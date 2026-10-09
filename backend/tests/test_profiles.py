@@ -72,11 +72,8 @@ def test_inventory_separates_fit_validation_and_quality_and_writes_nothing(ready
         {"memory": MemoryStatus(8 * 1024**3, profiles.Profile().host_required_bytes - 1, 0, 0)},
         {"dedicated_free_bytes": profiles.Profile().device_required_bytes - 1},
         {"dedicated_free_bytes": None},
-        {"gpu_names": ("Intel Iris Xe Graphics",)},
-        {"cpu": "A different CPU with more RAM"},
         {"os": "Linux"},
         {"architecture": "ARM64"},
-        {"cpu": None},
     ],
 )
 def test_auto_and_explicit_override_cannot_promote_unready_hardware(
@@ -86,6 +83,24 @@ def test_auto_and_explicit_override_cannot_promote_unready_hardware(
     for requested in ("auto", profiles.PROFILE_ID):
         with pytest.raises(ValueError, match="Profile unavailable"):
             profiles.select(ready, requested)
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"gpu_names": ("Intel Iris Xe Graphics",)},
+        {"cpu": "A different CPU with more RAM"},
+        {"cpu": None},
+    ],
+)
+def test_the_measured_profile_never_starts_on_other_hardware(
+    ready: Settings, monkeypatch: pytest.MonkeyPatch, change: dict[str, object]
+) -> None:
+    # ADR-0024: other Windows hardware gets the CPU profile; the MX350 one stays refused.
+    monkeypatch.setattr(profiles, "inventory", lambda settings: replace(host(), **change))
+    with pytest.raises(ValueError, match="measured only on an i5-1135G7 with an MX350"):
+        profiles.select(ready, profiles.PROFILE_ID)
+    assert profiles.select(ready).id == profiles.CPU_PROFILE_ID
 
 
 @pytest.mark.parametrize("mode", ["missing-model", "missing-runtime", "bad-runtime", "disk"])

@@ -4,7 +4,6 @@ The original CPU gate remains separate. No smaller margin is passed to it.
 """
 
 import re
-import shutil
 import subprocess
 import threading
 
@@ -16,6 +15,7 @@ from backend.setup import llama_cpp
 from backend.setup.download import sha256_file
 from backend.setup.models import model_path
 from backend.setup.pins import load_llama_cpp_pin, load_model_pins
+from backend.system_tools import NVIDIA_SMI, system_tool
 
 MODEL_ID = "qwen3.5-2b-q4_k_m"
 MODEL_SHA256 = "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8"
@@ -41,11 +41,11 @@ def device_budget(output: str) -> int:
 
 
 def nvidia_free() -> int:
-    executable = shutil.which("nvidia-smi")
-    if executable is None:
+    executable = system_tool(NVIDIA_SMI)
+    if not executable.is_file():
         raise ValueError("Cannot read the MX350's dedicated VRAM.")
     result = subprocess.run(  # noqa: S603 - fixed arguments to the system GPU utility
-        [executable, "--query-gpu=name,memory.free", "--format=csv,noheader,nounits"],
+        [str(executable), "--query-gpu=name,memory.free", "--format=csv,noheader,nounits"],
         capture_output=True,
         text=True,
         timeout=10,

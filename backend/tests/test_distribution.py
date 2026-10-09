@@ -91,6 +91,15 @@ def test_distribution_allowlist_excludes_private_and_evaluation_data() -> None:
     assert "analysis/typescript/resolver.mts" in names
     assert "agent/validator.py" in names
     assert "eval/bench/machine.py" in names
+    # The first-use check of a CPU profile (ADR-0024) runs from the package too.
+    assert {
+        "backend/acceptance.py",
+        "backend/cpu_profile.py",
+        "eval/feasibility/canary.py",
+        "eval/feasibility/constrained_answers.py",
+        "eval/feasibility/common.py",
+        "eval/fixtures/snippets/receipt_authn_only.py",
+    } <= set(names)
     assert all("tests" not in Path(n).parts for n in names)
     assert all(not n.startswith(("docs/", "tmp/", "eval/corpus", "eval/splits")) for n in names)
     assert not {"notes.md", "ML_Engineer_CaseStudy.pdf", "AGENTS.md", ".env"}.intersection(names)

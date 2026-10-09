@@ -19,7 +19,8 @@ export function parseReadiness(value:unknown):SetupReadiness {
   if(!structuralMatches(value,readinessSchema))throw new SetupReadError("Readiness cannot be read.");
   const p=value as SetupReadiness;
   validateCapabilities(p.capabilities,null);
-  const fits=p.available_ram_bytes>=p.required_ram_bytes&&p.available_vram_bytes!==null&&p.available_vram_bytes>=p.required_vram_bytes;
+  // A profile that uses no graphics card requires zero dedicated VRAM.
+  const fits=p.available_ram_bytes>=p.required_ram_bytes&&(p.required_vram_bytes===0||p.available_vram_bytes!==null&&p.available_vram_bytes>=p.required_vram_bytes);
   if(p.memory_fit!==fits||p.requires_large_download_approval!==(p.missing_download_bytes>500_000_000)
     ||p.ready&&!(p.inspect_ready&&p.measured_host&&p.model_verified&&p.runtime_verified&&fits))throw new SetupReadError("Readiness disagrees with measured prerequisites.");
   return p;

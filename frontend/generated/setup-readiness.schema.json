@@ -357,7 +357,7 @@
       "type": "integer"
     },
     "required_vram_bytes": {
-      "minimum": 1,
+      "minimum": 0,
       "title": "Required Vram Bytes",
       "type": "integer"
     },

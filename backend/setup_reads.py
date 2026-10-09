@@ -13,6 +13,7 @@ from backend.contracts.common import LinkStatus
 from backend.contracts.runs import Condition, ConditionKind
 from backend.contracts.setup_view import InspectionView, SetupReadiness
 from backend.jobs import WorkerLock
+from backend.profiles import chosen
 from backend.redaction import Redactor
 from backend.review import Review
 from backend.settings import Settings
@@ -24,7 +25,8 @@ def readiness(settings: Settings) -> SetupReadiness:
     with WorkerLock(settings.cache_dir / "review.lock"):
         plan = preview(settings)
     report = plan["doctor"]
-    profile = report["profiles"][0]
+    profile = chosen(report)
+    selected = report["selected_profile"] is not None
     model = next(m for m in report["model_candidates"] if m["id"] == profile["model_id"])
     conditions = []
     if not model["verified_installed"]:
@@ -40,14 +42,17 @@ def readiness(settings: Settings) -> SetupReadiness:
     if (
         not plan["typescript_helper"]["ready"]
         or not profile["runtime_verified"]
+        or not selected
         or not profile["compatible_measured_host"]
         or not profile["pins_match"]
         or profile["runtime_compatible"] is not True
+        or profile["first_use_check"] == "failed"
     ):
         conditions.append(
             Condition(
                 kind=ConditionKind.SETUP_REQUIRED,
-                message="Review prerequisites or the measured hardware profile are unavailable. "
+                message="Review prerequisites or a review profile for this computer are "
+                "unavailable. "
                 "Source inspection needs the trusted TypeScript helper; "
                 "no driver or Windows feature is changed.",
                 action="Run plumb setup to read the next steps.",
@@ -59,11 +64,15 @@ def readiness(settings: Settings) -> SetupReadiness:
         conditions.append(
             Condition(
                 kind=ConditionKind.MODEL_TOO_LARGE,
-                message=f"{ram / 1_000_000_000:.2f} GB RAM free; this measured profile requires "
-                f"{profile['host_required_bytes'] / 1_000_000_000:.2f} GB RAM and "
-                f"{profile['device_required_bytes'] / 1_000_000_000:.2f} GB dedicated VRAM. "
-                "Dedicated VRAM available: "
-                + (f"{vram / 1_000_000_000:.2f} GB." if vram is not None else "unknown."),
+                message=f"{ram / 1_000_000_000:.2f} GB RAM free; this profile requires "
+                f"{profile['host_required_bytes'] / 1_000_000_000:.2f} GB RAM"
+                + (
+                    f" and {profile['device_required_bytes'] / 1_000_000_000:.2f} GB dedicated "
+                    "VRAM. Dedicated VRAM available: "
+                    + (f"{vram / 1_000_000_000:.2f} GB." if vram is not None else "unknown.")
+                    if profile["device_required_bytes"]
+                    else "."
+                ),
                 action="Close other apps if needed, then check readiness again. "
                 "Source inspection uses no model.",
             )
@@ -98,7 +107,7 @@ def readiness(settings: Settings) -> SetupReadiness:
         model_size_bytes=model["size_bytes"],
         model_verified=profile["model_verified"],
         runtime_verified=profile["runtime_verified"],
-        measured_host=profile["compatible_measured_host"] and profile["pins_match"],
+        measured_host=selected and profile["compatible_measured_host"] and profile["pins_match"],
         memory_fit=profile["estimated_memory_fit"],
         available_ram_bytes=report["inventory"]["memory"]["available_bytes"],
         required_ram_bytes=profile["host_required_bytes"],
@@ -113,8 +122,13 @@ def readiness(settings: Settings) -> SetupReadiness:
             report["memory_note"],
             report["disk_note"],
             profile["evaluated_capability"],
-            "Only the existing measured profile can be selected; "
-            "unmeasured models or hardware are not automatically approved.",
+            "Only registered profiles can be selected; a CPU profile is checked once on "
+            "each computer before its first review, and other settings are refused.",
+            *(
+                [m for m in profile["messages"] if "first" in m.lower()]
+                if profile["first_use_check"] in {"pending", "failed"}
+                else []
+            ),
         ],
     )
     return bounded(

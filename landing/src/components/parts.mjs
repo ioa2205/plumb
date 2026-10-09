@@ -9,6 +9,9 @@ import { gauge, glyph } from './glyphs.mjs';
 
 export const fact = (/** @type {unknown} */ value) => html`<span class="fact">${value}</span>`;
 
+/** A short recorded name, such as a profile ID, kept whole instead of breaking at its hyphens. */
+export const factWhole = (/** @type {unknown} */ value) => html`<span class="fact whole">${value}</span>`;
+
 /** A source line on a sheet saying which record the sheet shows. */
 export const stamp = (/** @type {unknown} */ value) => html`<p class="stamp">${value}</p>`;
 

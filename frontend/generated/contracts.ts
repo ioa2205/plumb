@@ -516,7 +516,7 @@ export namespace RunHistorySchema {
 }
 export type RunHistory = RunHistorySchema.RunHistory;
 
-// SetupReadiness.schema.json · SHA256 a1a011ceb300ea5e76d31ed6150fba39c5df75c0267731d973860a39b009cab4
+// SetupReadiness.schema.json · SHA256 69513980bc07aa68f2941056fb8c22becfc5ec0d5cbbf6e7d070b86b99a3f51d
 export namespace SetupReadinessSchema {
   export type CapabilityEvidence = { readonly "current_engine_acceptance"?: false; readonly "record": string; readonly "scope": string; readonly "sha256": string; };
   export type CapabilityRow = { readonly "category": "language" | "framework" | "family"; readonly "indexed": "observed" | "partial" | "unverified" | "not_applicable"; readonly "indexed_units"?: (number) | (null); readonly "investigated"?: false; readonly "name": string; readonly "parsed": "observed" | "partial" | "unverified" | "not_applicable"; readonly "parsed_units"?: (number) | (null); readonly "reason": string; readonly "runtime_testable"?: false; readonly "units"?: (number) | (null); readonly "workflow_implemented": boolean; };

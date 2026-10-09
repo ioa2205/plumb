@@ -25,7 +25,8 @@ class SetupReadiness(Contract):
     available_ram_bytes: int = Field(ge=0)
     required_ram_bytes: int = Field(ge=1)
     available_vram_bytes: int | None = Field(ge=0)
-    required_vram_bytes: int = Field(ge=1)
+    # Zero when the profile uses no graphics card.
+    required_vram_bytes: int = Field(ge=0)
     missing_download_bytes: int = Field(ge=0)
     requires_large_download_approval: bool
     conditions: list[Condition]
@@ -43,8 +44,11 @@ class SetupReadiness(Contract):
     @model_validator(mode="after")
     def _readiness(self) -> Self:
         fit = self.available_ram_bytes >= self.required_ram_bytes and (
-            self.available_vram_bytes is not None
-            and self.available_vram_bytes >= self.required_vram_bytes
+            self.required_vram_bytes == 0
+            or (
+                self.available_vram_bytes is not None
+                and self.available_vram_bytes >= self.required_vram_bytes
+            )
         )
         if self.memory_fit != fit or self.requires_large_download_approval != (
             self.missing_download_bytes > 500_000_000

@@ -145,8 +145,18 @@ def source_files() -> list[str]:
             )
         ):
             result.append(name)
-    # Only machine-state recording is used from eval; no corpus or sealed split.
-    result += ["eval/__init__.py", "eval/bench/__init__.py", "eval/bench/machine.py"]
+    # From eval: machine-state recording, and the two first-use checks with their three
+    # snippets (ADR-0024). No corpus or sealed split.
+    result += [
+        "eval/__init__.py",
+        "eval/bench/__init__.py",
+        "eval/bench/machine.py",
+        "eval/feasibility/__init__.py",
+        "eval/feasibility/common.py",
+        "eval/feasibility/canary.py",
+        "eval/feasibility/constrained_answers.py",
+        *(n for n in tracked if n.startswith("eval/fixtures/snippets/") and n.endswith(".py")),
+    ]
     return sorted(set(result))
 
 

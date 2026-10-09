@@ -633,7 +633,12 @@ def test_two_required_kinds_keep_separate_summaries_and_path_checks(tmp_path: Pa
     ],
 )
 def test_saved_m6_9k_action_packets_replay_the_exact_session_requirement(
-    tmp_path: Path, case_id: str, handler: str, expected: Conclusion, indices: list[int]
+    tmp_path: Path,
+    recorded_lab: Path,
+    case_id: str,
+    handler: str,
+    expected: Conclusion,
+    indices: list[int],
 ) -> None:
     """Saved-answer replay; the original fresh abstention/quality gate stays unchanged."""
     root = Path(__file__).resolve().parents[2]
@@ -670,7 +675,7 @@ def test_saved_m6_9k_action_packets_replay_the_exact_session_requirement(
             return JsonAnswer(json.loads(response["raw_answer"]), response["raw_answer"], 0, 0, 0)
 
     settings = Settings(data_dir=tmp_path / "data")
-    snapshot = take_snapshot(root / "labs/tandir", SnapshotStore(settings.cache_dir / "snapshots"))
+    snapshot = take_snapshot(recorded_lab, SnapshotStore(settings.cache_dir / "snapshots"))
     assert snapshot.id == record["snapshot"]["id"] == prepared["snapshot"]["id"]
     review = Review(settings, snapshot.id)
     try:

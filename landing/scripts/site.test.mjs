@@ -79,6 +79,34 @@ test('source conclusions and runtime labels stay separate in the record', () => 
   assert.notEqual(record.runtime.replay.review_id, record.run.id);
 });
 
+test('the second profile is stated as one run on one laptop, and kept apart from the download', () => {
+  const cpu = record.cpu_profile;
+  assert.equal(record.download.has_cpu_profile, false, 'the download predates the second profile');
+  assert.equal(cpu.same_computer_as_recorded_run, true);
+  assert.equal(cpu.first_use_check.outcome, 'passed');
+  assert.deepEqual(cpu.review.findings.map((/** @type {any} */ finding) => finding.conclusion), ['supported', 'rejected']);
+  // The record says its timings are not comparable, so none of them is extracted.
+  assert.doesNotMatch(JSON.stringify(cpu), /elapsed|seconds/);
+
+  const text = (/** @type {string} */ path) => readFileSync(path, 'utf8').replace(/<[^>]+>/g, '');
+  const named = [...pages(), join(DIST, 'agent-install.md')].filter((path) => text(path).includes(cpu.id));
+  assert.ok(named.length >= 9, 'the overview, both install pages and the limits page name the profile in both languages');
+  for (const path of named) {
+    // Wherever the profile is named, the same page says no other computer has been tried.
+    assert.match(
+      text(path),
+      isUzbek(path) ? /kompyuterda (?:esa |hali hech narsa )?sinab ko‘rilmagan/ : /(?:not|Nothing has) been tried on (?:any other|a second) computer/,
+      `${name(path)}: names ${cpu.id} without saying it is untried elsewhere`,
+    );
+    // The models have not been compared: no page may rank them.
+    assert.doesNotMatch(text(path), /more accurate|finds more|better model|aniqroq model|yaxshiroq model/i, `${name(path)}: ranks the models`);
+  }
+  // The fixed label is Plumb's own, shown as recorded in both languages.
+  for (const page of ['install/index.html', 'uz/install/index.html']) {
+    assert.ok(text(join(DIST, page)).includes(record.other_models_label), `${page}: the label for other models`);
+  }
+});
+
 test('nothing private is published', () => {
   // The owner's name and contact details are public because the owner put them in
   // site.json. They may appear exactly as written there and nowhere else.

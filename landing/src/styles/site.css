@@ -456,15 +456,15 @@ details.more-detail ul { display: grid; gap: 8px; margin-top: 8px; list-style: n
 .steps > li > div > * + * { margin-top: 10px; }
 .stack-gap > * + * { margin-top: 18px; }
 
-/* ---------- the message form: fields are wells with an underline (design.md §6) ---------- */
+/* ---------- the message form: fields are wells on the sheet, with no drawn edge ---------- */
 .form { display: grid; gap: 18px; max-width: 40rem; }
 .field { display: grid; gap: 6px; align-content: start; }
 .field label { font: var(--t-ui); }
 .optional { margin-left: 4px; color: var(--pencil); font-weight: 400; }
-/* On the sheet a field is the brightest surface: white by day, raised by night, with a faint
-   ring for its edge and the control rule along its foot. */
-.field input, .field textarea { appearance: none; width: 100%; border: 0; border-radius: var(--radius-control); background: var(--raised); box-shadow: inset 0 0 0 1px var(--well), inset 0 -1.5px 0 var(--control-rule); color: var(--ink); font: var(--t-body); padding: 12px 14px; transition: box-shadow 0.14s ease-out; }
-.field input:hover, .field textarea:hover { box-shadow: inset 0 0 0 1px var(--control-rule), inset 0 -1.5px 0 var(--control-rule); }
+/* A field is set apart from the sheet by tone alone: a well, one step darker by day and one
+   step lighter by night. No ring and no underline are drawn. Its label sits directly above
+   it, and the focus ring below marks the field being typed in. */
+.field input, .field textarea { appearance: none; width: 100%; border: 0; border-radius: var(--radius-control); background: var(--well); color: var(--ink); font: var(--t-body); padding: 12px 14px; }
 .field textarea { display: block; min-height: 11rem; resize: vertical; }
 .field input:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }

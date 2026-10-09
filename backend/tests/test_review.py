@@ -406,6 +406,61 @@ def test_public_cli_persists_preparation_and_resume_never_rebuilds_it(
         review.scheduling_limits = ["Static pattern and cached-peer queue preparation was not run."]
 
 
+@pytest.mark.parametrize("outcome", ["passed", "failed", "refused"])
+def test_first_review_on_a_computer_checks_the_runner_before_any_question(
+    review: Review, monkeypatch: pytest.MonkeyPatch, outcome: str
+) -> None:
+    from backend import cli
+    from backend.profiles import CPU_PROFILE_ID, REGISTRY
+
+    monkeypatch.setenv("PLUMB_DATA_DIR", str(review.settings.data_dir))
+    monkeypatch.setattr(cli, "Review", lambda *_: review)
+    monkeypatch.setattr(review, "close", lambda: None)
+    monkeypatch.setattr(cli, "select", lambda *_: REGISTRY[CPU_PROFILE_ID])
+    monkeypatch.setattr(cli, "machine_state", lambda: {})
+    monkeypatch.setattr(
+        cli,
+        "create",
+        lambda *_: SimpleNamespace(
+            config=SimpleNamespace(argv=lambda *_: ["fixture"]),
+            preflight=lambda: None,
+            stop=lambda: None,
+            memory_abort=None,
+        ),
+    )
+    events: list[str] = []
+
+    def check(settings: object, profile: object, log_name: str) -> dict[str, object]:
+        events.append("check")
+        return {"outcome": outcome, "path": "saved-record.json", "reason": "1.0 GB free."}
+
+    def workflow(context: object, runs: RunStore, run_id: str, *args: object) -> SimpleNamespace:
+        def run() -> ReviewRun:
+            events.append("review")
+            runs.request(run_id, "pause")
+            return Engine(runs, {}).run(run_id)
+
+        return SimpleNamespace(run=run, _challenge=None)
+
+    monkeypatch.setattr(cli, "first_use_pending", lambda *_: True)
+    monkeypatch.setattr(cli, "first_use_check", check)
+    monkeypatch.setattr(cli, "ModelAdapter", lambda *_a, **_k: SimpleNamespace(close=lambda: None))
+    monkeypatch.setattr(cli, "Workflow", workflow)
+    root = str(Path(__file__).resolve().parents[2] / "labs/tandir")
+    try:
+        code = cli.main(["review", root, "--resource", "Order", "--route", ROUTES[0]])
+        # Only a pass lets the review ask its first question.
+        assert (code, events) == (
+            (2, ["check", "review"]) if outcome == "passed" else (1, ["check"])
+        )
+        # The shared fixture keeps earlier reviews; this one's record names its outcome.
+        saved = (review.settings.data_dir / "reviews").glob("*/invocation-*.json")
+        assert any(f'"outcome": "{outcome}"' in p.read_text(encoding="utf-8") for p in saved)
+    finally:
+        review.preparation = None
+        review.scheduling_limits = ["Static pattern and cached-peer queue preparation was not run."]
+
+
 def test_authorization_severity_requires_source_scope_not_resource_names(
     review: Review,
     tmp_path: Path,
@@ -604,3 +659,46 @@ def test_review_refuses_guard_cache_inside_target(
     monkeypatch.setenv("PLUMB_DATA_DIR", str(tmp_path / "data"))
     assert main(["review", str(project), "--guard-cache", str(project / "guards.sqlite")]) == 1
     assert not (project / "guards.sqlite").exists()
+
+
+# --- A.7: an empty default selection names the families that do have checks ---
+
+
+def test_a_nextjs_only_project_is_told_which_family_to_review(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from backend import cli
+
+    def forbidden(*args: object, **kwargs: object) -> None:
+        pytest.fail("An empty selection reached profile selection or the model")
+
+    monkeypatch.setenv("PLUMB_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setattr(cli, "select", forbidden)
+    monkeypatch.setattr(cli, "create", forbidden)
+    monkeypatch.setattr(cli, "machine_state", lambda: {})
+    web = Path(__file__).resolve().parents[2] / "labs/tandir/web"
+    assert cli.main(["review", str(web)]) == 1
+    printed = capsys.readouterr().out
+    assert "No authorization checks match this scope" in printed
+    assert "nextjs_exposure (" in printed and f"plumb review '{web}'" in printed
+    assert "--family nextjs_exposure" in printed
+
+
+def test_an_empty_scope_with_no_other_family_says_so_without_a_false_hint(
+    review: Review,
+) -> None:
+    import argparse
+
+    from backend import cli
+
+    nothing = argparse.Namespace(
+        family=["nextjs_exposure"], resource=[], route=["/no/such/route"], folder=Path("project")
+    )
+    message = cli.no_checks_message(review, "run:empty", nothing)
+    assert "no other family has checks here either" in message and "--family" not in message
+    assert "not a safety verdict" in message
+    # The bundled lab has FastAPI routes: an unrelated selection points back to them.
+    other = argparse.Namespace(
+        family=["nextjs_exposure"], resource=[], route=[ROUTES[0]], folder=Path("p")
+    )
+    assert "--family authorization" in cli.no_checks_message(review, "run:empty", other)

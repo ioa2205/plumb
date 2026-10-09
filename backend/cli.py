@@ -15,22 +15,36 @@ from agent.llm import JsonAnswer, ModelAdapter, ModelRequest, Spend
 from analysis.overview import overview
 from analysis.overview import summary as overview_summary
 from analysis.snapshot import SnapshotStore, take_snapshot
+from backend import acceptance
 from backend.console import review_interrupts
 from backend.contracts.common import Family
 from backend.contracts.investigation import QuestionStatus
 from backend.contracts.runs import ModelRef, ReviewRun, RunLifecycle, RunType, Toolchain
 from backend.jobs import WorkerLock
 from backend.preflight import PreflightResult
-from backend.profiles import REGISTRY, create, doctor, select, validate_resume
+from backend.profiles import (
+    REGISTRY,
+    chosen,
+    create,
+    doctor,
+    first_use_check,
+    first_use_pending,
+    select,
+    validate_resume,
+)
 from backend.review import Review, Workflow, export, implementation_identity, write_json
 from backend.run_store import RunStore
 from backend.saved_reports import show, summary
 from backend.settings import Settings
 from backend.setup.pins import load_llama_cpp_pin, load_model_pins
+from backend.system_tools import unsupported_system
 from eval.bench.machine import machine_state
 
 
 def main(argv: list[str] | None = None) -> int:
+    if refusal := unsupported_system():
+        print(refusal)
+        return 1
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     from backend.setup.__main__ import add_arguments, execute
@@ -42,6 +56,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     diagnostic = commands.add_parser("doctor", help="Read-only hardware, assets and profile checks")
     diagnostic.add_argument("--json", action="store_true", help="Print full diagnostic JSON")
+    calibrate = commands.add_parser(
+        "calibrate", help="Check the model runner on this computer; loads the model once"
+    )
+    calibrate.add_argument("--profile", choices=["auto", *REGISTRY], default="auto")
     report_command = commands.add_parser("report", help="Read a saved report without analysis")
     report_command.add_argument("run_id")
     report_command.add_argument("--open", action="store_true", help="Request the default browser")
@@ -87,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
         command.add_argument(
             "--profile",
             choices=["auto", *REGISTRY],
-            help="Measured profile; resume retains its identity",
+            help="Review profile (see plumb doctor); resume retains its identity",
         )
         command.add_argument(
             "--limit",
@@ -133,17 +151,53 @@ def main(argv: list[str] | None = None) -> int:
             if args.json:
                 print(json.dumps(Redactor.configured().strings(report), indent=2))
             else:
-                profile = report["profiles"][0]
+                profile = chosen(report)
                 host = report["inventory"]
+                device = (
+                    f"Dedicated {profile['device_name']} VRAM: "
+                    f"{profile['dedicated_free_bytes']} bytes\n"
+                    if profile["device_name"]
+                    else ""
+                )
+                others = ", ".join(
+                    f"{p['id']} (ready: {p['ready']})"
+                    for p in report["profiles"]
+                    if p["id"] != profile["id"] and p["model_id"] == profile["model_id"]
+                )
+                scanner = report["pattern_scanner"]
+                scanned = (
+                    "installed"
+                    if scanner["verified_installed"]
+                    else "not installed; reviews run without pattern leads until "
+                    "plumb setup --install"
+                )
+                advice = report["model_recommendation"]
+                largest = advice["largest_fitting_model"]
+                if largest is None:
+                    models = "No pinned model fits the free memory now.\n"
+                elif advice["label"] is None:
+                    models = "Largest pinned model that fits the free memory now: the default.\n"
+                else:
+                    models = (
+                        f"Largest pinned model that fits the free memory now: {largest} "
+                        f"({advice['label']}).\n"
+                        f"  Install: plumb setup --install --model {largest}"
+                        f" | review: --profile cpu-8k-{largest}\n"
+                    )
                 print(
                     Redactor.configured().text(
                         f"{host['os']} / {host['architecture']} | CPU: {host['cpu'] or 'unknown'}\n"
                         f"Available RAM: {host['memory']['available_bytes']} bytes\n"
-                        f"Dedicated MX350 VRAM: {profile['dedicated_free_bytes']} bytes\n"
+                        f"{device}"
                         f"Data-volume free disk: {host['disk_free_bytes']} bytes\n"
-                        f"Profile: {profile['id']} | ready: {profile['ready']}\n"
+                        f"Profile: {report['selected_profile'] or 'none for this system'}"
+                        f" | ready: {report['selection_ready']}\n"
+                        f"Needs {profile['host_required_bytes']} bytes of available RAM\n"
+                        f"Other profiles: {others}\n"
+                        f"Default model: {advice['default_model']}\n{models}"
                         f"Verified model/runtime: {profile['model_verified']}/"
                         f"{profile['runtime_verified']}\n"
+                        f"Pattern scanner ({scanner['name']} {scanner['release']}): {scanned}\n"
                         f"{report['memory_note']}\n{profile['evaluated_capability']}\n"
                         + "\n".join(report["messages"])
                         + "\nFull inventory and pinned download previews: plumb doctor --json"
@@ -153,6 +207,8 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as error:
             print(Redactor.configured().text(f"Doctor failed: {error}"))
             return 1
+    if args.command == "calibrate":
+        return calibrate_profile(settings, args.profile)
     if args.command == "policy":
         from backend.contracts.policies import PolicyInput
         from backend.project_reads import ProjectReads
@@ -180,6 +236,62 @@ def main(argv: list[str] | None = None) -> int:
             return 1
     with review_interrupts():
         return execute_review(args, settings)
+
+
+def no_checks_message(context: Review, run_id: str, args: argparse.Namespace) -> str:
+    """Why nothing was selected, and which families do have checks here, with the flag."""
+    selected = [Family(f) for f in (args.family or [Family.AUTHORIZATION.value])]
+    found: list[tuple[str, int]] = []
+    for family in Family:
+        if family in selected:
+            continue
+        # A resource name narrows authorization only; routes narrow every family.
+        resources = args.resource if family is Family.AUTHORIZATION else []
+        questions, _, _ = context.questions(run_id, resources, args.route, (family,))
+        if questions:
+            found.append((family.value, len(questions)))
+    names = ", ".join(f.value for f in selected)
+    if not found:
+        return (
+            f"No supported source checks match this scope (families tried: {names}; no other "
+            "family has checks here either). The overview above lists what was recognized. "
+            "This is not a safety verdict"
+        )
+    return (
+        f"No {names} checks match this scope, but this project has checks in: "
+        + ", ".join(f"{name} ({count})" for name, count in found)
+        + f". Run: plumb review '{args.folder}' "
+        + " ".join(f"--family {name}" for name, _ in found)
+    )
+
+
+def calibrate_profile(settings: Settings, requested: str) -> int:
+    """The first-use check on request (ADR-0024). Loads the model once; reviews nothing."""
+    from backend.redaction import Redactor
+
+    try:
+        with WorkerLock(settings.cache_dir / "review.lock"):
+            profile = select(settings, requested, rechecking=True)
+            if profile.device_name:
+                print(
+                    f"{profile.id} was measured on this hardware and needs no first-use check. "
+                    "Check a CPU profile with: plumb calibrate --profile cpu-8k"
+                )
+                return 0
+            print(
+                f"Checking {profile.id} on this computer: 3 structured answers and "
+                f"{acceptance.PAIRS} leak-check pairs. This takes a few minutes.",
+                flush=True,
+            )
+            record = first_use_check(settings, profile, "first-use-" + uuid4().hex)
+    except Exception as error:
+        print(Redactor.configured().text(f"Check could not start: {error}"))
+        return 1
+    if record["outcome"] == acceptance.PASSED:
+        print(f"Passed. {profile.id} can review on this computer.\nRecord: {record['path']}")
+        return 0
+    print(Redactor.configured().text(acceptance.explain(record)))
+    return 2 if record["outcome"] == acceptance.REFUSED else 1
 
 
 def execute_review(
@@ -249,7 +361,7 @@ def execute_review(
                     tuple(Family(f) for f in (args.family or [Family.AUTHORIZATION.value])),
                 )
                 if not questions:
-                    raise ValueError("No supported source checks match this scope")
+                    raise ValueError(no_checks_message(context, run_id, args))
                 selected_profile = select(settings, args.profile or "auto")
                 server = create(settings, run_id, selected_profile)
                 from backend.scheduling import order_questions, prepare
@@ -382,6 +494,19 @@ def execute_review(
                 server = create(settings, run_id, selected_profile)
             if ready is not None:
                 ready(run_id)
+            if first_use_pending(settings, selected_profile):
+                # A memory estimate alone does not qualify a profile on a new computer.
+                print(
+                    f"First use of {selected_profile.id} on this computer: checking the model "
+                    "runner before the review. This takes a few minutes.",
+                    flush=True,
+                )
+                checked = first_use_check(settings, selected_profile, f"{run_id}-first-use")
+                manifest["first_use_check"] = {
+                    key: checked.get(key) for key in ("outcome", "path", "reason")
+                }
+                if checked["outcome"] != acceptance.PASSED:
+                    raise ValueError(acceptance.explain(checked))
             model_pin = load_model_pins().get(selected_profile.model_id).model_dump(mode="json")
             launch = server.config.argv(0, "<per-launch key>")
             manifest.update(

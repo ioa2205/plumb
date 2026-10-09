@@ -35,6 +35,16 @@ one extracted record into HTML. Node.js 22 or later is enough.
   saying how many lines went.
 - The picture of the flaw uses the practice app's own sample customers, read
   from its seed file, and shows only the fields its receipt route returns.
+- The second profile, `cpu-8k`, has its own record
+  (`docs/results/2026-10-10-a1-cpu-profile-attempt-2.json`), checked against the
+  first-use check and the report it points to. It is a later review of the same
+  two addresses and is never merged with the recorded run. Its timings are not
+  extracted, because the record says they are not comparable. Its day is the
+  one the record is filed under (the laptop's calendar day); the other dates on
+  the site are read in UTC.
+- The label Plumb prints beside models other than the default is read from
+  `backend/profiles.py` and shown as recorded. The models have not been
+  compared, so no page may rank them; a check refuses wording that does.
 
 On the page, the monospaced face marks text copied from a record.
 
@@ -109,6 +119,12 @@ in-memory rate limit. The rate limit resets when the function instance is
 recycled; it slows floods and is not a guarantee. Without scripts the form still
 posts and lands on `/contact/sent` or `/contact/not-sent`.
 
+The fields have no drawn edge: no ring and no underline. Each is a `well` on
+the form's sheet, set apart by tone, with its label directly above and the ink
+focus ring when it is being typed in. The owner asked for the border line to go
+(10 October 2026), so do not bring back the input underline that `design.md` §6
+describes for the workbench.
+
 ## Words that must never be published
 
 `scripts/private.mjs` holds the general privacy patterns (absolute Windows
@@ -127,6 +143,16 @@ which extraction refuses unless the archive checks passed, the source was
 clean, the recorded report opened, and the investigator files match the
 package used in the recorded run.
 
+The download is older than the source code. It was built before the audit
+fixes: it has one profile, so it starts a review only on the measured laptop
+model, and it lacks `calibrate`, `--model`, the model advice in `doctor`, the
+scanner step of setup and the fix that keeps programs in the working folder
+from being started. Pages keep "the download" and "from source" apart and never
+describe the package as having those changes. Extraction records that the
+package's investigator has no `backend/cpu_profile.py`, and pages assert it
+with `holds(...)`, so a newer package stops the build until the wording is
+revisited.
+
 ## Installing, for people and for AI agents
 
 The install steps are written once, in `src/lib/guide.mjs`. `/install` shows
@@ -134,7 +160,11 @@ them to people, `/install/agent` turns them into one message to paste into an
 AI coding agent (in English; the Uzbek page asks the agent to explain in
 Uzbek), and the build writes them to `dist/agent-install.md` for agents that
 read web pages. A check keeps the rules and commands the same in all three.
-Download sizes come from the pinned model and runtime.
+Download sizes come from the pinned model, the pinned program that runs it for
+each profile, and the pinned pattern scanner. The source steps leave the
+profile option out of the review command, so Plumb picks the profile for the
+computer it is on; the package steps keep the recorded command, which names the
+only profile the package has.
 
 ## Pictures of the saved report
 

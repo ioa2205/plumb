@@ -188,7 +188,9 @@ def test_multiple_edits_are_compared_as_one_complete_change(tmp_path: Path) -> N
     assert store.read(snapshot, "x.py") == raw
 
 
-def test_saved_r_whitespace_sketch_is_refused_without_a_new_model(tmp_path: Path) -> None:
+def test_saved_r_whitespace_sketch_is_refused_without_a_new_model(
+    tmp_path: Path, recorded_lab: Path
+) -> None:
     root = Path(__file__).resolve().parents[2]
     saved: Any = json.loads(
         (root / "docs/results/2026-10-08-m6.9r-action-phone-execution.json").read_bytes()
@@ -201,7 +203,7 @@ def test_saved_r_whitespace_sketch_is_refused_without_a_new_model(tmp_path: Path
         record["questions"][0]["answer"]["proposal"]["change"]["source_scope"]
     )
     store = SnapshotStore(tmp_path / "snapshots")
-    snapshot = take_snapshot(root / "labs/tandir", store)
+    snapshot = take_snapshot(recorded_lab, store)
     assert snapshot.id == record["snapshot"]["id"]
     file = next(f for f in snapshot.files if f.path == scope.path)
     assert file.language is not None

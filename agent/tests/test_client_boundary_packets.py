@@ -193,7 +193,7 @@ def test_added_module_binding_source_obeys_the_unchanged_packet_budget(tmp_path:
 
 
 def test_actual_tandir_courier_and_order_packets_include_the_exact_client_modules(
-    tmp_path: Path,
+    tmp_path: Path, recorded_lab: Path
 ) -> None:
     root = Path(__file__).resolve().parents[2]
     prepared = json.loads(
@@ -204,7 +204,7 @@ def test_actual_tandir_courier_and_order_packets_include_the_exact_client_module
     )
     settings = Settings(data_dir=tmp_path / "data")
     store = SnapshotStore(settings.cache_dir / "snapshots")
-    snapshot = take_snapshot(root / "labs/tandir", store)
+    snapshot = take_snapshot(recorded_lab, store)
     review = Review(settings, snapshot.id)
     try:
         review.policies = FrozenPolicies.model_validate(prepared["requirements"])

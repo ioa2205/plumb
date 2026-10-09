@@ -1,6 +1,6 @@
 # analysis
 
-Application understanding: content-addressed snapshots, the tree-sitter index, Python (ty) and TypeScript reference resolution, framework adapters, access sites, the application map, and the pinned Opengrep rules. Nothing here executes target code.
+Application understanding: content-addressed snapshots, the tree-sitter index, Python and TypeScript reference resolution, framework adapters, access sites, the application map, and the pinned Opengrep rules. Nothing here executes target code.
 
 - **Plan:** §4 Scope, §5 Architecture.
 - **Tasks:** M2.1–M2.8, M1.8 (Opengrep rules).
@@ -40,6 +40,12 @@ screen or security coverage claim is introduced by this overview.
 `uv run python -m analysis.python_resolution labs/tandir --caller tandir.routers.orders.get_invoice`
 builds a snapshot and index, then resolves Python calls. The resulting graph lives at
 `PLUMB_DATA_DIR/cache/resolution/<snapshot>.python.sqlite`. `--no-ty` exercises the fallback.
+**Reviews use only the fallback:** `plumb inspect`, `plumb review` and the browser pass
+`use_ty=False` (`backend/review.py`, `analysis/access.py`), so ty runs only from this command
+and from `analysis.application_map`. Compared on the lab on 10 October 2026: both link the
+same 103 of 663 call sites to the same targets, ty links one more (in the lab's test helper),
+and the guard candidates and access sites are identical
+([record](../docs/results/2026-10-10-a10a-ty-comparison.json)).
 `CallGraph.calls()` and `callers()` retain exact snapshot spans, target symbol IDs, provenance,
 and one of these statuses:
 

@@ -438,6 +438,103 @@ function extractRuntime() {
   };
 }
 
+// ---------------------------------------------------------------- the second profile
+
+/** "3 of 3" in a summary record, as two numbers. */
+function countOf(/** @type {unknown} */ value) {
+  const found = String(value).match(/^(\d+) of (\d+)$/);
+  must(found, `expected "N of M", found ${JSON.stringify(value)}`);
+  return /** @type {RegExpMatchArray} */ (found).slice(1).map(Number);
+}
+
+/**
+ * The one real run of the processor-only profile: its first-use check, then a review of the
+ * same two addresses as the recorded run. It is a separate, later review and is never merged
+ * with the recorded one. The summary is checked against the two records it points to.
+ *
+ * Its timings are left out on purpose. The summary says they are not comparable: no benchmark
+ * protocol was followed and the laptop was in its power-saving mode.
+ * @param {any} recorded the recorded run, as extracted above
+ */
+function extractCpuProfile(recorded) {
+  const name = '2026-10-10-a1-cpu-profile-attempt-2.json';
+  const summary = json(`${RESULTS}/${name}`);
+  const check = json(summary.first_use_check.record);
+  const report = json(`${summary.review.records}report.json`);
+
+  // The record is filed under the laptop's own calendar day, and so is the request that
+  // started it. Its timestamps are in UTC, where the run began late on the day before.
+  const [recordedOn] = /** @type {RegExpMatchArray} */ (name.match(/^\d{4}-\d{2}-\d{2}/));
+  must(summary.conditions.requested_by.includes(recordedOn), 'the run and its record carry different days');
+  const hoursFromThatDay = (Date.parse(report.run.started_at) - Date.parse(`${recordedOn}T00:00:00Z`)) / 3_600_000;
+  must(hoursFromThatDay > -14 && hoursFromThatDay < 36, 'the review did not start on the day its record is filed under');
+
+  must(summary.hypothesis_held === true, 'the declared hypothesis did not hold');
+  must(summary.profile === check.profile.id && summary.required_ram_bytes === check.profile.host_required_bytes, 'summary and first-use check name different profiles');
+  must(check.profile.device_required_bytes === 0 && check.profile.offload_layers === 0, 'the profile uses a graphics card');
+  must(check.profile.model_sha256 === recorded.model.file_sha256 && report.run.model.file_sha256 === recorded.model.file_sha256, 'a different model was used');
+  must(report.run.toolchain.backend === check.profile.backend, 'check and review used different model runners');
+
+  // The first-use check: form and leak-freedom, counted again from its own record.
+  must(summary.first_use_check.outcome === 'passed' && check.outcome === 'passed' && summary.first_use_check.exit_code === 0, 'the first-use check did not pass');
+  const [answersValid, answers] = countOf(summary.first_use_check.structured_answers_parsed_with_valid_citations);
+  const [kindsMatched] = countOf(summary.first_use_check.structured_answers_whose_guard_kinds_matched_the_expected_kinds);
+  const [pairsClean, pairs] = countOf(summary.first_use_check.leak_check_pairs_secret_echoed_then_absent);
+  must(
+    check.answers.length === answers &&
+      check.answers.filter((/** @type {any} */ entry) => entry.parsed && entry.invalid_citations.length === 0).length === answersValid &&
+      check.answers.filter((/** @type {any} */ entry) => entry.kinds_match).length === kindsMatched,
+    'first-use answers do not match their summary',
+  );
+  must(
+    check.canary.length === pairs &&
+      check.canary.filter((/** @type {any} */ pair) => pair.a_contains_token && !pair.leaked).length === pairsClean,
+    'leak-check pairs do not match their summary',
+  );
+
+  // The review, against its own report.
+  const { review } = summary;
+  must(review.run_id === report.run.id && review.lifecycle === report.run.lifecycle, 'summary and report name different reviews');
+  must(JSON.stringify(review.coverage) === JSON.stringify(report.run.coverage), 'summary and report disagree on coverage');
+  const findings = review.findings.map((/** @type {any} */ finding) => {
+    const saved = report.findings.find((/** @type {any} */ entry) => entry.display_id === finding.display_id);
+    must(saved?.conclusion === finding.conclusion, `${finding.display_id}: summary and report disagree`);
+    must(finding.conclusion === finding.expected, `${finding.display_id}: not the declared result`);
+    const [, route] = /** @type {RegExpMatchArray} */ (finding.address.match(/^GET (\/\S+)$/) ?? []);
+    must(route, `${finding.display_id}: unexpected address`);
+    return { display_id: finding.display_id, route, conclusion: finding.conclusion, runtime_verification: saved.runtime_verification };
+  });
+  must(findings.length === report.findings.length, 'summary and report list different findings');
+
+  return {
+    id: summary.profile,
+    backend: check.profile.backend,
+    recorded_on: recordedOn,
+    required_ram_bytes: summary.required_ram_bytes,
+    // The same laptop as the recorded run: same processor, same installed memory.
+    same_computer_as_recorded_run:
+      check.host.cpu === recorded.machine.cpu && check.host.total_memory_bytes === recorded.machine.total_memory_bytes,
+    first_use_check: {
+      outcome: check.outcome,
+      answers,
+      answers_valid: answersValid,
+      answers_matching_expected_kind: kindsMatched,
+      leak_pairs: pairs,
+      leak_pairs_clean: pairsClean,
+    },
+    review: {
+      id: review.run_id,
+      lifecycle: review.lifecycle,
+      exit: review.exit_code,
+      model_requests: review.model_requests,
+      memory_abort: review.memory_abort,
+      admitted_with_bytes: review.preflight.available_ram_bytes,
+      coverage: review.coverage,
+      findings,
+    },
+  };
+}
+
 // ---------------------------------------------------------------- model, package, checks
 
 /** @param {string} id */
@@ -509,8 +606,8 @@ function extractSample() {
 }
 
 /**
- * The program that runs the model for the measured profile: what setup downloads besides
- * the model file.
+ * The program that runs the model for one profile: what setup downloads besides the model
+ * file. The measured profile and the processor-only profile each have their own.
  * @param {string} backend
  */
 function extractRuntimePin(backend) {
@@ -530,6 +627,25 @@ function extractRuntimePin(backend) {
   const [release] = pins.match(/^release = "([^"]+)"$/m)?.slice(1) ?? [];
   must(release, 'runtime release missing');
   return { release, backend, name: assets[0].name, size: assets[0].size };
+}
+
+/**
+ * The words Plumb prints beside every pinned model other than the default. The models have
+ * not been compared on the same cases, so the site repeats this label and adds nothing to it.
+ */
+function extractModelLabel() {
+  const found = text('backend/profiles.py').match(/^NOT_COMPARED = "([^"]+)"$/m);
+  must(found, 'the label for models other than the default is missing');
+  return /** @type {RegExpMatchArray} */ (found)[1];
+}
+
+/** The pattern scanner that setup also installs when Plumb is run from source. */
+function extractScannerPin() {
+  const pins = text('backend/setup/pins/opengrep.toml');
+  const release = pins.match(/^release = "([^"]+)"$/m)?.[1];
+  const size = Number(pins.match(/^size = (\d+)$/m)?.[1]);
+  must(release && size > 0, 'scanner pin is incomplete');
+  return { name: 'Opengrep', release, size };
 }
 
 /**
@@ -557,6 +673,8 @@ function extractDownload() {
     inventoried_files: artifact.inventoried_files,
     files_left_out: recorded.inventoried_files - artifact.inventoried_files,
     investigator_files_identical: Object.keys(artifact.implementation_sha256).length,
+    // The package was built before the processor-only profile: its investigator has no such file.
+    has_cpu_profile: Object.keys(artifact.implementation_sha256).includes('backend/cpu_profile.py'),
     checked_at: smoke.created_at,
     doctor_refused_for_memory: followup.doctor_summary?.messages?.some((/** @type {string} */ m) => /RAM/.test(m)) ?? false,
   };
@@ -727,13 +845,18 @@ function assertPublic(label, content) {
 function main() {
   const tokens = tokensCss();
   const run = extractRun();
+  const cpuProfile = extractCpuProfile(run);
   const record = {
     run,
     excerpts: extractExcerpts(),
     runtime: extractRuntime(),
     sample: extractSample(),
     model: extractModelPin(run.model.id),
+    other_models_label: extractModelLabel(),
     runtime_download: extractRuntimePin(run.toolchain.backend),
+    cpu_profile: cpuProfile,
+    cpu_runtime_download: extractRuntimePin(cpuProfile.backend),
+    scanner_download: extractScannerPin(),
     package: extractPackage(),
     download: extractDownload(),
     software: extractSoftware(),

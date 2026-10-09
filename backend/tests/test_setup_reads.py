@@ -120,6 +120,9 @@ def test_saved_actual_readiness_retains_memory_gate_and_missing_asset_conditions
 ) -> None:
     raw = json.loads((ROOT / "frontend/scripts/fixtures/setup-views.json").read_text())
     plan = raw["setup_preview"]
+    # The saved record predates ADR-0024; name its one profile as the selected one.
+    plan["doctor"]["selected_profile"] = plan["doctor"]["recommended_profile"]
+    plan["doctor"]["profiles"][0].update(first_use_check="not needed", messages=[])
     monkeypatch.setattr("backend.setup_reads.preview", lambda settings: plan)
     view = readiness(Settings(data_dir=tmp_path / "data"))
     assert view.model_loaded is False and view.downloads_started is False

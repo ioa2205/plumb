@@ -223,7 +223,7 @@ def test_source_limit_is_not_bypassed_by_field_focus(tmp_path: Path) -> None:
 
 
 def test_actual_tandir_phone_chain_keeps_each_query_and_binding_without_inference(
-    tmp_path: Path,
+    tmp_path: Path, recorded_lab: Path
 ) -> None:
     root = Path(__file__).resolve().parents[2]
     prepared = json.loads(
@@ -234,7 +234,7 @@ def test_actual_tandir_phone_chain_keeps_each_query_and_binding_without_inferenc
     )
     record = next(r for r in original["records"] if r["case_id"] == "TANDIR-D2")
     settings = Settings(data_dir=tmp_path / "data")
-    snapshot = take_snapshot(root / "labs/tandir", SnapshotStore(settings.cache_dir / "snapshots"))
+    snapshot = take_snapshot(recorded_lab, SnapshotStore(settings.cache_dir / "snapshots"))
     review = Review(settings, snapshot.id)
     try:
         review.policies = FrozenPolicies.model_validate(prepared["requirements"])

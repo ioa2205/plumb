@@ -7,7 +7,6 @@ not change the production CPU gate or automatically select a runtime profile.
 import argparse
 import json
 import re
-import shutil
 import subprocess
 import threading
 import time
@@ -24,6 +23,7 @@ from backend.setup import llama_cpp
 from backend.setup.download import sha256_file
 from backend.setup.models import model_path
 from backend.setup.pins import load_llama_cpp_pin, load_model_pins
+from backend.system_tools import NVIDIA_SMI, system_tool
 from eval.bench.machine import machine_state
 from eval.bench.run import measure, prompt_tokens, summarize
 from eval.feasibility.canary import run_pairs
@@ -80,11 +80,11 @@ def cpu_gate(output: str, file_bytes: int, available: int) -> dict[str, Any]:
 
 
 def free_vram() -> int:
-    executable = shutil.which("nvidia-smi")
-    if executable is None:
+    executable = system_tool(NVIDIA_SMI)
+    if not executable.is_file():
         raise RuntimeError("nvidia-smi unavailable")
     result = subprocess.run(  # noqa: S603 - fixed arguments to the system GPU utility
-        [executable, "--query-gpu=memory.free", "--format=csv,noheader,nounits"],
+        [str(executable), "--query-gpu=memory.free", "--format=csv,noheader,nounits"],
         capture_output=True,
         text=True,
         timeout=10,

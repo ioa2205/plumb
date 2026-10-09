@@ -798,6 +798,7 @@ def implementation_identity() -> dict[str, str]:
             "backend/contracts/common.py",
             "backend/profiles.py",
             "backend/vulkan_profile.py",
+            "backend/cpu_profile.py",
             "analysis/overview.py",
             "analysis/index.py",
             "analysis/syntax.py",

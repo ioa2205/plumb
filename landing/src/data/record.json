@@ -1076,11 +1076,67 @@
     "quantization": "Q4_K_M",
     "license": "apache-2.0"
   },
+  "other_models_label": "quality not yet compared with the default",
   "runtime_download": {
     "release": "v0.5.0",
     "backend": "vulkan",
     "name": "llama-b11146-bin-win-vulkan-x64.zip",
     "size": 32127004
+  },
+  "cpu_profile": {
+    "id": "cpu-8k",
+    "backend": "cpu",
+    "recorded_on": "2026-10-10",
+    "required_ram_bytes": 2436385888,
+    "same_computer_as_recorded_run": true,
+    "first_use_check": {
+      "outcome": "passed",
+      "answers": 3,
+      "answers_valid": 3,
+      "answers_matching_expected_kind": 0,
+      "leak_pairs": 10,
+      "leak_pairs_clean": 10
+    },
+    "review": {
+      "id": "review-3524e1b6a94749648ea442154645d4a4",
+      "lifecycle": "completed",
+      "exit": 0,
+      "model_requests": 28,
+      "memory_abort": null,
+      "admitted_with_bytes": 3014443008,
+      "coverage": {
+        "total": 87,
+        "completed": 2,
+        "pending": 0,
+        "excluded": 85,
+        "unsupported": 0
+      },
+      "findings": [
+        {
+          "display_id": "F-01",
+          "route": "/orders/{order_id}/receipt",
+          "conclusion": "supported",
+          "runtime_verification": "not_attempted"
+        },
+        {
+          "display_id": "F-02",
+          "route": "/orders/{order_id}/invoice",
+          "conclusion": "rejected",
+          "runtime_verification": "not_attempted"
+        }
+      ]
+    }
+  },
+  "cpu_runtime_download": {
+    "release": "v0.5.0",
+    "backend": "cpu",
+    "name": "llama-b11146-bin-win-cpu-x64.zip",
+    "size": 18560055
+  },
+  "scanner_download": {
+    "name": "Opengrep",
+    "release": "v1.30.0",
+    "size": 53652992
   },
   "package": {
     "archive_bytes": 97471080,
@@ -1096,6 +1152,7 @@
     "inventoried_files": 2940,
     "files_left_out": 11,
     "investigator_files_identical": 63,
+    "has_cpu_profile": false,
     "checked_at": "2026-10-09T13:09:25.941136+00:00",
     "doctor_refused_for_memory": true
   },
@@ -1197,8 +1254,10 @@
     ]
   },
   "sources": {
+    "backend/profiles.py": "727136d0b4ea709c3d7bffb89b4904549b78e1a08db5aa99aa2d505e42494073",
     "backend/setup/pins/llama_cpp.toml": "4e289c977fa76f257b37edcfc67769f71a39b142b60e67b6f4bbf754594c1fca",
     "backend/setup/pins/models.toml": "5aaecdee08e3476305857284b3ace0ccb70a0540ede36e0eb8acaadabd620088",
+    "backend/setup/pins/opengrep.toml": "2f90d9ca77c8151e041293733853d431ac8dcc4c16ecb599286671f7dbf31bc4",
     "docs/results/2026-10-05-m4.2-invoice.json": "092ee3b2dc249ed520257b1684819dcaff314ae98949b3b72074525671915f3e",
     "docs/results/2026-10-05-m4.2-receipt.json": "5c9be0fcdddf9b7ddd8e3a6bb75cb0cfa0fc9df728e74f262bd0984c6188c0ee",
     "docs/results/2026-10-06-evaluation.md": "1d999b1820c1f2bc173f74795b3649a7e17d2783f8e2b23dd65ae34422f3688e",
@@ -1218,6 +1277,9 @@
     "docs/results/2026-10-08-m7.8a-raw/report.sarif": "82d9d7b14f3ccf9a5102d1a91ad14b9000a49b1e7f6e30f7c0e8a23b0b11b022",
     "docs/results/2026-10-09-m7.9b-package-followup.json": "30e6b9db2e5afbd171bb5f9d98eaa804d114b58e69ddf7f870d30f2b2c6387d6",
     "docs/results/2026-10-09-m7.9b-package-smoke.json": "ba945a1fe2ec0e56bd40a937f56342af72bb5c9fb76438461c2bc6868c170a3d",
+    "docs/results/2026-10-10-a1-cpu-profile-attempt-2.json": "0ebc2ab3dff6891dc20f95df15c62e9f3b1af47b88cef0c5922ac6042fc6f8f4",
+    "docs/results/2026-10-10-a1-cpu-profile-first-use-check.json": "a6d94e3de6663743def55d579a3654858e0f2aacf6361d06c0b09d5cbef408d4",
+    "docs/results/2026-10-10-a1-cpu-profile-review/report.json": "893e6a2a22bf24a410f1b363f4ba19e703fbe7c1fd8b1463d5dc7d5b6be2fdd7",
     "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",
     "labs/tandir/api/tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
     "labs/tandir/api/tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",

@@ -1,7 +1,7 @@
 // @ts-check
 import { glyph } from '../components/glyphs.mjs';
 import { band, page } from '../components/layout.mjs';
-import { fact } from '../components/parts.mjs';
+import { fact, factWhole } from '../components/parts.mjs';
 import { day, int, mb, shortHash } from '../lib/format.mjs';
 import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
@@ -15,7 +15,7 @@ const recorded = (/** @type {string} */ word) => (lang() === 'uz' ? html` <span 
 /** @param {import('../components/layout.mjs').PageContext} context */
 export function render(context) {
   const { record } = context;
-  const { run, runtime, software, development, package: pack } = record;
+  const { run, runtime, software, development, package: pack, cpu_profile: cpu } = record;
   const [receipt, invoice] = run.findings;
   const { baseline, family_run: familyRun } = development;
   const { python } = software;
@@ -41,6 +41,16 @@ export function render(context) {
   holds(run.initial_refusal.model_loaded === false, 'refused once before the recorded run');
   holds(pack.clean_user_profile === false && run.browser_rendering_claimed === false, 'clean account and browser rendering are untested');
   holds(runtime.receipt.outcome === 'reproduced' && runtime.invoice.outcome === 'not_reproduced' && runtime.replay.after.outcome === 'fixed', 'runtime outcomes');
+  const check = cpu.first_use_check;
+  const [cpuReceipt, cpuInvoice] = cpu.review.findings;
+  holds(record.download.has_cpu_profile === false, 'the second profile is in the source code, not in the download');
+  holds(cpu.same_computer_as_recorded_run, 'the second profile ran on the same laptop as everything else');
+  holds(check.outcome === 'passed' && check.answers_matching_expected_kind === 0, 'the first-use check passed although no answer named the expected kind of check');
+  holds(cpu.review.lifecycle === 'completed' && cpu.review.exit === 0 && cpu.review.memory_abort === null, 'the processor-only review ended normally');
+  holds(
+    cpuReceipt.route === receipt.route && cpuInvoice.route === invoice.route && cpuReceipt.conclusion === receipt.conclusion && cpuInvoice.conclusion === invoice.conclusion,
+    'the same two routes got the same conclusions',
+  );
 
   const head = html`<header class="page-head">
   <div class="wrap">
@@ -78,6 +88,11 @@ export function render(context) {
         <dd>${t(
           'Model, code and results stay on the machine. Plumb refuses to start a review when free memory is below the measured requirement, and did so once before the recorded run.',
           'Model, kod va natijalar kompyuterning o‘zida qoladi. Bo‘sh xotira o‘lchangan talabdan kam bo‘lsa, Plumb tekshiruvni boshlamaydi. Yozib olingan sinovdan oldin bir marta aynan shunday bo‘lgan.',
+        )}</dd></div>
+      <div>${glyph('half', partly)}<dt>${t('Reviews on other computers', 'Boshqa kompyuterlarda tekshiruv')}</dt>
+        <dd>${t(
+          html`A second profile, ${factWhole(cpu.id)}, runs the same AI model on the processor alone, so a 64-bit Windows computer other than the measured laptop model can start a review. It is in the source code, not in the download. It has completed <a href="#passed">one real run</a>, on the laptop Plumb is developed on, and has not been tried on a second computer.`,
+          html`Ikkinchi profil, ${factWhole(cpu.id)}, o‘sha SI modelini faqat protsessorda ishlatadi, shu tufayli o‘lchangan noutbuk modelidan boshqa 64 bitli Windows kompyuter ham tekshiruvni boshlay oladi. U manba kodida bor, tayyor to‘plamda yo‘q. Plumb ishlab chiqilayotgan noutbukda <a href="#passed">bir marta haqiqiy sinovdan</a> o‘tgan, ikkinchi kompyuterda esa sinab ko‘rilmagan.`,
         )}</dd></div>
       <div>${glyph('half', partly)}<dt>${t('Other kinds of flaw', 'Boshqa turdagi xatolar')}</dt>
         <dd>${t(
@@ -179,6 +194,17 @@ export function render(context) {
           )}</td>
         </tr>
         <tr>
+          <th scope="row">${t('A review on the processor alone', 'Faqat protsessorda o‘tkazilgan tekshiruv')}<br><span class="small">${day(cpu.recorded_on)}</span></th>
+          <td data-label="${result}">${t(
+            html`With the second profile, ${factWhole(cpu.id)}. First its check of the program that runs the model passed: ${fact(check.answers_valid)} of ${fact(check.answers)} test answers came back in the required form with valid citations, and in ${fact(check.leak_pairs_clean)} of ${fact(check.leak_pairs)} pairs of requests nothing from the first request showed up in the second. Then the review: receipt route ${fact(cpuReceipt.conclusion)}, invoice route ${fact(cpuInvoice.conclusion)}, ${fact(cpu.review.model_requests)} requests, normal exit.`,
+            html`Ikkinchi profil, ${factWhole(cpu.id)} bilan. Avval modelni ishga tushiradigan dasturning sinovi o‘tdi: ${fact(check.answers)} ta sinov javobidan ${fact(check.answers_valid)} tasi talab qilingan shaklda va to‘g‘ri havolalar bilan keldi, ${fact(check.leak_pairs)} juft so‘rovdan ${fact(check.leak_pairs_clean)} tasida birinchi so‘rovdagi ma’lumot ikkinchisida ko‘rinmadi. So‘ng tekshiruv: chek manzili ${fact(cpuReceipt.conclusion)}, hisob-faktura manzili ${fact(cpuInvoice.conclusion)}, ${fact(cpu.review.model_requests)} ta so‘rov, ish odatdagidek tugagan.`,
+          )}</td>
+          <td data-label="${reach}">${t(
+            html`One run, on the laptop Plumb is developed on, of the same two routes as the recorded run. It has not been tried on any other computer, and its speed there is unknown. The check looks at the form of an answer, not at whether it is right: on all ${fact(check.answers)} test snippets the model named a different kind of check than the expected one, and the check passed all the same.`,
+            html`Plumb ishlab chiqilayotgan noutbukdagi bitta sinov, yozib olingan sinovdagi ikki manzilning o‘zida. Boshqa hech bir kompyuterda sinab ko‘rilmagan, u yerdagi tezligi ham noma’lum. Sinov javobning shakliga qaraydi, to‘g‘riligiga emas: sinov uchun berilgan ${fact(check.answers)} ta kod parchasining hammasida model kutilganidan boshqa turdagi tekshiruvni ko‘rsatdi, sinov esa baribir o‘tdi.`,
+          )}</td>
+        </tr>
+        <tr>
           <th scope="row">${t('Software tests', 'Dasturiy testlar')}</th>
           <td data-label="${result}">${t(
             html`${fact(int(python.collected))} Python tests collected. ${fact(int(python.passed_first_run))} passed. ${fact(python.failed_first_run)} failed on a Windows temporary-file permission error and passed when rerun alone. ${fact(python.skipped)} were skipped because Windows did not let the tests create symbolic links. ${fact(software.frontend_tests)} browser-view tests pass.`,
@@ -259,15 +285,17 @@ export function render(context) {
     body: html`<ul class="limits">
       ${t(
         html`<li><strong>Any accuracy figure.</strong> No precision, recall or false-alarm rate exists for Plumb. A sealed test set was prepared and has not been opened.</li>
-      <li><strong>Comparison with other tools or models.</strong> None has been run on equal terms.</li>
-      <li><strong>A second computer.</strong> Everything here was recorded on one laptop, under one Windows account.</li>
+      <li><strong>Comparison with other tools or models.</strong> None has been run on equal terms. That includes the larger models Plumb can install from its list: none has been downloaded or run here, so nothing is known about how they compare.</li>
+      <li><strong>A second computer.</strong> Everything here was recorded on one laptop, under one Windows account. That includes the one run of the second profile, which was added so that other computers can start a review.</li>
+      <li><strong>macOS and Linux.</strong> Plumb runs on 64-bit Windows 10 or 11 only for now.</li>
       <li><strong>Running reviewed code safely.</strong> No isolated environment was available on this laptop, so none has passed its checks and Plumb does not run the projects it reviews.</li>
       <li><strong>How the browser view and the report look.</strong> They pass their software checks. Their appearance on desktop and phone, and their accessibility, have not been formally checked.</li>
       <li><strong>Other languages and frameworks.</strong> Only Python with FastAPI and TypeScript with Next.js are mapped.</li>
       <li><strong>A video.</strong> No screen recording exists. The saved report files are the record.</li>`,
         html`<li><strong>Har qanday aniqlik ko‘rsatkichi.</strong> Plumb uchun aniqlik, to‘liqlik yoki yolg‘on signallar ulushi hisoblanmagan. Yopiq test to‘plami tayyorlangan, lekin hali ochilmagan.</li>
-      <li><strong>Boshqa vositalar yoki modellar bilan taqqoslash.</strong> Teng sharoitda birorta ham taqqoslash o‘tkazilmagan.</li>
-      <li><strong>Ikkinchi kompyuter.</strong> Bu yerdagi hamma narsa bitta noutbukda, bitta Windows hisobida yozib olingan.</li>
+      <li><strong>Boshqa vositalar yoki modellar bilan taqqoslash.</strong> Teng sharoitda birorta ham taqqoslash o‘tkazilmagan. Plumb o‘z ro‘yxatidan o‘rnata oladigan kattaroq modellar ham shunga kiradi: ularning birortasi bu yerda yuklab olinmagan va ishga tushirilmagan, shuning uchun ular bir-biridan qanday farq qilishi haqida hech narsa ma’lum emas.</li>
+      <li><strong>Ikkinchi kompyuter.</strong> Bu yerdagi hamma narsa bitta noutbukda, bitta Windows hisobida yozib olingan. Boshqa kompyuterlar ham tekshiruvni boshlay olishi uchun qo‘shilgan ikkinchi profilning yagona sinovi ham shu noutbukda o‘tgan.</li>
+      <li><strong>macOS va Linux.</strong> Plumb hozircha faqat 64 bitli Windows 10 yoki 11 da ishlaydi.</li>
       <li><strong>Tekshirilayotgan kodni xavfsiz ishga tushirish.</strong> Bu noutbukda ajratilgan muhit yo‘q edi, shuning uchun bunday muhit sinovdan o‘tmagan va Plumb tekshirayotgan loyihalarni ishga tushirmaydi.</li>
       <li><strong>Interfeys va hisobotning brauzerdagi ko‘rinishi.</strong> Ular dasturiy tekshiruvlardan o‘tadi. Kompyuter va telefondagi ko‘rinishi hamda imkoniyati cheklangan foydalanuvchilar uchun qulayligi rasman tekshirilmagan.</li>
       <li><strong>Boshqa dasturlash tillari va freymvorklar.</strong> Faqat Python (FastAPI) va TypeScript (Next.js) xaritaga tushiriladi.</li>
@@ -288,14 +316,14 @@ export function render(context) {
         html`<li><strong>Measure how often it is right.</strong> Open the sealed test set once, score Plumb on it, and compare it with a pattern scanner and with the model asked directly.</li>
       <li><strong>Repair the recorded misses.</strong> Unsafe database queries, data leaking from Next.js pages, and suggested fixes that are not valid code.</li>
       <li><strong>A safe place to run reviewed code.</strong> With an isolated runner such as Windows Sandbox or Docker, a finding could be tested with real requests on projects other than the practice app.</li>
-      <li><strong>More computers.</strong> Test the installation under a clean Windows account, and measure hardware beyond this one laptop, including larger models on stronger machines.</li>
+      <li><strong>More computers.</strong> Run the second profile on a computer other than this laptop, test the installation under a clean Windows account, and measure hardware beyond this one laptop, including larger models on stronger machines.</li>
       <li><strong>More frameworks.</strong> Django, Flask, Express and Hono, each with its own test cases.</li>
       <li><strong>A review on every change.</strong> A command that looks only at what a change touched, so Plumb can run when code is sent for review.</li>
       <li><strong>Finish checking the browser view.</strong> Confirm how it and the HTML report look and behave on desktop and phone.</li>`,
         html`<li><strong>Qanchalik tez-tez to‘g‘ri topishini o‘lchash.</strong> Yopiq test to‘plamini bir marta ochib, Plumbni unda baholash va natijani andoza skaneri hamda to‘g‘ridan-to‘g‘ri so‘ralgan model bilan solishtirish.</li>
       <li><strong>Aniqlanmay qolgan xatolarni tuzatish.</strong> Ma’lumotlar bazasiga xavfli so‘rovlar, Next.js sahifalaridan sizib chiqadigan ma’lumotlar va yaroqsiz kod bo‘lib chiqadigan tuzatish takliflari.</li>
       <li><strong>Tekshirilayotgan kodni ishga tushirish uchun xavfsiz joy.</strong> Windows Sandbox yoki Docker kabi ajratilgan muhit bo‘lsa, topilmalarni sinov ilovasidan tashqari loyihalarda ham haqiqiy so‘rovlar bilan tekshirish mumkin bo‘ladi.</li>
-      <li><strong>Ko‘proq kompyuterlar.</strong> O‘rnatishni yangi Windows hisobida sinash va boshqa qurilmalarni ham o‘lchash, jumladan kuchliroq kompyuterlarda kattaroq modellarni.</li>
+      <li><strong>Ko‘proq kompyuterlar.</strong> Ikkinchi profilni shu noutbukdan boshqa kompyuterda ishga tushirib ko‘rish, o‘rnatishni yangi Windows hisobida sinash va boshqa qurilmalarni ham o‘lchash, jumladan kuchliroq kompyuterlarda kattaroq modellarni.</li>
       <li><strong>Ko‘proq freymvorklar.</strong> Django, Flask, Express va Hono, har biri o‘z sinov holatlari bilan.</li>
       <li><strong>Har bir o‘zgarishda tekshiruv.</strong> Faqat o‘zgarish tekkan joylarni ko‘radigan buyruq. Shunda kod ko‘rib chiqishga yuborilganda Plumb avtomatik ishlay oladi.</li>
       <li><strong>Interfeysni tekshirib tugatish.</strong> Brauzerdagi interfeys va HTML hisobot kompyuter hamda telefonda qanday ko‘rinishi va ishlashini tasdiqlash.</li>`,
@@ -309,11 +337,13 @@ export function render(context) {
     body: html`<ul class="limits">
       ${t(
         html`<li><strong>Reviewed code is read as text.</strong> It is never imported, installed or executed.</li>
+      <li><strong>Programs in the reviewed folder are not started.</strong> Windows looks in the current folder first when a program is started by name, so a file hidden in a project under the name of a Windows tool could have been started. Installed from source, Plumb now leaves the current folder out of that search. The download was built before this fix.</li>
       <li><strong>No cloud model.</strong> There are no API keys and no remote model calls. The model runs on the same computer.</li>
       <li><strong>Memory is checked before every launch.</strong> A watcher stops Plumb’s own model if free memory falls too low. It never closes other programs.</li>
       <li><strong>Comments and names are not evidence.</strong> A comment saying the code is safe does not count. Only executable code can clear a suspect.</li>
       <li><strong>Secrets are masked.</strong> Text with the known shapes of passwords and keys is replaced in reports, and the reports leave out source text.</li>`,
         html`<li><strong>Tekshirilayotgan kod matn sifatida o‘qiladi.</strong> U hech qachon import qilinmaydi, o‘rnatilmaydi va ishga tushirilmaydi.</li>
+      <li><strong>Tekshirilayotgan papkadagi dasturlar ishga tushirilmaydi.</strong> Windows dasturni nomi bo‘yicha ishga tushirayotganda avval joriy papkaga qaraydi, shuning uchun loyihaga Windows vositasi nomi bilan yashirib qo‘yilgan fayl ishga tushib ketishi mumkin edi. Manba kodidan o‘rnatilgan Plumb endi joriy papkani bu qidiruvdan chiqarib tashlaydi. Tayyor to‘plam bu tuzatishdan oldin yig‘ilgan.</li>
       <li><strong>Bulutdagi model yo‘q.</strong> API kalitlari ham, masofaviy modelga murojaat ham yo‘q. Model shu kompyuterning o‘zida ishlaydi.</li>
       <li><strong>Har safar ishga tushishdan oldin xotira tekshiriladi.</strong> Bo‘sh xotira haddan tashqari kamayib ketsa, nazoratchi Plumbning o‘z modelini to‘xtatadi. Boshqa dasturlarni u hech qachon yopmaydi.</li>
       <li><strong>Izohlar va nomlar dalil hisoblanmaydi.</strong> «Bu kod xavfsiz» degan izoh inobatga olinmaydi. Shubhani faqat ishlaydigan kod yo‘qqa chiqara oladi.</li>

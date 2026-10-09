@@ -1,8 +1,9 @@
 // @ts-check
 import { band, page } from '../components/layout.mjs';
-import { command, copyBlock, fact } from '../components/parts.mjs';
+import { command, copyBlock, fact, factWhole } from '../components/parts.mjs';
 import { gb, minutes } from '../lib/format.mjs';
 import { AGENT_RULES, agentMessage, guide } from '../lib/guide.mjs';
+import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
 import { t } from '../lib/lang.mjs';
 
@@ -14,8 +15,9 @@ export const AGENT_FILE = '/agent-install.md';
 /** @param {import('../components/layout.mjs').PageContext} context */
 export function render(context) {
   const { record, site } = context;
-  const { run } = record;
-  const { steps, downloadBytes } = guide(record, site);
+  const { run, cpu_profile: cpu } = record;
+  const { steps, downloads } = guide(record, site);
+  holds(cpu.review.lifecycle === 'completed' && cpu.same_computer_as_recorded_run, 'the second profile has completed one real run, on the same laptop');
   const step = (/** @type {string} */ id) => /** @type {import('../lib/guide.mjs').Step} */ (steps.find((entry) => entry.id === id));
 
   const head = html`<header class="page-head">
@@ -46,8 +48,8 @@ export function render(context) {
             html`<strong>Plumb papkasi.</strong> Kod hali ommaga ochilmagan, shuning uchun agent uni o‘zi yuklab ololmaydi. <a href="/contact">Nusxa so‘rang</a>, uni arxivdan chiqaring va papka yo‘lini quyidagi xabarga qo‘ying.`,
           )}</p></div></li>
       <li><div><p>${t(
-        html`<strong>Room for the downloads.</strong> On the measured laptop model setup downloads ${fact(gb(downloadBytes))}. Elsewhere it downloads no model.`,
-        html`<strong>Yuklanadigan fayllar uchun joy.</strong> O‘lchangan noutbuk modelida o‘rnatuvchi ${fact(gb(downloadBytes))} yuklab oladi. Boshqa kompyuterlarda model yuklanmaydi.`,
+        html`<strong>Room for the downloads.</strong> Setup downloads at most ${fact(gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured)))}: the AI model, the program that runs it and a pattern scanner. The agent shows you the list and asks first.`,
+        html`<strong>Yuklanadigan fayllar uchun joy.</strong> O‘rnatuvchi ko‘pi bilan ${fact(gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured)))} yuklab oladi: SI modeli, uni ishga tushiradigan dastur va andoza skaneri. Agent avval ro‘yxatni ko‘rsatib, sizdan ruxsat so‘raydi.`,
       )}</p></div></li>
     </ol>`,
   });
@@ -88,8 +90,8 @@ export function render(context) {
         </div></li>`;
       })}
       <li><div><p>${t(
-        html`<strong>It tells you the result.</strong> What worked, what did not, and whether this computer can run a full review with the AI model.`,
-        html`<strong>Natijani aytadi.</strong> Nima ishladi, nima ishlamadi va bu kompyuter SI modeli bilan to‘liq tekshiruvni bajara oladimi.`,
+        html`<strong>It tells you the result.</strong> What worked, what did not, which profile Plumb picked for this computer, and whether enough memory is free for a full review with the AI model.`,
+        html`<strong>Natijani aytadi.</strong> Nima ishladi, nima ishlamadi, Plumb bu kompyuter uchun qaysi profilni tanladi va SI modeli bilan to‘liq tekshiruvga xotira yetarlimi.`,
       )}</p></div></li>
     </ol>`,
   });
@@ -99,14 +101,14 @@ export function render(context) {
     heading: t('Where it stops and asks you.', 'Qayerda to‘xtab, sizdan so‘raydi.'),
     body: html`<ul class="limits">
       ${t(
-        html`<li><strong>Before the large download.</strong> On the measured laptop it shows you the list of downloads first. Plumb itself refuses to start them without the approval option.</li>
+        html`<li><strong>Before the large download.</strong> It shows you the list of downloads first. Plumb itself refuses to start them without the approval option.</li>
       <li><strong>When a tool is missing.</strong> It tells you which one to install. It does not install Git, uv, Node.js or pnpm on its own.</li>
       <li><strong>When something fails or Plumb refuses.</strong> It shows you the exact message instead of working around it.</li>
-      <li><strong>Before a review with the AI model.</strong> It does not start one unless you ask. On the measured laptop the recorded two-question review took ${fact(minutes(run.elapsed_seconds))}.</li>`,
-        html`<li><strong>Katta faylni yuklab olishdan oldin.</strong> O‘lchangan noutbukda u avval yuklanadigan fayllar ro‘yxatini ko‘rsatadi. Roziligingizni bildiruvchi parametrsiz Plumbning o‘zi ularni yuklashni boshlamaydi.</li>
+      <li><strong>Before anything that loads the AI model.</strong> It does not start a review, or the check of the program that runs the model, unless you ask. On the measured laptop model the recorded two-question review took ${fact(minutes(run.elapsed_seconds))}. How long one takes on another computer is not known.</li>`,
+        html`<li><strong>Katta faylni yuklab olishdan oldin.</strong> U avval yuklanadigan fayllar ro‘yxatini ko‘rsatadi. Roziligingizni bildiruvchi parametrsiz Plumbning o‘zi ularni yuklashni boshlamaydi.</li>
       <li><strong>Biror dastur yetishmasa.</strong> Qaysi birini o‘rnatish kerakligini aytadi. Git, uv, Node.js yoki pnpm ni o‘zboshimchalik bilan o‘rnatmaydi.</li>
       <li><strong>Biror narsa ishlamasa yoki Plumb rad etsa.</strong> Muammoni chetlab o‘tishga urinmaydi, xabarning aynan o‘zini sizga ko‘rsatadi.</li>
-      <li><strong>SI modeli bilan tekshiruvdan oldin.</strong> Siz so‘ramaguningizcha uni boshlamaydi. O‘lchangan noutbukda ikki savolli yozib olingan tekshiruv ${fact(minutes(run.elapsed_seconds))} davom etgan.</li>`,
+      <li><strong>SI modelini yuklaydigan har qanday ishdan oldin.</strong> Siz so‘ramaguningizcha tekshiruvni ham, modelni ishga tushiradigan dastur sinovini ham boshlamaydi. O‘lchangan noutbuk modelida ikki savolli yozib olingan tekshiruv ${fact(minutes(run.elapsed_seconds))} davom etgan. Boshqa kompyuterda qancha vaqt ketishi noma’lum.</li>`,
       )}
     </ul>
     <details class="more-detail">
@@ -129,8 +131,8 @@ export function render(context) {
         html`Biror narsa noto‘g‘ri ketsa, <a href="/install#refusals">o‘rnatish sahifasida</a> har bir rad javobi nimani anglatishi yozilgan. Xabarning aynan o‘zini <a href="/contact">menga yuborishingiz</a> ham mumkin.`,
       )}</p>
       <p class="small">${t(
-        html`Measured on the profile ${fact(run.profile)}. On other computers the agent can set up source mapping only, and that path has not yet been tried on a second computer.`,
-        html`${fact(run.profile)} profilida o‘lchangan. Boshqa kompyuterlarda agent faqat kod xaritasini tuzish imkoniyatini o‘rnata oladi, bu yo‘l esa ikkinchi kompyuterda hali sinab ko‘rilmagan.`,
+        html`The recorded test ran on one laptop, with the profile ${factWhole(run.profile)}. On other 64-bit Windows computers Plumb picks ${factWhole(cpu.id)}, which has completed one real run, on that same laptop. Nothing has been tried on a second computer yet.`,
+        html`Yozib olingan sinov bitta noutbukda, ${factWhole(run.profile)} profilida o‘tgan. Boshqa 64 bitli Windows kompyuterlarda Plumb ${factWhole(cpu.id)} profilini tanlaydi: u bir marta, o‘sha noutbukning o‘zida haqiqiy sinovdan o‘tgan. Ikkinchi kompyuterda hali hech narsa sinab ko‘rilmagan.`,
       )}</p>
     </div>`,
   });

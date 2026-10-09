@@ -172,7 +172,9 @@ def test_unrelated_same_named_wrapper_is_not_query_evidence(tmp_path: Path) -> N
         assert all(part.path != "unrelated.ts" for part in packet.excerpts)
 
 
-def test_actual_d2_retains_scalar_wrapper_driver_and_caller_imports(tmp_path: Path) -> None:
+def test_actual_d2_retains_scalar_wrapper_driver_and_caller_imports(
+    tmp_path: Path, recorded_lab: Path
+) -> None:
     root = Path(__file__).resolve().parents[2]
     prepared = json.loads(
         (root / "docs/results/2026-10-08-m6.9v-phone-client-binding-preparation.json").read_bytes()
@@ -182,7 +184,7 @@ def test_actual_d2_retains_scalar_wrapper_driver_and_caller_imports(tmp_path: Pa
     )
     settings = Settings(data_dir=tmp_path / "data")
     store = SnapshotStore(settings.cache_dir / "snapshots")
-    snapshot = take_snapshot(root / "labs/tandir", store)
+    snapshot = take_snapshot(recorded_lab, store)
     review = Review(settings, snapshot.id)
     try:
         review.policies = FrozenPolicies.model_validate(prepared["requirements"])

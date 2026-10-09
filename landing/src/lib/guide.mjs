@@ -18,23 +18,46 @@ const PACKAGED_LAB = '.\\app\\labs\\tandir';
  * @property {string} [agent]          the same step, said to an AI agent where it differs
  * @property {string[]} [commands]       one block of lines to type
  * @property {string} [otherwise]        a second case, said before `otherCommands`
+ * @property {string} [agentOtherwise]   that second case, said to an AI agent where it differs
  * @property {string[]} [otherCommands]
- * @property {boolean} [measuredOnly]    only on the measured laptop model
  * @property {boolean} [optional]
  */
 
-/** The recorded review, as typed from a source checkout instead of the Windows package. */
+/**
+ * The recorded review, as the Windows package typed it and as a source checkout types it.
+ * The package has one profile and the recorded command names it. From source the option is
+ * left out, so Plumb picks the profile that fits the computer it is on.
+ */
 export function reviewCommands(/** @type {any} */ run) {
   holds(run.command.includes(PACKAGED_LAB), 'the recorded command reviews the bundled practice app');
-  const cacheOption = run.command.indexOf('--guard-cache');
-  const args = run.command.filter((/** @type {string} */ _arg, /** @type {number} */ index) => index !== cacheOption && index !== cacheOption + 1);
+  const without = (/** @type {string[]} */ args, /** @type {string} */ option) => {
+    const at = args.indexOf(option);
+    return at < 0 ? args : args.filter((_arg, index) => index !== at && index !== at + 1);
+  };
+  const args = without(run.command, '--guard-cache');
+  holds(args[args.indexOf('--profile') + 1] === run.profile, 'the recorded command names its profile');
   return {
     packaged: commandLine(args),
     source: commandLine(
-      args.map((/** @type {string} */ arg) => (arg === PACKAGED_LAB ? 'labs/tandir' : arg)),
+      without(args, '--profile').map((/** @type {string} */ arg) => (arg === PACKAGED_LAB ? 'labs/tandir' : arg)),
       'uv run plumb',
     ),
     lab: PACKAGED_LAB,
+  };
+}
+
+/**
+ * What setup downloads, in bytes, for each way of getting Plumb. Run from source it fetches
+ * the AI model, the program that runs it for the chosen profile, and the pattern scanner. The
+ * package predates the scanner step and the second profile.
+ * @param {any} record
+ */
+export function downloadSizes(record) {
+  const { model, runtime_download: measuredRuntime, cpu_runtime_download: cpuRuntime, scanner_download: scanner } = record;
+  return {
+    sourceCpu: model.size + cpuRuntime.size + scanner.size,
+    sourceMeasured: model.size + measuredRuntime.size + scanner.size,
+    packageMeasured: model.size + measuredRuntime.size,
   };
 }
 
@@ -44,12 +67,14 @@ export const repositoryFolder = (/** @type {string} */ repository) => repository
 /**
  * @param {any} record
  * @param {any} site
- * @returns {{ steps: Step[], downloadBytes: number }}
+ * @returns {{ steps: Step[], downloads: ReturnType<typeof downloadSizes> }}
  */
 export function guide(record, site) {
-  const { run, model, runtime_download: runtime } = record;
+  const { run, model, runtime_download: runtime, cpu_runtime_download: cpuRuntime, scanner_download: scanner, cpu_profile: cpu } = record;
   const review = reviewCommands(run);
-  const downloadBytes = model.size + runtime.size;
+  const check = cpu.first_use_check;
+  holds(cpu.id === 'cpu-8k' && run.profile === 'mx350-vulkan-8k', 'the two profiles are mx350-vulkan-8k and cpu-8k');
+  holds(check.answers === 3 && check.leak_pairs === 10, 'the first-use check asks three questions and sends ten pairs of requests');
 
   /** @type {Step} */
   const code = site.repository
@@ -95,8 +120,8 @@ export function guide(record, site) {
       id: 'preview',
       title: t('Preview the setup.', 'O‘rnatishni oldindan ko‘ring.'),
       detail: t(
-        'Lists what is ready and what is missing, with the size, source and licence of each download, and says whether this computer has a measured profile. It installs nothing.',
-        'Nima tayyor va nima yetishmasligini, har bir yuklanadigan faylning hajmi, manbasi va litsenziyasini ko‘rsatadi hamda bu kompyuter uchun o‘lchangan profil bor-yo‘qligini aytadi. Hech narsa o‘rnatmaydi.',
+        'Lists what is ready and what is missing, with the size, source and licence of each download, and names the review profile this computer would use. It installs nothing.',
+        'Nima tayyor va nima yetishmasligini, har bir yuklanadigan faylning hajmi, manbasi va litsenziyasini ko‘rsatadi hamda bu kompyuterda qaysi tekshiruv profili ishlatilishini aytadi. Hech narsa o‘rnatmaydi.',
       ),
       commands: ['uv run --locked plumb setup'],
     },
@@ -104,15 +129,16 @@ export function guide(record, site) {
       id: 'install',
       title: t('Install.', 'O‘rnating.'),
       detail: t(
-        `On the measured laptop model this downloads the AI model (${gb(model.size)}) and the program that runs it (${mb(runtime.size)}). The last option is your approval: setup asks for it whenever the downloads add up to more than 500 MB.`,
-        `O‘lchangan noutbuk modelida bu buyruq SI modelini (${gb(model.size)}) va uni ishga tushiradigan dasturni (${mb(runtime.size)}) yuklab oladi. Oxirgi parametr sizning roziligingizni bildiradi: yuklanadigan fayllar jami 500 MB dan oshsa, o‘rnatuvchi shuni talab qiladi.`,
+        `Downloads the AI model (${gb(model.size)}), the program that runs it (${mb(cpuRuntime.size)}, or ${mb(runtime.size)} on the measured laptop model) and the pattern scanner (${mb(scanner.size)}), which helps Plumb decide which questions to ask first. The last option is your approval: setup asks for it whenever the downloads add up to more than 500 MB.`,
+        `SI modelini (${gb(model.size)}), uni ishga tushiradigan dasturni (${mb(cpuRuntime.size)}, o‘lchangan noutbuk modelida ${mb(runtime.size)}) va andoza skanerini (${mb(scanner.size)}) yuklab oladi. Skaner Plumbga qaysi savolni birinchi berishni tanlashda yordam beradi. Oxirgi parametr sizning roziligingizni bildiradi: yuklanadigan fayllar jami 500 MB dan oshsa, o‘rnatuvchi shuni talab qiladi.`,
       ),
       commands: ['uv run --locked plumb setup --install --approve-large-downloads'],
-      agent: `Only if the preview names a measured profile. Show the person the downloads the preview listed (the model, ${gb(model.size)}, and the program that runs it, ${mb(runtime.size)}), and run this only after they agree. The last option records their approval; setup refuses downloads over 500 MB without it.`,
+      agent: `Show the person the downloads the preview listed (the AI model, ${gb(model.size)}; the program that runs it, ${mb(cpuRuntime.size)} or ${mb(runtime.size)} depending on the profile; the pattern scanner, ${mb(scanner.size)}), and run this only after they agree. The last option records their approval; setup refuses downloads over 500 MB without it.`,
       otherwise: t(
-        'On any other computer, install only what mapping needs. Setup refuses the full installation there, because no measured profile exists for that hardware.',
-        'Boshqa har qanday kompyuterda faqat xarita tuzish uchun keraklisini o‘rnating. U yerda to‘liq o‘rnatishni o‘rnatuvchining o‘zi rad etadi, chunki bunday qurilma uchun o‘lchangan profil yo‘q.',
+        'If you only want to map projects, with no AI model and no large download, install just what mapping needs instead.',
+        'Faqat loyiha xaritasini tuzmoqchi bo‘lsangiz, buning o‘rniga faqat xarita uchun keraklisini o‘rnating: SI modeli ham, katta fayllar ham yuklanmaydi.',
       ),
+      agentOtherwise: 'If the person does not agree to the downloads, or the preview says AI review is not available on this system, install only what mapping needs instead. It downloads no AI model.',
       otherCommands: ['uv run --locked plumb setup --install --inspect-only'],
     },
     {
@@ -128,20 +154,31 @@ export function guide(record, site) {
       id: 'doctor',
       title: t('Check the machine.', 'Kompyuterni tekshiring.'),
       detail: t(
-        'Reads the hardware, the installed files and the free memory, and changes nothing. If it says memory is short, close other programs and run it again.',
-        'Qurilma, o‘rnatilgan fayllar va bo‘sh xotirani o‘qiydi, hech narsani o‘zgartirmaydi. Xotira yetmayotganini aytsa, boshqa dasturlarni yopib, qaytadan ishga tushiring.',
+        'Reads the hardware, the installed files and the free memory, and changes nothing. It names the profile this computer would use and says whether enough memory is free for it. It also names the default AI model and the largest one that fits in the memory free right now. If memory is short, close other programs and run it again.',
+        'Qurilma, o‘rnatilgan fayllar va bo‘sh xotirani o‘qiydi, hech narsani o‘zgartirmaydi. Bu kompyuterda qaysi profil ishlatilishini va unga xotira yetish-yetmasligini aytadi. Shuningdek asosiy SI modelini va hozir bo‘sh turgan xotiraga sig‘adigan eng katta modelni ko‘rsatadi. Xotira yetmasa, boshqa dasturlarni yopib, qaytadan ishga tushiring.',
       ),
       commands: ['uv run plumb doctor'],
+    },
+    {
+      id: 'calibrate',
+      title: t('Optional: check the program that runs the model.', 'Ixtiyoriy: modelni ishga tushiradigan dasturni sinab ko‘ring.'),
+      detail: t(
+        `With the ${cpu.id} profile, the first review on a computer begins with this check by itself, so this command is only for running it ahead of time. It loads the AI model, asks ${check.answers} test questions, and sends ${check.leak_pairs} pairs of requests to make sure nothing from one request shows up in the next. A pass is saved for this computer. It shows that the program works here. It does not grade the model’s answers. On the measured laptop model the measured profile needs no such check, and the command says so.`,
+        `${cpu.id} profilida kompyuterdagi birinchi tekshiruv o‘z-o‘zidan shu sinov bilan boshlanadi, shuning uchun bu buyruq sinovni oldindan o‘tkazib olish uchungina kerak. U SI modelini yuklaydi, ${check.answers} ta sinov savoli beradi va bir so‘rovdagi ma’lumot keyingisiga o‘tib qolmasligiga ishonch hosil qilish uchun ${check.leak_pairs} juft so‘rov yuboradi. Sinovdan o‘tilsa, natija shu kompyuter uchun saqlab qo‘yiladi. Sinov dastur shu yerda ishlashini ko‘rsatadi, model javoblarining to‘g‘riligini esa baholamaydi. O‘lchangan noutbuk modelida o‘lchangan profilga bunday sinov kerak emas, buyruqning o‘zi shuni aytadi.`,
+      ),
+      agent: `Skip this step unless the person asks for it: it loads the AI model. With the ${cpu.id} profile the first review runs the same check by itself (${check.answers} test questions and ${check.leak_pairs} pairs of requests that look for one answer leaking into the next). It shows that the model runner works on this computer; it does not grade the model’s answers.`,
+      commands: ['uv run plumb calibrate'],
+      optional: true,
     },
     {
       id: 'review',
       title: t('Run the recorded review.', 'Yozib olingan tekshiruvni takrorlang.'),
       detail: t(
-        `Only on the measured laptop model. It asks the AI model about the receipt and the invoice of the practice app and prints a run ID at the end. The recorded run took ${minutes(run.elapsed_seconds)}.`,
-        `Faqat o‘lchangan noutbuk modelida. U SI modelidan sinov ilovasidagi chek va hisob-faktura haqida so‘raydi va oxirida tekshiruv identifikatorini chiqaradi. Yozib olingan sinov ${minutes(run.elapsed_seconds)} davom etgan.`,
+        `Asks the AI model about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: ${run.profile} on the measured laptop model, ${cpu.id} on any other. On the measured laptop model the recorded run took ${minutes(run.elapsed_seconds)}. How long it takes on another computer is not known.`,
+        `SI modelidan sinov ilovasidagi chek va hisob-faktura haqida so‘raydi va oxirida tekshiruv identifikatorini chiqaradi. Profilni Plumb shu kompyuterga qarab o‘zi tanlaydi: o‘lchangan noutbuk modelida ${run.profile}, boshqa har qanday kompyuterda ${cpu.id}. O‘lchangan noutbuk modelida yozib olingan sinov ${minutes(run.elapsed_seconds)} davom etgan. Boshqa kompyuterda qancha vaqt ketishi noma’lum.`,
       ),
+      agent: `Only if the person asks for a review: it loads the AI model. It asks about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: ${run.profile} on the measured laptop model, ${cpu.id} on any other. On the measured laptop model the recorded run took ${minutes(run.elapsed_seconds)}; how long it takes on another computer is not known.`,
       commands: [review.source],
-      measuredOnly: true,
     },
     {
       id: 'report',
@@ -151,7 +188,6 @@ export function guide(record, site) {
         '<run-id> o‘rniga chiqarilgan identifikatorni yozing. Saqlangan hisobot brauzeringizda ochiladi. Model yuklanmaydi.',
       ),
       commands: ['uv run plumb report <run-id> --open'],
-      measuredOnly: true,
     },
     {
       id: 'web',
@@ -164,7 +200,7 @@ export function guide(record, site) {
       optional: true,
     },
   ];
-  return { steps, downloadBytes };
+  return { steps, downloads: downloadSizes(record) };
 }
 
 /** What Plumb says when it refuses, and what to do. Shared by the install page and the agent file. */
@@ -175,10 +211,10 @@ export function refusals() {
       action: t('Read the setup preview and install only the pinned files it lists.', 'O‘rnatishni oldindan ko‘ring va faqat u ko‘rsatgan, oldindan belgilangan fayllarni o‘rnating.'),
     },
     {
-      says: t('No measured hardware profile', 'O‘lchangan qurilma profili yo‘q'),
+      says: t('No review profile for this computer', 'Bu kompyuter uchun tekshiruv profili yo‘q'),
       action: t(
-        'Use inspect and saved reports. A review with the model needs a measured profile for this machine.',
-        'inspect buyrug‘i va saqlangan hisobotlardan foydalaning. Model bilan tekshiruv uchun aynan shu kompyuterning o‘lchangan profili kerak.',
+        'With the download, this is any computer other than the measured laptop model. Install from source instead: there the cpu-8k profile covers other 64-bit Windows computers. Mapping with inspect and saved reports work without a profile.',
+        'Tayyor to‘plamda o‘lchangan noutbuk modelidan boshqa har qanday kompyuterda shunday bo‘ladi. Buning o‘rniga manba kodidan o‘rnating: u yerda cpu-8k profili boshqa 64 bitli Windows kompyuterlarni ham qamraydi. inspect buyrug‘i va saqlangan hisobotlar profilsiz ham ishlaydi.',
       ),
     },
     {
@@ -189,14 +225,21 @@ export function refusals() {
       ),
     },
     {
+      says: t('The program that runs the model failed its first-use check', 'Modelni ishga tushiradigan dastur dastlabki sinovdan o‘tmadi'),
+      action: t(
+        'Reviews with that profile stay off on this computer until the check passes. Run calibrate to try again. Mapping and saved reports still work.',
+        'Sinovdan o‘tmaguncha shu kompyuterda bu profil bilan tekshiruv o‘chiq turadi. Qayta urinish uchun calibrate buyrug‘ini ishga tushiring. Xarita tuzish va saqlangan hisobotlar avvalgidek ishlaydi.',
+      ),
+    },
+    {
       says: t('Not enough free disk space', 'Diskda bo‘sh joy yetarli emas'),
       action: t('Free space for the downloads the preview lists, then run setup again. Nothing was installed.', 'Oldindan ko‘rishda ko‘rsatilgan fayllar uchun joy bo‘shating va o‘rnatishni qayta boshlang. Hech narsa o‘rnatilmagan.'),
     },
     {
       says: t('No supported checks match', 'Mos keladigan tekshiruv topilmadi'),
       action: t(
-        'Read the overview to see what Plumb recognised. An empty selection is not a safety verdict.',
-        'Plumb nimani taniganini bilish uchun umumiy ko‘rinishni o‘qing. Bo‘sh natija «xavfsiz» degani emas.',
+        'From source, Plumb names the kinds of check your project does have and the exact option to use, for example --family nextjs_exposure for a project with only Next.js code. If it names none, read the overview to see what it recognised. An empty selection is not a safety verdict.',
+        'Manba kodidan o‘rnatilgan Plumb loyihangizda qaysi turdagi tekshiruvlar borligini va aynan qaysi parametrni yozish kerakligini aytadi, masalan faqat Next.js kodi bor loyiha uchun --family nextjs_exposure. Hech birini aytmasa, Plumb nimani taniganini bilish uchun umumiy ko‘rinishni o‘qing. Bo‘sh natija «xavfsiz» degani emas.',
       ),
     },
     {
@@ -204,6 +247,13 @@ export function refusals() {
       action: t(
         'The file was changed, or was written by an older version. Keep it as it is and open it with the version that wrote it.',
         'Fayl o‘zgartirilgan yoki eskiroq versiyada yozilgan. Uni o‘zgartirmasdan saqlang va uni yozgan versiya bilan oching.',
+      ),
+    },
+    {
+      says: t('This system is not supported yet', 'Bu tizim hozircha qo‘llab-quvvatlanmaydi'),
+      action: t(
+        'Plumb runs on 64-bit Windows 10 or 11 only for now. From source, every command on macOS or Linux prints this one sentence and stops.',
+        'Plumb hozircha faqat 64 bitli Windows 10 yoki 11 da ishlaydi. Manba kodidan o‘rnatilgan bo‘lsa, macOS yoki Linuxda har bir buyruq shu bitta jumlani chiqarib, to‘xtaydi.',
       ),
     },
   ];
@@ -217,7 +267,7 @@ export const AGENT_RULES = [
   'Keep Plumb’s data folder outside the Plumb folder and outside any project it reviews. The default location is correct.',
   'Ask me before any download larger than 500 MB.',
   'If a command fails or Plumb refuses, show me the exact message and stop. Do not work around a refusal or lower a limit.',
-  'Do not start a review with the AI model unless I ask for one.',
+  'Do not start a review with the AI model, or run plumb calibrate, unless I ask: both load the model.',
 ];
 
 /** The same rules, as the instructions file states them: about the person, not to them. */
@@ -229,8 +279,7 @@ export const AGENT_RULES_FOR_FILE = AGENT_RULES.map((rule) => rule.replace(/\bme
  * @param {any} record @param {any} site
  */
 export function agentMessage(record, site) {
-  const { run } = record;
-  holds(run.machine.cpu.includes('i5-1135G7') && run.machine.gpu.includes('MX350'), 'the measured profile is the i5-1135G7 with MX350 graphics');
+  holds(record.cpu_profile.review.lifecycle === 'completed', 'a review can start through a second profile on other 64-bit Windows computers');
   const lines = [
     'Install Plumb on this Windows computer and run its first checks. Plumb is a local security reviewer that reads source code with a small offline AI model.',
     ...(site.url ? ['', `Full instructions for agents: ${site.url}/agent-install.md`] : []),
@@ -242,14 +291,14 @@ export function agentMessage(record, site) {
     '2. Check that git, uv, Node.js 24 or newer, and pnpm are installed (run each with --version). If any is missing, tell me what to install and stop.',
     '3. Run: uv sync --locked',
     '4. Run: uv run --locked plumb setup',
-    '   This only previews. Summarise it for me.',
-    '5. If the preview says this hardware has no measured review profile, run:',
-    '   uv run --locked plumb setup --install --inspect-only',
-    '   Otherwise, list the downloads it shows (size, source, licence) and ask me before running:',
+    '   This only previews. Tell me which review profile it names for this computer, and list the downloads it shows (size, source, licence).',
+    '5. Ask me before running:',
     '   uv run --locked plumb setup --install --approve-large-downloads',
+    '   If I say no, or the preview says AI review is not available on this system, run this instead. It downloads no AI model:',
+    '   uv run --locked plumb setup --install --inspect-only',
     '6. Run: uv run plumb inspect labs/tandir',
     '7. Run: uv run plumb doctor',
-    '8. Tell me in plain words what worked, what did not, and whether this computer can run a full review with the AI model.',
+    '8. Tell me in plain words what worked, what did not, which profile doctor names, and whether enough memory is free for a full review with the AI model.',
     '',
     'Rules:',
     ...AGENT_RULES.map((rule) => `- ${rule}`),
@@ -263,17 +312,18 @@ export function agentMessage(record, site) {
  * @param {any} record @param {any} site
  */
 export function agentFile(record, site) {
-  const { steps, downloadBytes } = guide(record, site);
-  const { run } = record;
+  const { steps, downloads } = guide(record, site);
+  const { run, cpu_profile: cpu } = record;
   holds(run.machine.cpu.includes('i5-1135G7'), 'the measured profile is the i5-1135G7');
+  holds(cpu.review.lifecycle === 'completed' && cpu.same_computer_as_recorded_run, 'cpu-8k has completed one real run, on the development laptop');
   const fence = (/** @type {string[]} */ commands) => ['```powershell', ...commands, '```'];
   const body = steps.flatMap((step, index) => [
-    `### ${index + 1}. ${step.title.replace(/\.$/, '')}${step.measuredOnly ? ' (measured laptop only)' : ''}`,
+    `### ${index + 1}. ${step.title.replace(/\.$/, '')}`,
     '',
     step.agent ?? step.detail,
     '',
     ...(step.commands ? [...fence(step.commands), ''] : []),
-    ...(step.otherwise ? [step.otherwise, '', ...fence(step.otherCommands ?? []), ''] : []),
+    ...(step.otherwise ? [step.agentOtherwise ?? step.otherwise, '', ...fence(step.otherCommands ?? []), ''] : []),
   ]);
   const link = (/** @type {string} */ path) => (site.url ? `${site.url}${path}` : path);
   return [
@@ -289,9 +339,9 @@ export function agentFile(record, site) {
     '',
     '## Before you start',
     '',
-    '- 64-bit Windows, and PowerShell.',
+    '- Windows 10 or 11, 64-bit, and PowerShell. On macOS or Linux every `plumb` command prints one sentence saying the system is not supported yet, and stops.',
     '- Git, uv, Node.js 24 or newer, and pnpm. Plumb’s setup does not install them. uv provides Python 3.12.',
-    `- For a full review: the measured hardware profile \`${run.profile}\` (an Intel Core i5-1135G7 with ${run.machine.gpu} graphics), and ${gb(downloadBytes)} of free disk space for the downloads. On any other computer only source mapping is available, and that path has not yet been tried on a second computer.`,
+    `- For a full review: ${gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured))} of free disk space for the downloads, and enough free memory for the profile Plumb picks. That is \`${run.profile}\` on an Intel Core i5-1135G7 laptop with ${run.machine.gpu} graphics, and \`${cpu.id}\` on any other 64-bit Windows computer with an x64 processor: the same AI model on the processor alone, needing ${gb(cpu.required_ram_bytes)} of free RAM. \`${cpu.id}\` has completed one real run, on the laptop Plumb is developed on. It has not been tried on a second computer, and how fast it is there is not known.`,
     site.repository ? `- The code: ${site.repository}` : '- The code: not public yet. The person must give you the folder they received.',
     '',
     '## Steps',
@@ -304,7 +354,7 @@ export function agentFile(record, site) {
     '## What to report at the end',
     '',
     '- Which steps passed and which failed, with the exact message of any failure.',
-    '- Whether this computer has a measured review profile, as the setup preview or doctor states it.',
+    '- Which review profile the setup preview or doctor names for this computer, and whether doctor says enough memory is free for it.',
     '- What `inspect` found in the practice app: files, frameworks and addresses.',
     '',
     ...(site.url ? [`More: ${link('/')} · step-by-step page for people: ${link('/install')} · contact: ${link('/contact')}`, ''] : []),

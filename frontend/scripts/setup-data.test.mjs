@@ -25,6 +25,13 @@ test("actual readiness and inspected source preserve measured requirements, scop
   for(const e of p.entries)assert.equal(e.span.snapshot_id,p.snapshot_id);
 });
 
+test("a CPU profile needs no dedicated VRAM, and its memory rule still cannot be forged",()=>{
+  const cpu={...actual.readiness,profile_id:"cpu-8k",ready:false,required_ram_bytes:2436385888,available_ram_bytes:4000000000,required_vram_bytes:0,available_vram_bytes:null,memory_fit:true};
+  assert.equal(parseReadiness(cpu).required_vram_bytes,0);
+  assert.equal(parseReadiness({...cpu,available_ram_bytes:2436385887,memory_fit:false}).memory_fit,false);
+  for(const changes of [{memory_fit:false},{available_ram_bytes:1,memory_fit:true},{required_vram_bytes:-1},{required_vram_bytes:1}])assert.throws(()=>parseReadiness({...cpu,...changes}));
+});
+
 test("browser review dispatch preserves inspected identity, consent and selected scope",async()=>{
   const p={...actual.inspection,inspection_id:"inspect-"+"a".repeat(32)};const signal=new AbortController().signal;
   const run={id:"review-"+"b".repeat(32),snapshot_id:p.snapshot_id,run_type:"live",lifecycle:"queued",created_at:"2026-10-06T00:00:00Z",coverage:{total:1,pending:1,completed:0,excluded:0,unsupported:0}};

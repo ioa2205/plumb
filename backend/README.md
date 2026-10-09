@@ -16,6 +16,16 @@ eval.feasibility.vulkan_adapter`. These load the model after preflight. The CPU
 no-repack profile remains experimental; the tested CUDA profile is disabled
 after a kernel failure. M3.4 still needs to establish classification correctness.
 
+## CPU profile for other laptops (ADR-0024)
+
+`cpu_profile.create(settings, log_name)` returns a server for the same model on
+the pinned CPU build: 8K context, 4 threads, batches 2048/512, nothing on a
+graphics card. Its admission check is the original CPU gate, 2.44 GB of available
+RAM, and it keeps the same 256 MiB live stop. `profiles.REGISTRY` lists both
+profiles; `profiles.doctor` judges each one and `profiles.create` starts the runner
+that belongs to the chosen profile. `acceptance.py` holds the first-use check that
+each computer passes before its first review with a CPU profile.
+
 The local FastAPI service: settings, contracts (Pydantic models exported as JSON Schema, with generated TypeScript types for the workbench), jobs, the run store, and the memory preflight.
 
 - **Plan:** §5 Architecture, §6 The investigator (contracts), §8 Security of Plumb itself.

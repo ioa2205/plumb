@@ -168,18 +168,16 @@ def test_command_operand_focus_cites_argument_list_not_call_options(
     "case_id,function", [("TANDIR-B1", "search_orders"), ("TANDIR-B2-L", "print_receipt")]
 )
 def test_saved_real_sink_failures_remain_inconclusive_replay(
-    tmp_path: Path, case_id: str, function: str
+    tmp_path: Path, recorded_lab: Path, case_id: str, function: str
 ) -> None:
     """Saved actual answers are replay, never fresh acceptance of the changed prompt."""
-    from eval.ground_truth import load
-
     root = Path(__file__).resolve().parents[2]
     saved: Any = json.loads(
         (root / "docs/results/2026-10-08-m6.9f-current-tandir-execution.json").read_bytes()
     )
     record = next(r for r in saved["records"] if r["case_id"] == case_id)
     store = SnapshotStore(tmp_path / "snapshots")
-    snapshot = take_snapshot(load().lab_root(), store)
+    snapshot = take_snapshot(recorded_lab, store)
     assert snapshot.id == record["snapshot"]["id"]
     index = Index.build(snapshot, store, tmp_path / "index.sqlite")
 

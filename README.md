@@ -35,11 +35,16 @@ recorded test step by step and a guide for installing with an AI agent.
 
 - How often it is right. It has been shown on one practice app; it has not been
   measured on real projects.
-- Whether it runs on your computer. Full reviews with the AI model start only on
-  the one hardware profile measured so far: an Intel Core i5-1135G7 laptop with
-  NVIDIA GeForce MX350 graphics and 8 GB of memory. Other Windows computers can
-  map a project without the model; that path has not been tried on a second
-  computer yet.
+- Whether it runs on your computer. Every recorded review ran on one laptop: an
+  Intel Core i5-1135G7 with NVIDIA GeForce MX350 graphics and 8 GB of memory.
+  When run from source, other 64-bit Windows computers with an Intel or AMD
+  processor and about 2.4 GB of free memory can start a review through a second
+  profile, `cpu-8k`, which runs the
+  same model on the processor alone. That profile has completed one real run, on
+  the same laptop on 10 October 2026, with the same result as the recorded test
+  below. Nothing has been tried on a second computer. The downloadable package
+  was built before this profile existed and starts reviews only on the measured
+  laptop.
 - How well it finds other kinds of flaw. In development runs it missed an
   unsafe database query and an exposed phone number.
 
@@ -82,9 +87,17 @@ and downloads no model.
 The package has been checked only on the laptop it was built on, under that
 laptop's Windows account. A fresh Windows account has not been tested.
 
+The package is older than the source and lacks one safety fix. If its commands
+are typed from inside the folder being reviewed, a program hidden in that folder
+under the name of a Windows tool can be started. The source no longer allows
+this. Until a new package is built, type its commands from the extracted Plumb
+folder, as above, and give the project as a path.
+
 ## Run from source
 
-You need Git, [uv](https://docs.astral.sh/uv/), Node.js 24 or newer, and pnpm.
+You need Windows 10 or 11 (64-bit), Git, [uv](https://docs.astral.sh/uv/),
+Node.js 24 or newer, and pnpm. On macOS or Linux each `plumb` command prints one
+sentence saying it is not supported yet.
 uv fetches Python 3.12 by itself. Setup does not install these tools.
 
 ```powershell
@@ -96,6 +109,10 @@ uv run --locked plumb setup --install --approve-large-downloads
 uv run plumb inspect labs/tandir                  # map the practice app; no model
 uv run plumb doctor                               # hardware, files and free memory
 ```
+
+On another Windows computer, run the review command below without
+`--profile mx350-vulkan-8k`. Plumb then uses `cpu-8k`, and the first review
+begins with a check of the model runner that takes a few minutes.
 
 On the measured laptop, repeat the recorded review and open its report:
 
@@ -156,17 +173,19 @@ running reviewed code, ask before downloads over 500 MB), are in
 | `landing/` | The project website, built from the saved records |
 
 Run the tests with `uv run pytest`, after the setup step (it installs the
-TypeScript helper that the analysis tests use). In a fresh clone 44 tests fail,
-each because it needs something this repository does not contain:
+TypeScript helper that the analysis tests use). In a fresh clone 38 tests are
+skipped, each because it needs something this repository does not contain:
 
 - saved evaluation records, which are kept private for now;
-- the practice app's prepared, hash-pinned runner environment;
-- `labs/tandir/web/next-env.d.ts`, which Next.js writes when the practice app's
-  web part is built.
+- the practice app's prepared, hash-pinned runner environment.
 
-Everything else passed when this was checked on 9 October 2026. Making those
-tests skip cleanly in a fresh clone is planned. Design notes are private too,
-so a few code comments refer to documents that are not in this repository.
+Each skipped test prints which of the two it needs. A few more are skipped on
+Windows accounts that may not create symbolic links. Checked on 10 October 2026
+by running the whole suite in a fresh clone of a copy made the way this
+repository is published, on the development laptop: 2,342 tests passed, 41 were
+skipped (the 38 above and 3 for symbolic links) and none failed. Design notes
+are private too, so a few code comments refer to documents that are not in this
+repository.
 
 ## Licence
 

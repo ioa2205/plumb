@@ -6,7 +6,6 @@ Large missing downloads require --approve-large-downloads. No driver/admin actio
 
 import argparse
 import json
-import shutil
 import subprocess
 import sys
 from datetime import UTC, datetime
@@ -15,13 +14,21 @@ from typing import Any
 
 import httpx
 
-from backend.profiles import PROFILE_ID, REGISTRY, doctor, verify_runtime
+from backend.profiles import (
+    NOT_COMPARED,
+    REGISTRY,
+    chosen,
+    cpu_profile_id,
+    doctor,
+    verify_runtime,
+)
 from backend.redaction import Redactor
 from backend.settings import Settings
-from backend.setup import llama_cpp
+from backend.setup import llama_cpp, opengrep
 from backend.setup.download import DownloadError, UnsafeArchiveError, fetch, is_verified
 from backend.setup.models import model_path
-from backend.setup.pins import load_llama_cpp_pin, load_model_pins
+from backend.setup.pins import load_llama_cpp_pin, load_model_pins, load_opengrep_pin
+from backend.system_tools import on_search_path, unsupported_system
 from backend.user_config import remember_location
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -44,10 +51,10 @@ def _run(argv: list[str]) -> str:
 
 
 def pnpm_command(node: Path) -> list[str] | None:
-    found = shutil.which("pnpm")
-    if not found:
+    found = on_search_path("pnpm")
+    if found is None:
         return None
-    command = Path(found).resolve()
+    command = found.resolve()
     if command.suffix.lower() == ".exe":
         return [str(command)]
     # Invoke the installed JS entry directly; do not build a cmd/PowerShell string.
@@ -91,16 +98,36 @@ def helper_status(settings: Settings) -> dict[str, Any]:
     }
 
 
-def preview(settings: Settings, *, inspect_only: bool = False) -> dict[str, Any]:
+def installable_models() -> list[str]:
+    """Pinned models a CPU profile can review with: the default first."""
+    return [m.id for m in load_model_pins().models if cpu_profile_id(m) in REGISTRY]
+
+
+def preview(
+    settings: Settings, *, inspect_only: bool = False, model_id: str | None = None
+) -> dict[str, Any]:
     if settings.data_dir.resolve().is_relative_to(ROOT):
         raise ValueError("PLUMB_DATA_DIR must be outside the repository")
+    if model_id is not None and inspect_only:
+        raise ValueError("--model installs a review model; it cannot be used with --inspect-only")
+    if model_id is not None and model_id not in installable_models():
+        raise ValueError(f"Unknown or unsupported model {model_id!r}; see plumb doctor --json")
     report = doctor(settings)
-    profile = REGISTRY[PROFILE_ID]
-    model = load_model_pins().get(profile.model_id)
+    pins = load_model_pins()
+    # The profile this computer would review with; systems without one install nothing.
+    judged = chosen(report)
+    available = report["selected_profile"] is not None
+    # A named model other than that profile's is reviewed through its own CPU profile.
+    other = model_id is not None and model_id != judged["model_id"]
+    if other:
+        judged = chosen(report, cpu_profile_id(pins.get(model_id)))
+        available = judged["compatible_measured_host"]
+    profile = REGISTRY[judged["id"]]
+    model = pins.get(profile.model_id)
     runtime = load_llama_cpp_pin()
     missing: list[dict[str, Any]] = []
-    if not inspect_only:
-        if not report["profiles"][0]["model_verified"]:
+    if not inspect_only and available:
+        if not judged["model_verified"]:
             missing.append(
                 {
                     "kind": "model",
@@ -122,21 +149,37 @@ def preview(settings: Settings, *, inspect_only: bool = False) -> dict[str, Any]
                         "license": "MIT (llama.cpp); bundled dependencies retain their licenses",
                     }
                 )
+        scanner = report["pattern_scanner"]
+        if not scanner["verified_installed"]:
+            # Reviews order their questions with it (PROJECT_PLAN §7); inspection does not use it.
+            missing.append(
+                {
+                    "kind": "pattern scanner",
+                    "source": scanner["source"],
+                    "size_bytes": scanner["size_bytes"],
+                    "sha256": scanner["sha256"],
+                    "license": scanner["license"],
+                }
+            )
     helper = helper_status(settings)
     total = sum(item["size_bytes"] for item in missing)
     return {
         "mode": "inspect-only" if inspect_only else "review",
         "data_dir": str(settings.data_dir),
-        "profile": profile.id if not inspect_only else None,
+        "profile": profile.id if available and not inspect_only else None,
+        "model": model_id,
+        "model_note": f"{model.family} ({model.id}): {NOT_COMPARED}" if other else None,
         "doctor": report,
         "typescript_helper": helper,
         "missing_downloads": missing,
         "missing_download_bytes": total,
         "requires_large_download_approval": total > 500_000_000,
         "model_loaded": False,
-        "ready": helper["ready"] and (inspect_only or report["selection_ready"]),
+        "ready": helper["ready"]
+        and (inspect_only or (judged["ready"] if other else report["selection_ready"])),
         "next": "plumb setup --install"
         + (" --inspect-only" if inspect_only else "")
+        + (f" --model {model_id}" if model_id else "")
         + (" --approve-large-downloads" if total > 500_000_000 else ""),
     }
 
@@ -146,14 +189,15 @@ def install(
 ) -> dict[str, Any]:
     inspect_only = plan["mode"] == "inspect-only"
     # A preview can go stale. Recompute before any installation and check again at fetch.
-    plan = preview(settings, inspect_only=inspect_only)
+    plan = preview(settings, inspect_only=inspect_only, model_id=plan.get("model"))
     if plan["requires_large_download_approval"] and not approve_large_downloads:
         raise ValueError(
             "Missing downloads exceed 500 MB; inspect the preview and explicitly approve first"
         )
-    if not inspect_only and plan["doctor"]["recommended_profile"] is None:
+    if not inspect_only and plan["profile"] is None:
         raise ValueError(
-            "This hardware has no measured review profile; use --inspect-only or calibrate"
+            "No review profile exists for this system (AI review needs 64-bit Windows); "
+            "use --inspect-only"
         )
     helper = plan["typescript_helper"]
     if not helper["node_compatible"]:
@@ -178,7 +222,7 @@ def install(
             ]
         )
     if not inspect_only:
-        profile = REGISTRY[PROFILE_ID]
+        profile = REGISTRY[plan["profile"]]
         runtime = load_llama_cpp_pin()
         model = load_model_pins().get(profile.model_id)
         if not verify_runtime(settings, runtime, profile.backend):
@@ -202,7 +246,15 @@ def install(
                     size=model.size,
                     client=client,
                 )
-    result = preview(settings, inspect_only=inspect_only)
+        scanner = load_opengrep_pin()
+        if not is_verified(
+            opengrep.binary_path(settings, scanner),
+            sha256=scanner.asset.sha256,
+            size=scanner.asset.size,
+        ):
+            with httpx.Client(timeout=httpx.Timeout(30, read=120)) as client:
+                opengrep.install(settings, scanner, client)
+    result = preview(settings, inspect_only=inspect_only, model_id=plan.get("model"))
     result["installation_attempted"] = True
     result["note"] = "Assets installed; inference still checks live memory. No model was loaded."
     return result
@@ -220,6 +272,11 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument(
         "--inspect-only", action="store_true", help="Set up source inspection without model assets"
+    )
+    parser.add_argument(
+        "--model",
+        choices=installable_models(),
+        help="Install this pinned model instead of the default (see plumb doctor)",
     )
     parser.add_argument("--data-dir", type=Path, help="Absolute external data directory")
     parser.add_argument(
@@ -251,11 +308,14 @@ def human_summary(result: dict[str, Any], *, installing: bool) -> str:
     lines.append("Source tools: ready" if helper["ready"] else f"Source tools: {helper['action']}")
     report = result["doctor"]
     if not inspection:
-        selected = report["recommended_profile"]
-        lines.append(f"Measured profile: {selected or 'unavailable on this hardware'}")
-        lines.extend(report["messages"])
-        if report["profiles"]:
-            lines.append(f"Evaluated scope: {report['profiles'][0]['evaluated_capability']}")
+        selected = result.get("profile") or report["selected_profile"]
+        lines.append(f"Review profile: {selected or 'none for this system'}")
+        if result.get("model_note"):
+            lines.append(f"Model: {result['model_note']}")
+            lines.append(f"Review with it by adding: --profile {selected}")
+        judged = chosen(report, selected)
+        lines.extend(report["messages"] if not result.get("model_note") else judged["messages"])
+        lines.append(f"Evaluated scope: {judged['evaluated_capability']}")
     missing = result["missing_downloads"]
     if missing:
         lines.append(f"Missing pinned downloads: {result['missing_download_bytes']:,} bytes")
@@ -275,16 +335,21 @@ def human_summary(result: dict[str, Any], *, installing: bool) -> str:
         lines.append("No model/runtime downloads are missing for this mode.")
     if result["ready"]:
         lines.append(
-            "Ready for source inspection." if inspection else "Ready for the measured review scope."
+            "Ready for source inspection." if inspection else "Ready for the scoped AI review."
         )
         lines.append(
             "Next: plumb inspect <folder>"
             if inspection
             else "Next: plumb review <folder> --open-report"
         )
-    elif not inspection and report["recommended_profile"] is None:
+        if any(item["kind"] == "pattern scanner" for item in missing):
+            lines.append(
+                "The pattern scanner is not installed yet. A review still runs, but its "
+                "questions are not ordered by pattern leads. Install it with: plumb setup --install"
+            )
+    elif not inspection and report["selected_profile"] is None:
         lines.append(
-            "AI review is unmeasured here; source inspection is available without a model."
+            "AI review is not available on this system; source inspection works without a model."
         )
         lines.append("Next: plumb setup --install --inspect-only")
     elif installing:
@@ -311,7 +376,7 @@ def execute(args: argparse.Namespace) -> int:
         redactor = Redactor.configured(Settings(data_dir=ROOT.parent))
         redaction_ready = True
         settings = Settings(data_dir=args.data_dir) if args.data_dir else Settings()
-        plan = preview(settings, inspect_only=args.inspect_only)
+        plan = preview(settings, inspect_only=args.inspect_only, model_id=args.model)
         record["preview"] = plan
         if args.install:
             result = install(settings, plan, approve_large_downloads=args.approve_large_downloads)
@@ -391,6 +456,9 @@ def execute(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    if refusal := unsupported_system():
+        print(refusal)
+        return 1
     parser = argparse.ArgumentParser(description=__doc__)
     add_arguments(parser)
     return execute(parser.parse_args(argv))

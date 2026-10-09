@@ -15,14 +15,22 @@ def plan(*, mode: str = "review", large: bool = False, measured: bool = True) ->
     return {
         "mode": mode,
         "data_dir": "fixture-data-location",
+        "profile": "mx350-vulkan-8k" if measured and mode == "review" else None,
         "next": "plumb setup --install",
         "missing_downloads": [],
         "requires_large_download_approval": large,
         "missing_download_bytes": 600_000_000 if large else 0,
         "doctor": {
             "recommended_profile": "mx350-vulkan-8k" if measured else None,
+            "selected_profile": "mx350-vulkan-8k" if measured else None,
             "inventory": {"disk_free_bytes": 10_000_000_000},
-            "profiles": [{"evaluated_capability": "Fixture scope; not real model evidence"}],
+            "profiles": [
+                {
+                    "id": "mx350-vulkan-8k",
+                    "evaluated_capability": "Fixture scope; not real model evidence",
+                },
+                {"id": "cpu-8k", "evaluated_capability": "Fixture scope; no profile here"},
+            ],
             "messages": [],
         },
         "typescript_helper": {
@@ -46,6 +54,7 @@ def offline(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Settings:
     monkeypatch.setattr(wizard, "_run", forbid)
     monkeypatch.setattr(wizard, "fetch", forbid)
     monkeypatch.setattr(wizard.llama_cpp, "install", forbid)
+    monkeypatch.setattr(wizard.opengrep, "install", forbid)
     return settings
 
 
@@ -66,12 +75,12 @@ def test_large_approval_is_rechecked_against_fresh_inventory(
     assert not offline.data_dir.exists()
 
 
-def test_unmeasured_review_host_is_refused_before_installs(
+def test_a_system_without_a_review_profile_is_refused_before_installs(
     offline: Settings,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(wizard, "preview", lambda *args, **kwargs: plan(measured=False))
-    with pytest.raises(ValueError, match="no measured"):
+    with pytest.raises(ValueError, match="No review profile exists for this system"):
         wizard.install(offline, plan())
 
 
@@ -284,13 +293,14 @@ def test_human_preview_discloses_exact_download_and_requires_consent(
     assert "Ready for" not in output and not offline.data_dir.exists()
 
 
-def test_human_unmeasured_host_has_source_only_next_action() -> None:
+def test_human_summary_without_a_profile_has_source_only_next_action() -> None:
     current = plan(measured=False)
     current["ready"] = False
     output = wizard.human_summary(current, installing=False)
-    assert "unmeasured here" in output
+    assert "AI review is not available on this system" in output
+    assert "Review profile: none for this system" in output
     assert "Next: plumb setup --install --inspect-only" in output
-    assert "Ready for the measured review" not in output
+    assert "Ready for the scoped AI review" not in output
 
 
 def test_human_record_failure_is_actionable_and_redacted(

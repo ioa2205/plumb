@@ -24,11 +24,9 @@ from backend.contracts.verification import SourceEdit
 @pytest.mark.parametrize("case_id", ["TANDIR-A1", "TANDIR-B2"])
 @pytest.mark.parametrize("corrected_fixture", [False, True], ids=["saved-replay", "new-fixture"])
 def test_saved_proposal_failures_stay_refused_and_bounded_fixtures_can_propose(
-    tmp_path: Path, case_id: str, corrected_fixture: bool
+    tmp_path: Path, recorded_lab: Path, case_id: str, corrected_fixture: bool
 ) -> None:
     """Exact primary source and saved answers; fixtures are not new model acceptance."""
-    from eval.ground_truth import load
-
     root = Path(__file__).resolve().parents[2]
     execution: Any = json.loads(
         (root / "docs/results/2026-10-08-m6.9f-current-tandir-execution.json").read_bytes()
@@ -40,7 +38,7 @@ def test_saved_proposal_failures_stay_refused_and_bounded_fixtures_can_propose(
     previous = record["requests"][-1]
     assert previous["body"]["response_format"]["json_schema"]["name"] == "fix_sketch"
     store = SnapshotStore(tmp_path / "snapshots")
-    snapshot = take_snapshot(load().lab_root(), store)
+    snapshot = take_snapshot(recorded_lab, store)
     assert snapshot.id == record["snapshot"]["id"]
     source = SourceSpan.model_validate(
         next(c for c in preparation["cases"] if c["id"] == case_id)["source"]

@@ -13,6 +13,7 @@ from fastapi import FastAPI
 from backend.app import create_app
 from backend.security import LOOPBACK
 from backend.settings import Settings
+from backend.system_tools import unsupported_system
 
 
 def bind(port: int) -> socket.socket:
@@ -71,6 +72,9 @@ def server(
 
 
 def main(*, open_browser: bool = False) -> int:
+    if refusal := unsupported_system():
+        print(refusal)
+        return 1
     try:
         settings = Settings()
     except (OSError, ValueError):

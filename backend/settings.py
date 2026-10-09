@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     node_binary: Path = DEFAULT_NODE_BINARY
     # The local API's loopback port. The address itself is not a setting: it is always 127.0.0.1.
     port: int = Field(default=DEFAULT_PORT, ge=1024, le=65535)
+    # A lasting profile choice for the terminal and the browser; "auto" follows plumb doctor.
+    profile: str = Field(default="auto", pattern=r"^[a-z0-9][a-z0-9._-]*$")
     peer_min_peers: int = Field(default=3, ge=1)
     peer_min_share: float = Field(default=0.75, gt=0, le=1)
     # JSON array in PLUMB_REDACTION_SECRETS; never show values in settings diagnostics.

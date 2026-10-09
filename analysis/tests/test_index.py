@@ -14,6 +14,8 @@ from backend.contracts.common import Language
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 TANDIR = REPOSITORY / "labs" / "tandir"
+# Building the web lab writes next-env.d.ts, which Git ignores: a fresh clone has 59 modules.
+MODULES = 59 + (TANDIR / "web/next-env.d.ts").is_file()
 NOW = datetime(2026, 10, 3, 12, 0, tzinfo=UTC)
 
 
@@ -132,7 +134,7 @@ def test_python_symbols_match_the_standard_library_parser(
 
 def test_tandir_symbol_counts(index: Index) -> None:
     counts = index.counts()
-    assert counts["module"] == 60
+    assert counts["module"] == MODULES
     # TypeScript components and types, checked by hand against the web lab's sources.
     assert counts["component"] == 11
     assert counts["type"] == 13
@@ -214,7 +216,7 @@ def test_search_by_kind_and_falls_back_to_any_word(index: Index) -> None:
 @pytest.mark.parametrize("text", ['"); DROP TABLE symbols; --', "a OR b NEAR(c)", "*", "", "^"])
 def test_search_treats_text_as_words_never_as_query_syntax(index: Index, text: str) -> None:
     index.search(text)  # no exception
-    assert index.counts()["module"] == 60
+    assert index.counts()["module"] == MODULES
 
 
 def test_symbols_become_contracts_with_span_hashes(

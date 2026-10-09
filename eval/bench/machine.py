@@ -6,13 +6,13 @@ recorded as unavailable with the reason, never estimated.
 
 import json
 import subprocess
-import winreg
 from datetime import UTC, datetime
 from typing import Any
 
 import psutil
 
 from backend.memory import read_memory
+from backend.system_tools import NVIDIA_SMI, POWERSHELL, system_tool
 
 # Windows 11 power mode overlays (HKLM\...\Power\User\PowerSchemes).
 POWER_MODES = {
@@ -33,10 +33,15 @@ _CIM_SCRIPT = (
 )
 
 
-def _run(argv: list[str], timeout: float = 20) -> str | None:
+def _run(tool: str, *args: str, timeout: float = 20) -> str | None:
+    """Run a program from the Windows system folder; a bare name could be planted."""
     try:
         done = subprocess.run(  # noqa: S603 - fixed argv to system tools
-            argv, capture_output=True, text=True, timeout=timeout, check=False
+            [str(system_tool(tool)), *args],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
         )
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -44,6 +49,9 @@ def _run(argv: list[str], timeout: float = 20) -> str | None:
 
 
 def _power_mode() -> dict[str, str]:
+    # Imported here so that other systems can import this module and say what they lack.
+    import winreg
+
     key_path = r"SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes"
     try:
         with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path) as key:
@@ -54,7 +62,7 @@ def _power_mode() -> dict[str, str]:
 
 
 def _cim() -> dict[str, Any]:
-    out = _run(["powershell", "-NoProfile", "-NonInteractive", "-Command", _CIM_SCRIPT])
+    out = _run(POWERSHELL, "-NoProfile", "-NonInteractive", "-Command", _CIM_SCRIPT)
     if not out:
         return {"error": "CIM query failed"}
     data = json.loads(out)
@@ -78,7 +86,7 @@ def _cim() -> dict[str, Any]:
 
 def _gpu() -> dict[str, Any]:
     fields = "name,temperature.gpu,memory.used,memory.free,driver_version,pstate,clocks.sm"
-    out = _run(["nvidia-smi", f"--query-gpu={fields}", "--format=csv,noheader,nounits"])
+    out = _run(NVIDIA_SMI, f"--query-gpu={fields}", "--format=csv,noheader,nounits")
     if not out:
         return {"error": "nvidia-smi unavailable"}
     values = [v.strip() for v in out.strip().splitlines()[0].split(",")]
