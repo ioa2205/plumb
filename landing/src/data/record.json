@@ -1089,6 +1089,16 @@
     "references_checked": 294,
     "clean_user_profile": false
   },
+  "download": {
+    "name": "plumb-0.0.0-prototype-20261009-h.zip",
+    "archive_bytes": 97183740,
+    "archive_sha256": "471cdb591b1d8a9b2bf4de68c5974d7b36e6260c33c2af63539e4cf07488ebca",
+    "inventoried_files": 2940,
+    "files_left_out": 11,
+    "investigator_files_identical": 63,
+    "checked_at": "2026-10-09T13:09:25.941136+00:00",
+    "doctor_refused_for_memory": true
+  },
   "software": {
     "python": {
       "collected": 2334,
@@ -1206,6 +1216,8 @@
     "docs/results/2026-10-08-m7.8a-raw/report.json": "9076a57cb8727ba1d2b21f25ee4e3e05cdab9c1ceabf906935686b1c46638a0f",
     "docs/results/2026-10-08-m7.8a-raw/report.md": "95a1a3b451e51bd3015145da31219d7f088a159687d662f18c9128d498ce57f1",
     "docs/results/2026-10-08-m7.8a-raw/report.sarif": "82d9d7b14f3ccf9a5102d1a91ad14b9000a49b1e7f6e30f7c0e8a23b0b11b022",
+    "docs/results/2026-10-09-m7.9b-package-followup.json": "30e6b9db2e5afbd171bb5f9d98eaa804d114b58e69ddf7f870d30f2b2c6387d6",
+    "docs/results/2026-10-09-m7.9b-package-smoke.json": "ba945a1fe2ec0e56bd40a937f56342af72bb5c9fb76438461c2bc6868c170a3d",
     "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",
     "labs/tandir/api/tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
     "labs/tandir/api/tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",

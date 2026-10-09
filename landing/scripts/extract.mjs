@@ -532,6 +532,36 @@ function extractRuntimePin(backend) {
   return { release, backend, name: assets[0].name, size: assets[0].size };
 }
 
+/**
+ * The Windows package offered for download. It is a rebuild of the recorded run's package
+ * that leaves out launcher files naming the build folder and two private names; the
+ * investigator code is checked to be identical. Only facts the checks recorded are kept.
+ */
+function extractDownload() {
+  const smoke = json(`${RESULTS}/2026-10-09-m7.9b-package-smoke.json`);
+  const followup = json(`${RESULTS}/2026-10-09-m7.9b-package-followup.json`);
+  const recorded = json(`${RESULTS}/2026-10-08-m7.7f-package-smoke.json`).artifact;
+  const { artifact } = smoke;
+  must(artifact.passed && artifact.zip_inventory_and_hashes_pass && artifact.private_files_absent, 'download artifact checks did not pass');
+  must(artifact.source_dirty === false, 'download was built from uncommitted source');
+  must(JSON.stringify(artifact.implementation_sha256) === JSON.stringify(recorded.implementation_sha256), 'download investigator differs from the recorded package');
+  const passed = Object.fromEntries(smoke.checks.map((/** @type {any} */ check) => [check.args[0], check.passed]));
+  must(passed['--help'] && passed.setup && passed.inspect && smoke.web.passed, 'download command checks did not pass');
+  must(followup.report_opened && followup.current_report_unchanged, 'download did not open the recorded report');
+  const name = String(artifact.archive).split(/[\\/]/).pop();
+  must(/^plumb-[\w.-]+\.zip$/.test(name), 'unexpected download name');
+  return {
+    name,
+    archive_bytes: artifact.archive_bytes,
+    archive_sha256: artifact.archive_sha256,
+    inventoried_files: artifact.inventoried_files,
+    files_left_out: recorded.inventoried_files - artifact.inventoried_files,
+    investigator_files_identical: Object.keys(artifact.implementation_sha256).length,
+    checked_at: smoke.created_at,
+    doctor_refused_for_memory: followup.doctor_summary?.messages?.some((/** @type {string} */ m) => /RAM/.test(m)) ?? false,
+  };
+}
+
 function extractPackage() {
   const handoff = json(`${RESULTS}/2026-10-08-m7.8-handoff-checks.json`);
   const smoke = json(`${RESULTS}/2026-10-08-m7.7f-package-smoke.json`);
@@ -705,6 +735,7 @@ function main() {
     model: extractModelPin(run.model.id),
     runtime_download: extractRuntimePin(run.toolchain.backend),
     package: extractPackage(),
+    download: extractDownload(),
     software: extractSoftware(),
     development: extractDevelopment(),
     sources: Object.fromEntries([...sources.entries()].sort(([a], [b]) => a.localeCompare(b))),

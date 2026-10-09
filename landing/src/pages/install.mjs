@@ -2,7 +2,7 @@
 import { band, page } from '../components/layout.mjs';
 import { command, fact, reportShot } from '../components/parts.mjs';
 import { reviewConsole } from '../components/terminal.mjs';
-import { gb, int, mb, shortHash } from '../lib/format.mjs';
+import { day, gb, int, mb, shortHash } from '../lib/format.mjs';
 import { guide, refusals, reviewCommands } from '../lib/guide.mjs';
 import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
@@ -24,10 +24,15 @@ export function render(context) {
   const head = html`<header class="page-head">
   <div class="wrap">
     <h1>${t('Get Plumb', 'Plumbni o‘rnatish')}</h1>
-    <p class="lede">${t(
-      'Plumb is a program you run on your own Windows computer. This page says why there is no download button yet, what you need, every command in order, and what you will see.',
-      'Plumb o‘z Windows kompyuteringizda ishlaydigan dastur. Bu sahifada hozircha nega yuklab olish tugmasi yo‘qligi, nima kerakligi, barcha buyruqlar tartib bilan va natijada nimani ko‘rishingiz aytilgan.',
-    )}</p>
+    <p class="lede">${site.download
+      ? t(
+          'Plumb is a program you run on your own Windows computer. Download the ready-made package or install it from source. This page lists what you need, every command in order, and what you will see.',
+          'Plumb o‘z Windows kompyuteringizda ishlaydigan dastur. Tayyor to‘plamni yuklab oling yoki manba kodidan o‘rnating. Bu sahifada nima kerakligi, barcha buyruqlar tartib bilan va natijada nimani ko‘rishingiz aytilgan.',
+        )
+      : t(
+          'Plumb is a program you run on your own Windows computer. This page says why there is no download button yet, what you need, every command in order, and what you will see.',
+          'Plumb o‘z Windows kompyuteringizda ishlaydigan dastur. Bu sahifada hozircha nega yuklab olish tugmasi yo‘qligi, nima kerakligi, barcha buyruqlar tartib bilan va natijada nimani ko‘rishingiz aytilgan.',
+        )}</p>
   </div>
 </header>`;
 
@@ -45,6 +50,45 @@ export function render(context) {
           html`<p class="condition"><strong>Not available for download yet.</strong> The source code and the Windows package are sent on request. Ask through the <a href="/contact">contact page</a>.</p>`,
           html`<p class="condition"><strong>Hozircha yuklab olib bo‘lmaydi.</strong> Manba kodi va Windows to‘plami so‘rov bo‘yicha yuboriladi. <a href="/contact">Aloqa sahifasi</a> orqali so‘rang.</p>`,
         );
+
+  const { download } = record;
+  const downloadBand = band({
+    id: 'today',
+    heading: t('Download Plumb.', 'Plumbni yuklab oling.'),
+    body: html`<div class="stack-gap">
+      <div class="download-card">
+        <div class="download-main">
+          <p class="download-title">${t('Plumb for Windows', 'Windows uchun Plumb')}</p>
+          <p class="small">${t(
+            html`Portable ZIP · ${fact(mb(download.archive_bytes))} · ${fact(int(download.inventoried_files))} files · prototype, checked on ${day(download.checked_at)}`,
+            html`Ko‘chma ZIP · ${fact(mb(download.archive_bytes))} · ${fact(int(download.inventoried_files))} ta fayl · prototip, ${day(download.checked_at)} kuni tekshirilgan`,
+          )}</p>
+        </div>
+        <a class="btn btn-ink download-button" href="${site.download}">${t('Download ZIP', 'ZIP faylni yuklab olish')}</a>
+        <p class="download-hash"><span class="small">SHA-256</span> <span class="fact">${download.archive_sha256}</span></p>
+      </div>
+      <p class="small">${t(
+        html`The source code is on <a href="${site.repository}">GitHub</a>, under the MIT licence.`,
+        html`Manba kodi <a href="${site.repository}">GitHub</a>’da, MIT litsenziyasi ostida.`,
+      )}</p>
+      <ul class="limits">
+        ${t(
+          html`<li><strong>It is the investigator from the recorded test.</strong> The package from that run was rebuilt to leave out ${fact(download.files_left_out)} launcher files that only worked on the build laptop, and two mentions of private names. Its ${fact(download.investigator_files_identical)} investigator files are byte for byte the same.</li>
+        <li><strong>It has only been tried on the laptop it was built on.</strong> There, with developer tools removed from the path, it mapped the practice app, opened the recorded report and served its browser view. A fresh Windows account and other computers have not been tested.</li>
+        <li><strong>The AI model is not inside.</strong> Setup downloads it (${fact(gb(model.size))}) from Hugging Face after showing you its size, source and licence. Full reviews start only on the measured laptop model.</li>
+        <li><strong>Plumb is not a web service.</strong> It runs on your computer on purpose, so that your code stays with you.</li>`,
+          html`<li><strong>Bu yozib olingan sinovdagi tekshiruvchining o‘zi.</strong> O‘sha sinovdagi to‘plam qayta yig‘ilib, faqat yig‘ilgan noutbukda ishlaydigan ${fact(download.files_left_out)} ta ishga tushirish fayli va ikki joydagi shaxsiy nomlar olib tashlangan. Tekshiruvchining ${fact(download.investigator_files_identical)} ta fayli baytma-bayt bir xil.</li>
+        <li><strong>U faqat yig‘ilgan noutbukda sinab ko‘rilgan.</strong> U yerda, dasturchi vositalari olib tashlangan holda, sinov ilovasining xaritasini tuzdi, yozib olingan hisobotni ochdi va brauzerdagi interfeysini ishga tushirdi. Yangi Windows hisobi va boshqa kompyuterlarda sinab ko‘rilmagan.</li>
+        <li><strong>SI modeli to‘plam ichida emas.</strong> O‘rnatuvchi uni (${fact(gb(model.size))}) hajmi, manbasi va litsenziyasini ko‘rsatgandan keyin Hugging Face’dan yuklab oladi. To‘liq tekshiruv faqat o‘lchangan noutbuk modelida ishga tushadi.</li>
+        <li><strong>Plumb veb-xizmat emas.</strong> U ataylab sizning kompyuteringizda ishlaydi, shunda kodingiz o‘zingizda qoladi.</li>`,
+        )}
+      </ul>
+      <div class="routes">
+        <a class="route-card" href="#package"><span class="route-title">${t('After downloading', 'Yuklab olgandan keyin')}</span><span class="small">${t('Extract, set up the model, map the practice app.', 'Arxivdan chiqaring, modelni o‘rnating, sinov ilovasining xaritasini tuzing.')}</span></a>
+        <a class="route-card" href="/install/agent"><span class="route-title">${t('Let an AI agent install it', 'SI agentga o‘rnattiring')}</span><span class="small">${t('Paste one message into Claude Code, Codex or a similar agent.', 'Claude Code, Codex yoki shunga o‘xshash agentga bitta xabar yuboring.')}</span></a>
+      </div>
+    </div>`,
+  });
 
   const today = band({
     id: 'today',
@@ -83,7 +127,7 @@ export function render(context) {
           'Windows, 64-bit, with PowerShell. No administrator rights, Docker or Windows Sandbox.',
           '64 bitli Windows va PowerShell. Administrator huquqlari, Docker yoki Windows Sandbox kerak emas.',
         )}</dd></div>
-      <div><dt>${t('Tools', 'Dasturlar')}</dt>
+      <div><dt>${site.download ? t('Tools, for the source install', 'Dasturlar, manba kodidan o‘rnatish uchun') : t('Tools', 'Dasturlar')}</dt>
         <dd>${t(
           'Git, uv, Node.js 24 or newer, and pnpm. uv brings Python 3.12 with it.',
           'Git, uv, Node.js 24 yoki undan yangi versiyasi va pnpm. Python 3.12 ni uv o‘zi olib keladi.',
@@ -142,10 +186,16 @@ export function render(context) {
 
   const packageSteps = band({
     id: 'package',
-    heading: t('Or start from the Windows package.', 'Yoki Windows to‘plamidan boshlang.'),
+    heading: site.download
+      ? t('Use the Windows package.', 'Windows to‘plamidan foydalaning.')
+      : t('Or start from the Windows package.', 'Yoki Windows to‘plamidan boshlang.'),
     intro: html`<p>${t(
-      html`If you were sent the ZIP (${fact(mb(pack.archive_bytes))}, ${fact(int(pack.inventoried_files))} files). Python, Node and the browser view are inside, so nothing else has to be installed first. The model is still downloaded by setup.`,
-      html`Agar sizga ZIP fayl (${fact(mb(pack.archive_bytes))}, ${fact(int(pack.inventoried_files))} ta fayl) yuborilgan bo‘lsa. Ichida Python, Node va brauzerdagi interfeys bor, shuning uchun oldindan boshqa hech narsa o‘rnatish shart emas. Modelni baribir o‘rnatuvchi yuklab oladi.`,
+      site.download
+        ? html`After downloading the ZIP. Python, Node and the browser view are inside, so nothing else has to be installed first. The model is still downloaded by setup.`
+        : html`If you were sent the ZIP (${fact(mb(pack.archive_bytes))}, ${fact(int(pack.inventoried_files))} files). Python, Node and the browser view are inside, so nothing else has to be installed first. The model is still downloaded by setup.`,
+      site.download
+        ? html`ZIP faylni yuklab olgandan keyin. Ichida Python, Node va brauzerdagi interfeys bor, shuning uchun oldindan boshqa hech narsa o‘rnatish shart emas. Modelni baribir o‘rnatuvchi yuklab oladi.`
+        : html`Agar sizga ZIP fayl (${fact(mb(pack.archive_bytes))}, ${fact(int(pack.inventoried_files))} ta fayl) yuborilgan bo‘lsa. Ichida Python, Node va brauzerdagi interfeys bor, shuning uchun oldindan boshqa hech narsa o‘rnatish shart emas. Modelni baribir o‘rnatuvchi yuklab oladi.`,
     )}</p>`,
     body: html`<ol class="steps">
       <li><div>
@@ -244,7 +294,9 @@ export function render(context) {
       'Why Plumb has no download button yet, what it needs, how to install it from source step by step or from the Windows package, how to review your own project, and what it refuses to do.',
       'Plumbni nega hozircha yuklab olib bo‘lmasligi, unga nima kerakligi, uni manba kodidan qadam-baqadam yoki Windows to‘plamidan qanday o‘rnatish, o‘z loyihangizni qanday tekshirish va u nimani rad etishi.',
     ),
-    body: html`${head}${today}${needs}${source}${packageSteps}${own}${refusalsBand}`,
+    body: site.download
+      ? html`${head}${downloadBand}${needs}${packageSteps}${source}${own}${refusalsBand}`
+      : html`${head}${today}${needs}${source}${packageSteps}${own}${refusalsBand}`,
     context,
   });
 }

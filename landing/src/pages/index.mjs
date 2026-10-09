@@ -290,7 +290,12 @@ export function render(context) {
   </div>
 </section>`;
 
-  const availability = site.repository
+  const availability = site.download
+    ? t(
+        html`<p><strong>Yes, as a download.</strong> <a href="${site.download}">Download the Windows package</a> (${fact(mb(record.download.archive_bytes))}), or get the source code on <a href="${site.repository}">GitHub</a>. The <a href="/install">install page</a> has every step.</p>`,
+        html`<p><strong>Ha, yuklab olish mumkin.</strong> <a href="${site.download}">Windows to‘plamini yuklab oling</a> (${fact(mb(record.download.archive_bytes))}) yoki manba kodini <a href="${site.repository}">GitHub</a>’dan oling. Barcha qadamlar <a href="/install">o‘rnatish sahifasida</a>.</p>`,
+      )
+    : site.repository
     ? t(
         html`<p><strong>Yes, from the source code.</strong> The code is public in <a href="${site.repository}">the repository</a>. You need a Windows computer and a few commands, or an AI coding agent to type them for you.</p>`,
         html`<p><strong>Ha, manba kodi orqali.</strong> Kod <a href="${site.repository}">repozitoriyda</a> ochiq turibdi. Sizga Windows kompyuter va bir nechta buyruq kerak bo‘ladi. Ularni siz uchun SI agent ham yozib berishi mumkin.</p>`,

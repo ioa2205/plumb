@@ -265,6 +265,14 @@ details.more-detail .term { margin-top: 12px; }
 :root[data-theme="night"] .shot .only-day { display: none; }
 :root[data-theme="night"] .shot .only-night { display: block; }
 
+/* ---------- the download ---------- */
+.download-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px 24px; padding: clamp(20px, 2.6vw, 30px); border-radius: var(--radius-sheet); background: var(--sheet); }
+.download-title { font: 600 1.375rem / 1.25 var(--sans); letter-spacing: -0.015em; }
+.download-main .small { margin-top: 4px; }
+.download-button { min-height: 48px; padding: 0 22px; font-size: 1rem; }
+.download-hash { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.download-hash .fact { padding: 4px 8px; border-radius: var(--radius-tag); background: var(--well); font-size: 0.75rem; }
+
 /* ---------- two ways in ---------- */
 .routes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .route-card { display: grid; align-content: start; gap: 6px; padding: clamp(18px, 2.2vw, 24px); border-radius: var(--radius-sheet); background: var(--sheet); text-decoration: none; transition: background-color 0.14s ease-out; }
@@ -522,6 +530,8 @@ a.channel:hover .arrow { stroke: var(--ink); transform: translate(2px, -2px); }
 @media (max-width: 700px) {
   .ledger > div { grid-template-columns: 16px minmax(0, 1fr); }
   .ledger dd { grid-column: 2; }
+  .download-card { grid-template-columns: minmax(0, 1fr); }
+  .download-button { justify-self: start; }
   .spec > div, .terms > div, .field-row { grid-template-columns: minmax(0, 1fr); }
   .field-row + .small { margin-top: 0; }
   .facts { grid-template-columns: minmax(0, 1fr); }
