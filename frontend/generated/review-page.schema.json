@@ -1,0 +1,684 @@
+{
+  "$defs": {
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConditionKind"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "ConditionKind": {
+      "enum": [
+        "setup_required",
+        "model_too_large",
+        "runner_unavailable",
+        "stale_source",
+        "unsupported_framework",
+        "unreadable_file",
+        "partial_coverage"
+      ],
+      "title": "ConditionKind",
+      "type": "string"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "description": "True-denominator progress: every question is counted somewhere.",
+      "properties": {
+        "completed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Completed",
+          "type": "integer"
+        },
+        "excluded": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Excluded",
+          "type": "integer"
+        },
+        "pending": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Pending",
+          "type": "integer"
+        },
+        "total": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "unsupported": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Unsupported",
+          "type": "integer"
+        }
+      },
+      "title": "Coverage",
+      "type": "object"
+    },
+    "EventKind": {
+      "enum": [
+        "run.started",
+        "run.resumed",
+        "run.paused",
+        "run.canceled",
+        "run.failed",
+        "run.completed",
+        "run.queue_changed",
+        "question.started",
+        "question.stage",
+        "question.activity",
+        "question.finished"
+      ],
+      "title": "EventKind",
+      "type": "string"
+    },
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "ModelRef": {
+      "additionalProperties": false,
+      "properties": {
+        "file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "quantization": {
+          "title": "Quantization",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "file_sha256",
+        "quantization"
+      ],
+      "title": "ModelRef",
+      "type": "object"
+    },
+    "QuestionStage": {
+      "description": "FRAME -> GATHER -> HYPOTHESIZE -> CHALLENGE -> DECIDE -> [VERIFY] -> RECORD.",
+      "enum": [
+        "frame",
+        "gather",
+        "hypothesize",
+        "challenge",
+        "decide",
+        "verify",
+        "record"
+      ],
+      "title": "QuestionStage",
+      "type": "string"
+    },
+    "QuestionStatus": {
+      "enum": [
+        "pending",
+        "excluded",
+        "running",
+        "answered",
+        "rejected_by_validator",
+        "inconclusive",
+        "budget_exhausted",
+        "canceled",
+        "failed"
+      ],
+      "title": "QuestionStatus",
+      "type": "string"
+    },
+    "QuestionType": {
+      "enum": [
+        "guard_summary",
+        "guard_equivalent",
+        "input_origin",
+        "sink_safety",
+        "intentional_exception",
+        "client_exposure",
+        "fix_sketch"
+      ],
+      "title": "QuestionType",
+      "type": "string"
+    },
+    "QueueRow": {
+      "additionalProperties": false,
+      "properties": {
+        "exploration": {
+          "title": "Exploration",
+          "type": "boolean"
+        },
+        "family": {
+          "$ref": "#/$defs/Family"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "original_position": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Position"
+        },
+        "position": {
+          "minimum": 1,
+          "title": "Position",
+          "type": "integer"
+        },
+        "priority_reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Priority Reasons",
+          "type": "array"
+        },
+        "stage": {
+          "$ref": "#/$defs/QuestionStage"
+        },
+        "status": {
+          "$ref": "#/$defs/QuestionStatus"
+        },
+        "type": {
+          "$ref": "#/$defs/QuestionType"
+        }
+      },
+      "required": [
+        "id",
+        "position",
+        "type",
+        "family",
+        "stage",
+        "status",
+        "location",
+        "priority_reasons",
+        "exploration"
+      ],
+      "title": "QueueRow",
+      "type": "object"
+    },
+    "ReviewRun": {
+      "additionalProperties": false,
+      "properties": {
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage",
+          "default": {
+            "completed": 0,
+            "excluded": 0,
+            "pending": 0,
+            "total": 0,
+            "unsupported": 0
+          }
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "finding_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Finding Ids",
+          "type": "array"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/RunLifecycle"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModelRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "run_type": {
+          "$ref": "#/$defs/RunType"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RunStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "toolchain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Toolchain"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "run_type",
+        "lifecycle",
+        "created_at"
+      ],
+      "title": "ReviewRun",
+      "type": "object"
+    },
+    "RunEvent": {
+      "additionalProperties": false,
+      "description": "One entry of a run's activity log. ``seq`` counts from 1 within the run, without gaps,\nso a client that reconnects can ask for everything after the last one it saw.",
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "coverage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Coverage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "$ref": "#/$defs/EventKind"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "question_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question Id"
+        },
+        "run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "minimum": 1,
+          "title": "Seq",
+          "type": "integer"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "at",
+        "kind"
+      ],
+      "title": "RunEvent",
+      "type": "object"
+    },
+    "RunLifecycle": {
+      "enum": [
+        "queued",
+        "running",
+        "paused",
+        "canceled",
+        "failed",
+        "completed"
+      ],
+      "title": "RunLifecycle",
+      "type": "string"
+    },
+    "RunStage": {
+      "enum": [
+        "indexing",
+        "scanning",
+        "investigating",
+        "verifying",
+        "reporting"
+      ],
+      "title": "RunStage",
+      "type": "string"
+    },
+    "RunType": {
+      "description": "Live, replayed, and saved runs are always labeled differently (PROJECT_PLAN \u00a715).",
+      "enum": [
+        "live",
+        "replay",
+        "saved"
+      ],
+      "title": "RunType",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "Toolchain": {
+      "additionalProperties": false,
+      "description": "Everything needed to reproduce a run (design.md \u00a712, Runs).",
+      "properties": {
+        "backend": {
+          "title": "Backend",
+          "type": "string"
+        },
+        "knowledge_pack_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Knowledge Pack Date"
+        },
+        "llama_cpp_build": {
+          "title": "Llama Cpp Build",
+          "type": "string"
+        },
+        "llama_cpp_release": {
+          "title": "Llama Cpp Release",
+          "type": "string"
+        },
+        "opengrep_rules_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opengrep Rules Sha256"
+        },
+        "opengrep_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opengrep Version"
+        }
+      },
+      "required": [
+        "llama_cpp_release",
+        "llama_cpp_build",
+        "backend"
+      ],
+      "title": "Toolchain",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ReviewPage.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cursor": {
+      "minimum": 0,
+      "title": "Cursor",
+      "type": "integer"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/RunEvent"
+      },
+      "maxItems": 100,
+      "title": "Events",
+      "type": "array"
+    },
+    "next_offset": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Next Offset"
+    },
+    "offset": {
+      "minimum": 0,
+      "title": "Offset",
+      "type": "integer"
+    },
+    "questions": {
+      "items": {
+        "$ref": "#/$defs/QueueRow"
+      },
+      "maxItems": 20,
+      "title": "Questions",
+      "type": "array"
+    },
+    "queue_excluded": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Queue Excluded",
+      "type": "integer"
+    },
+    "requested": {
+      "anyOf": [
+        {
+          "enum": [
+            "pause",
+            "cancel"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Requested"
+    },
+    "run": {
+      "$ref": "#/$defs/ReviewRun"
+    },
+    "total": {
+      "minimum": 0,
+      "title": "Total",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run",
+    "questions",
+    "total",
+    "offset",
+    "next_offset",
+    "events",
+    "cursor",
+    "requested"
+  ],
+  "title": "ReviewPage",
+  "type": "object"
+}

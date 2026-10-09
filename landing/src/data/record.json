@@ -1,0 +1,1216 @@
+{
+  "run": {
+    "id": "review-ee4171c3eebb409292621ba112eabc63",
+    "type": "live",
+    "lifecycle": "completed",
+    "created_at": "2026-10-08T15:50:40.922283Z",
+    "started_at": "2026-10-08T15:50:46.658283Z",
+    "finished_at": "2026-10-08T16:05:16.566292Z",
+    "model": {
+      "id": "qwen3.5-2b-q4_k_m",
+      "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+      "quantization": "Q4_K_M"
+    },
+    "toolchain": {
+      "llama_cpp_release": "v0.5.0",
+      "llama_cpp_build": "b11146",
+      "backend": "vulkan",
+      "opengrep_version": "v1.30.0"
+    },
+    "profile": "mx350-vulkan-8k",
+    "command": [
+      "review",
+      ".\\app\\labs\\tandir",
+      "--resource",
+      "Order",
+      "--route",
+      "/orders/{order_id}/receipt",
+      "--route",
+      "/orders/{order_id}/invoice",
+      "--family",
+      "authorization",
+      "--profile",
+      "mx350-vulkan-8k",
+      "--limit",
+      "2",
+      "--guard-cache",
+      "<new-empty-cache>"
+    ],
+    "question_limit": 2,
+    "declared_stop": {
+      "answers": 60,
+      "seconds": 1800
+    },
+    "coverage": {
+      "total": 87,
+      "completed": 2,
+      "pending": 0,
+      "excluded": 85,
+      "unsupported": 0
+    },
+    "snapshot": {
+      "id": "3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39",
+      "root_name": "tandir"
+    },
+    "overview": {
+      "included_files": 51,
+      "excluded_files": 2,
+      "python": 20,
+      "tsx": 11,
+      "typescript": 12,
+      "fastapi_entries": 26,
+      "nextjs_entries": 13,
+      "access_paths": 87,
+      "pattern_leads": 15,
+      "pattern_leads_in_scope": 1
+    },
+    "requests": {
+      "started": 28,
+      "answered": 28,
+      "attempts": 28,
+      "by_finding": [
+        {
+          "finding": "F-01",
+          "kinds": {
+            "guard_summary": 13,
+            "gather": 4,
+            "intentional_exception": 3,
+            "fix_sketch": 1
+          }
+        },
+        {
+          "finding": "F-02",
+          "kinds": {
+            "gather": 4,
+            "guard_summary": 3
+          }
+        }
+      ]
+    },
+    "prompt_tokens": 20381,
+    "completion_tokens": 1273,
+    "elapsed_seconds": 921.547,
+    "exit": 0,
+    "budget_stop": false,
+    "memory_abort": null,
+    "forced_stops": 0,
+    "owned_remaining": 0,
+    "target_code_executed": false,
+    "browser_rendering_claimed": false,
+    "clean_user_profile": false,
+    "admission": {
+      "available_bytes": 1921687552,
+      "host_bytes": 1361051648,
+      "device_bytes": 1776287744,
+      "device_name": "NVIDIA GeForce MX350",
+      "ctx_size": 8192
+    },
+    "initial_refusal": {
+      "available_bytes": 882130944,
+      "total_bytes": 8358518784,
+      "exit": 2,
+      "message": "Insufficient or unknown RAM/dedicated VRAM; close apps and rerun doctor",
+      "model_loaded": false
+    },
+    "machine": {
+      "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+      "physical_cores": 4,
+      "os": "Windows",
+      "architecture": "AMD64",
+      "total_memory_bytes": 8358518784,
+      "gpu": "NVIDIA GeForce MX350"
+    },
+    "report_read": {
+      "elapsed_seconds": 11.235,
+      "exit": 0,
+      "reports_unchanged": true
+    },
+    "limitations": [
+      "Static support does not establish runtime reproduction.",
+      "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+      "Valid citations establish grounding, not the correctness of a security judgment.",
+      "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+      "Only selected families and recognized source forms are investigated. Unsupported flows remain explicit gaps.",
+      "Python resolution uses the static import fallback. Dynamic dispatch and unsupported guards remain gaps.",
+      "No target code was executed. Runtime verification is unavailable; source-based severity does not establish runtime impact.",
+      "Coverage counts discovered access sites, not every possible vulnerability or source file.",
+      "Peer analysis covers the selected resources; excluded resources cannot establish their policies.",
+      "Queue peer checks reuse validated exact-source/profile summaries only; uncached guards stay unknown until investigation.",
+      "Opengrep supplied 15 cited pattern leads; 1 overlap the selected supported questions. Other matches are not investigated by this queue. Pattern matches are not findings.",
+      "Supplementary observations are not challenged findings and do not affect coverage.",
+      "Credential shapes may be placeholders; values are omitted and are not validated remotely.",
+      "Configuration flags do not establish deployment exposure or exploitability.",
+      "Advisory matches describe exact lockfile version exposure, not runtime exploitability.",
+      "The dated advisory pack is a small curated subset, not a complete vulnerability database.",
+      "Only npm package-lock/npm-shrinkwrap v2/v3 and uv.lock v1 registry packages are supported. pnpm, Yarn, requirements ranges, Git/path/workspace packages and other ecosystems are unknown.",
+      "Lockfile citations cover the parsed file; no package scripts, imports or installs are run.",
+      "0 known secret files were excluded from the snapshot and were not opened.",
+      "Included unsupported lockfiles were not advisory-matched; dependency scope remains incomplete.",
+      "fixed/api.patch: excluded (unsupported).",
+      "fixed/web.patch: excluded (unsupported).",
+      "F-01: Bounded static analysis; runtime verification not attempted",
+      "F-01: Runtime reachability is not established by static mounting",
+      "F-02: Bounded static analysis; runtime verification not attempted",
+      "F-02: Runtime reachability is not established by static mounting"
+    ],
+    "console": [
+      "Project: tandir | snapshot 3af5575a0bd6",
+      "Included files: 51; excluded: 2",
+      "Source files: python 20, tsx 11, typescript 12",
+      "Discovered entries: fastapi 26, nextjs 13",
+      "Modules with source: 41; empty modules: 2; access paths: 87; unresolved links: 707",
+      "Guard candidates: 4 (unverified); extraction issues: 1",
+      "Showing 12 of 39 entry flows:",
+      "  GET /health | api/tandir/main.py:18 | 0 access paths, 0 unresolved links",
+      "  GET /admin/orders | api/tandir/routers/admin.py:18 | 2 access paths, 24 unresolved links",
+      "  GET /admin/customers | api/tandir/routers/admin.py:36 | 2 access paths, 26 unresolved links",
+      "  GET /admin/orders/{order_id} | api/tandir/routers/admin.py:56 | 3 access paths, 27 unresolved links",
+      "  POST /auth/login | api/tandir/routers/auth.py:13 | 0 access paths, 23 unresolved links",
+      "  POST /auth/logout | api/tandir/routers/auth.py:21 | 2 access paths, 22 unresolved links",
+      "  GET /auth/me | api/tandir/routers/auth.py:27 | 2 access paths, 18 unresolved links",
+      "  GET /branches/{branch_id}/menu | api/tandir/routers/branches.py:25 | 1 access paths, 4 unresolved links",
+      "  PUT /branches/{branch_id}/menu/{item_id} | api/tandir/routers/branches.py:31 | 3 access paths, 27 unresolved links",
+      "  PUT /branches/{branch_id}/hours | api/tandir/routers/branches.py:49 | 3 access paths, 28 unresolved links",
+      "  GET /branches/{branch_id}/orders | api/tandir/routers/branches.py:73 | 3 access paths, 30 unresolved links",
+      "  GET /courier/deliveries | api/tandir/routers/courier.py:24 | 3 access paths, 30 unresolved links",
+      "Overview only; no security verdict. Full citations, unknowns and exclusions are saved in overview.json.",
+      "Capability: Parsed/Indexed are source observations; Investigated is unverified for the current engine, and general Runtime-testable is unavailable.",
+      "Investigated requires passing evaluation slices for this engine, model and framework. Current engine acceptance is unrun. Historical scoped successes and broader misses below are retained; software fixtures, installed assets and parsing do not prove model accuracy.",
+      "General runtime-testable support is unavailable: no isolated backend has passed acceptance (ADR-0017). The separate hash-pinned bundled Tandir receipt/invoice exception has recorded runtime proof; it permits no arbitrary source or proposed diff execution.",
+      "Preparing the queue from frozen source and cached guard evidence...",
+      "Run: review-ee4171c3eebb409292621ba112eabc63",
+      "Reports: <data folder>\\reviews\\review-ee4171c3eebb409292621ba112eabc63",
+      "Selected families: authorization",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  gather: answered",
+      "  gather: answered",
+      "  gather: answered",
+      "  gather: answered",
+      "  intentional_exception: answered",
+      "  intentional_exception: answered",
+      "  intentional_exception: answered",
+      "  fix_sketch: answered",
+      "F-01: supported - Order access: owner check",
+      "  gather: answered",
+      "  gather: answered",
+      "  gather: answered",
+      "  gather: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "  guard_summary: answered",
+      "F-02: rejected - Order access: owner check",
+      "Run review-ee4171c3eebb409292621ba112eabc63: completed (live)",
+      "Source conclusions: 1 supported, 1 rejected, 0 inconclusive",
+      "Scope: 2/87 checks processed; 0 pending, 85 excluded, 0 unsupported",
+      "Source support and runtime reproduction are separate; see each finding's evidence.",
+      "Limit: Only selected families and recognized source forms are investigated. Unsupported flows remain explicit gaps.",
+      "Limit: Python resolution uses the static import fallback. Dynamic dispatch and unsupported guards remain gaps.",
+      "Limit: No target code was executed. Runtime verification is unavailable; source-based severity does not establish runtime impact.",
+      "Limit: Coverage counts discovered access sites, not every possible vulnerability or source file.",
+      "Limit: Peer analysis covers the selected resources; excluded resources cannot establish their policies.",
+      "Limit: Queue peer checks reuse validated exact-source/profile summaries only; uncached guards stay unknown until investigation.",
+      "Limit: Opengrep supplied 15 cited pattern leads; 1 overlap the selected supported questions. Other matches are not investigated by this queue. Pattern matches are not findings.",
+      "Saved <data folder>\\reviews\\review-ee4171c3eebb409292621ba112eabc63\\report.html",
+      "View with: plumb report review-ee4171c3eebb409292621ba112eabc63"
+    ],
+    "findings": [
+      {
+        "display_id": "F-01",
+        "id": "finding:8a434935f7a4a50882a36a5a",
+        "route": "/orders/{order_id}/receipt",
+        "family": "authorization",
+        "cwe": [
+          639,
+          862
+        ],
+        "title": "Order access: owner check",
+        "lede": "Peer deviation persists after three independent acquittal searches",
+        "conclusion": "supported",
+        "runtime_verification": "not_attempted",
+        "severity": "medium",
+        "severity_rationale": "Source-impact v1: Potential unauthorized read of principal/tenant-scoped records through a declared HTTP route. The data class is inferred from executable peer restrictions, not resource names; personal/payment contents and broader compromise are not established. Evidence: E01, E06, E07, E08, E09, E05, E10, E11, E12, E13, E14, E15, E16, E17, E18, E19, E20, E21, E22, E23, E24, E25, E26, E27, E28, E29, E30, E31. Deployment reachability, attacker prerequisites and runtime impact remain unverified.",
+        "strength": "partial",
+        "gaps": [
+          "Bounded static analysis; runtime verification not attempted"
+        ],
+        "unknowns": [
+          "Runtime reachability is not established by static mounting"
+        ],
+        "exhibit_count": 31,
+        "evidence_violations": 0,
+        "priority_reasons": [
+          "Order holds payment data, going by its name",
+          "Order is selected by an ID from the URL path",
+          "Guard/path uncertainty: Guard classification is not cached for this exact source/profile",
+          "Opengrep lead (plumb.authz.load-by-id-without-owner-comparison) at api/tandir/routers/orders.py:88; requires source challenge"
+        ],
+        "looked": [
+          "helper_body",
+          "query_text",
+          "router_config"
+        ],
+        "searches": [
+          {
+            "item": "A query filter scoped to the principal",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:82-91",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:60-76",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "An equivalent guard in the handler, router, dependency or DAL",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:82-91",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:60-76",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "An admin-only entry point",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:82-91",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:60-76",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "A resource public by executable policy",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:82-91",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:60-76",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "An unreachable route",
+            "status": "unsupported",
+            "note": "Runtime reachability is not established by static mounting",
+            "places": [
+              "api/tandir/routers/orders.py:82-91",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:60-76",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          }
+        ],
+        "judgments": [
+          {
+            "seed": 42,
+            "question_type": "intentional_exception",
+            "interpretation": "none_found",
+            "answer": {
+              "reason": "none_found",
+              "line_ids": []
+            },
+            "violations": 0
+          },
+          {
+            "seed": 43,
+            "question_type": "intentional_exception",
+            "interpretation": "none_found",
+            "answer": {
+              "reason": "none_found",
+              "line_ids": []
+            },
+            "violations": 0
+          },
+          {
+            "seed": 44,
+            "question_type": "intentional_exception",
+            "interpretation": "none_found",
+            "answer": {
+              "reason": "none_found",
+              "line_ids": []
+            },
+            "violations": 0
+          }
+        ],
+        "guards": [
+          {
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "where": "api/tandir/security.py:45-46"
+          }
+        ]
+      },
+      {
+        "display_id": "F-02",
+        "id": "finding:c8e84a74edcc9b9f78438d67",
+        "route": "/orders/{order_id}/invoice",
+        "family": "authorization",
+        "cwe": [
+          639,
+          862
+        ],
+        "title": "Order access: owner check",
+        "lede": "Three judgments cite executable protection on the access path",
+        "conclusion": "rejected",
+        "runtime_verification": "not_attempted",
+        "severity": "unknown",
+        "severity_rationale": "Not rated: the investigation is rejected.",
+        "strength": "partial",
+        "gaps": [
+          "Bounded static analysis; runtime verification not attempted"
+        ],
+        "unknowns": [
+          "Runtime reachability is not established by static mounting"
+        ],
+        "exhibit_count": 7,
+        "evidence_violations": 0,
+        "priority_reasons": [
+          "Order holds payment data, going by its name",
+          "Order is selected by an ID from the URL path",
+          "Guard/path uncertainty: Guard classification is not cached for this exact source/profile"
+        ],
+        "looked": [
+          "helper_body",
+          "query_text",
+          "router_config",
+          "callers"
+        ],
+        "searches": [
+          {
+            "item": "A query filter scoped to the principal",
+            "status": "found",
+            "note": "Executable protection found on this access path",
+            "places": [
+              "api/tandir/routers/orders.py:94-101",
+              "api/tandir/services/orders.py:10-16",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:82-85",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 1
+          },
+          {
+            "item": "An equivalent guard in the handler, router, dependency or DAL",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:94-101",
+              "api/tandir/services/orders.py:10-16",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:82-85",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "An admin-only entry point",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:94-101",
+              "api/tandir/services/orders.py:10-16",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:82-85",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "A resource public by executable policy",
+            "status": "not_found",
+            "note": "Not found in the cited code searched; this is bounded negative evidence",
+            "places": [
+              "api/tandir/routers/orders.py:94-101",
+              "api/tandir/services/orders.py:10-16",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:82-85",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          },
+          {
+            "item": "An unreachable route",
+            "status": "unsupported",
+            "note": "Runtime reachability is not established by static mounting",
+            "places": [
+              "api/tandir/routers/orders.py:94-101",
+              "api/tandir/services/orders.py:10-16",
+              "api/tandir/security.py:42-50",
+              "api/tandir/schemas.py:82-85",
+              "api/tandir/security.py:35-39"
+            ],
+            "guards": 0
+          }
+        ],
+        "judgments": [
+          {
+            "seed": 42,
+            "question_type": "guard_summary",
+            "interpretation": "scoped_elsewhere",
+            "answer": {
+              "guards": [
+                {
+                  "kind": "owner",
+                  "subject": "user.id",
+                  "object": "Order.customer_id",
+                  "line_ids": [
+                    "L7"
+                  ]
+                }
+              ]
+            },
+            "violations": 0
+          },
+          {
+            "seed": 43,
+            "question_type": "guard_summary",
+            "interpretation": "scoped_elsewhere",
+            "answer": {
+              "guards": [
+                {
+                  "kind": "owner",
+                  "subject": "user.id",
+                  "object": "Order.customer_id",
+                  "line_ids": [
+                    "L3"
+                  ]
+                }
+              ]
+            },
+            "violations": 0
+          },
+          {
+            "seed": 44,
+            "question_type": "guard_summary",
+            "interpretation": "scoped_elsewhere",
+            "answer": {
+              "guards": [
+                {
+                  "kind": "owner",
+                  "subject": "user.id",
+                  "object": "Order.customer_id",
+                  "line_ids": [
+                    "L12"
+                  ]
+                }
+              ]
+            },
+            "violations": 0
+          }
+        ],
+        "guards": [
+          {
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "where": "api/tandir/security.py:45-46"
+          },
+          {
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "query_filter",
+            "subject": "user.id",
+            "object": "Order.customer_id",
+            "where": "api/tandir/services/orders.py:11-13"
+          }
+        ]
+      }
+    ],
+    "peer": {
+      "resource": "Order",
+      "min_peers": 3,
+      "min_share": 0.75,
+      "columns": [
+        "authenticated",
+        "owner",
+        "role"
+      ],
+      "deviation": {
+        "missing": "owner",
+        "peers_applying": 10,
+        "peers_total": 10
+      },
+      "compared": 11,
+      "excluded": 4,
+      "rows": [
+        {
+          "site": "access:3e7c979be201d2175b8062dc",
+          "method": "GET",
+          "route": "/admin/orders/{order_id}",
+          "handler": {
+            "path": "api/tandir/routers/admin.py",
+            "line": 56
+          },
+          "applied": [],
+          "excluded": "Admin-only dependency: literal admin binding and enforcing role body cited",
+          "subject": false
+        },
+        {
+          "site": "access:c42904f03cbba04a760ed7a3",
+          "method": "GET",
+          "route": "/branches/{branch_id}/orders",
+          "handler": {
+            "path": "api/tandir/routers/branches.py",
+            "line": 73
+          },
+          "applied": [],
+          "excluded": "Separate tenant-scoped role policy: resource scope and literal role binding cited",
+          "subject": false
+        },
+        {
+          "site": "access:325a77ca6ddd1fab14044c25",
+          "method": "GET",
+          "route": "/courier/deliveries",
+          "handler": {
+            "path": "api/tandir/routers/courier.py",
+            "line": 24
+          },
+          "applied": [
+            "authenticated",
+            "owner",
+            "role"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:bce923f64e6dee00a8cfbe40",
+          "method": "GET",
+          "route": "/courier/orders/{order_id}",
+          "handler": {
+            "path": "api/tandir/routers/courier.py",
+            "line": 32
+          },
+          "applied": [
+            "authenticated",
+            "owner",
+            "role"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:d6c35fbf2efb00fb2cda2939",
+          "method": "POST",
+          "route": "/kitchen/orders/{order_id}/items/{item_id}/label",
+          "handler": {
+            "path": "api/tandir/routers/kitchen.py",
+            "line": 27
+          },
+          "applied": [],
+          "excluded": "Separate tenant-scoped role policy: resource scope and literal role binding cited",
+          "subject": false
+        },
+        {
+          "site": "access:e762e143df858264024d693a",
+          "method": "POST",
+          "route": "/kitchen/orders/{order_id}/receipt",
+          "handler": {
+            "path": "api/tandir/routers/kitchen.py",
+            "line": 45
+          },
+          "applied": [],
+          "excluded": "Separate tenant-scoped role policy: resource scope and literal role binding cited",
+          "subject": false
+        },
+        {
+          "site": "access:ed378f0cfa63b5c5de8b150f",
+          "method": "GET",
+          "route": "/orders",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 27
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:482dfd5b97f4f8e958ea5a45",
+          "method": "GET",
+          "route": "/orders/{order_id}",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 68
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:ffb0ea24ed0b07eb3940e2d4",
+          "method": "GET",
+          "route": "/orders/{order_id}/receipt",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 82
+          },
+          "applied": [
+            "authenticated"
+          ],
+          "excluded": null,
+          "subject": true
+        },
+        {
+          "site": "access:f55c0f3a2d93e70d18a86db7",
+          "method": "GET",
+          "route": "/orders/{order_id}/invoice",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 94
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:8987cdaa54c5804fd5ceaae8",
+          "method": "POST",
+          "route": "/orders/{order_id}/cancel",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 104
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:a1d59f6039b3151fd618fc38",
+          "method": "GET",
+          "route": "/orders/{order_id}/items",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 120
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:c8dedc4648eed54116fbf431",
+          "method": "GET",
+          "route": "/orders/{order_id}/tracking",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 133
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:2e0c46fe90931ef75cc79c29",
+          "method": "POST",
+          "route": "/orders/{order_id}/photos",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 148
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        },
+        {
+          "site": "access:b0a88d36af91cfeb0400facc",
+          "method": "GET",
+          "route": "/orders/{order_id}/photos",
+          "handler": {
+            "path": "api/tandir/routers/orders.py",
+            "line": 167
+          },
+          "applied": [
+            "authenticated",
+            "owner"
+          ],
+          "excluded": null,
+          "subject": false
+        }
+      ],
+      "limitations": [
+        "Peer deviations are leads requiring challenge, not verdicts",
+        "Resource identities are not merged by spelling",
+        "Unsupported paths remain in the voting denominator",
+        "Branch/admin exclusions are candidate exceptions, not confirmed policy"
+      ]
+    },
+    "proposal": {
+      "status": "refused",
+      "reason": "Proposed code has invalid syntax; preserve indentation and punctuation.",
+      "probe_status": "unavailable",
+      "probe_reason": "No validated change/probe mapping was produced; verification unavailable."
+    },
+    "saved_reports": [
+      {
+        "name": "report.html",
+        "bytes": 98365,
+        "sha256": "ef37b848232d9a2cf8d5dff4cda655e5d46cd124a2ee27525e25a8e2747607b5"
+      },
+      {
+        "name": "report.md",
+        "bytes": 27615,
+        "sha256": "95a1a3b451e51bd3015145da31219d7f088a159687d662f18c9128d498ce57f1"
+      },
+      {
+        "name": "report.json",
+        "bytes": 214021,
+        "sha256": "9076a57cb8727ba1d2b21f25ee4e3e05cdab9c1ceabf906935686b1c46638a0f"
+      },
+      {
+        "name": "report.sarif",
+        "bytes": 360002,
+        "sha256": "82d9d7b14f3ccf9a5102d1a91ad14b9000a49b1e7f6e30f7c0e8a23b0b11b022"
+      }
+    ]
+  },
+  "excerpts": {
+    "receipt_handler": {
+      "tag": "F-01/E01",
+      "role": "evidence",
+      "path": "api/tandir/routers/orders.py",
+      "start": 82,
+      "end": 91,
+      "sha256": "5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e",
+      "lines": [
+        "@router.get(\"/{order_id}/receipt\")",
+        "def get_receipt(",
+        "    order_id: int,",
+        "    user: User = Depends(current_user),",
+        "    db: Session = Depends(get_db),",
+        ") -> ReceiptOut:",
+        "    order = db.get(Order, order_id)",
+        "    if order is None:",
+        "        raise HTTPException(status_code=404, detail=\"Order not found\")",
+        "    return ReceiptOut.from_order(order)"
+      ],
+      "access": {
+        "tag": "F-01/E06",
+        "start": 88,
+        "end": 88
+      }
+    },
+    "invoice_handler": {
+      "tag": "F-02/E01",
+      "role": "evidence",
+      "path": "api/tandir/routers/orders.py",
+      "start": 94,
+      "end": 101,
+      "sha256": "1082adcb6f2c04ed23ca08bfc8e01776fcc33175bed0e07d316f42d89992a627",
+      "lines": [
+        "@router.get(\"/{order_id}/invoice\")",
+        "def get_invoice(",
+        "    order_id: int,",
+        "    user: User = Depends(current_user),",
+        "    db: Session = Depends(get_db),",
+        ") -> InvoiceOut:",
+        "    order = load_order_scoped(db, order_id, user)",
+        "    return InvoiceOut.from_order(order)"
+      ]
+    },
+    "invoice_helper": {
+      "tag": "F-02/E02",
+      "role": "evidence",
+      "path": "api/tandir/services/orders.py",
+      "start": 10,
+      "end": 16,
+      "sha256": "3d1e9f676d301b4d76a7b85f980f6e1ff9c79a882b8bdbc321efec586e65ce1e",
+      "lines": [
+        "def load_order_scoped(db: Session, order_id: int, user: User) -> Order:",
+        "    order = db.scalars(",
+        "        select(Order).where(Order.id == order_id, Order.customer_id == user.id)",
+        "    ).first()",
+        "    if order is None:",
+        "        raise HTTPException(status_code=404, detail=\"Order not found\")",
+        "    return order"
+      ],
+      "guard": {
+        "tag": "F-02/E07",
+        "start": 11,
+        "end": 13
+      }
+    },
+    "signed_in": {
+      "tag": "F-01/E02",
+      "role": "evidence",
+      "path": "api/tandir/security.py",
+      "start": 42,
+      "end": 50,
+      "sha256": "480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266",
+      "lines": [
+        "def current_user(request: Request, db: Session = Depends(get_db)) -> User:",
+        "    token = _token(request)",
+        "    login = db.get(LoginSession, token) if token else None",
+        "    if login is None:",
+        "        raise HTTPException(status_code=401, detail=\"Sign in first\")",
+        "    user = db.get(User, login.user_id)",
+        "    if user is None:",
+        "        raise HTTPException(status_code=401, detail=\"Sign in first\")",
+        "    return user"
+      ],
+      "guard": {
+        "tag": "F-01/E05",
+        "start": 45,
+        "end": 46
+      }
+    }
+  },
+  "runtime": {
+    "receipt": {
+      "at": "2026-10-05T17:42:53.314407Z",
+      "route": "/orders/{order_id}/receipt",
+      "outcome": "reproduced",
+      "steps": [
+        {
+          "role": "setup",
+          "principal": "alice",
+          "expected_if_safe": "allowed",
+          "status": 201,
+          "marker_present": false
+        },
+        {
+          "role": "attack",
+          "principal": "bob",
+          "expected_if_safe": "denied",
+          "status": 200,
+          "marker_present": true
+        },
+        {
+          "role": "control",
+          "principal": "alice",
+          "expected_if_safe": "allowed",
+          "status": 200,
+          "marker_present": true
+        }
+      ]
+    },
+    "invoice": {
+      "at": "2026-10-05T17:48:50.525433Z",
+      "route": "/orders/{order_id}/invoice",
+      "outcome": "not_reproduced",
+      "steps": [
+        {
+          "role": "setup",
+          "principal": "alice",
+          "expected_if_safe": "allowed",
+          "status": 201,
+          "marker_present": false
+        },
+        {
+          "role": "attack",
+          "principal": "bob",
+          "expected_if_safe": "denied",
+          "status": 404,
+          "marker_present": false
+        },
+        {
+          "role": "control",
+          "principal": "alice",
+          "expected_if_safe": "allowed",
+          "status": 200,
+          "marker_present": true
+        }
+      ]
+    },
+    "replay": {
+      "at": "2026-10-06T19:58:25.738942+00:00",
+      "review_id": "review-efe914fb441a4374bd3ec22debc371dc",
+      "model_loaded": false,
+      "before": {
+        "outcome": "reproduced",
+        "steps": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "expected_if_safe": "allowed",
+            "status": 201,
+            "marker_present": false
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "expected_if_safe": "denied",
+            "status": 200,
+            "marker_present": true
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "expected_if_safe": "allowed",
+            "status": 200,
+            "marker_present": true
+          }
+        ]
+      },
+      "after": {
+        "outcome": "fixed",
+        "steps": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "expected_if_safe": "allowed",
+            "status": 201,
+            "marker_present": false
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "expected_if_safe": "denied",
+            "status": 404,
+            "marker_present": false
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "expected_if_safe": "allowed",
+            "status": 200,
+            "marker_present": true
+          }
+        ]
+      }
+    }
+  },
+  "sample": {
+    "victim": {
+      "id": 1,
+      "customer": {
+        "username": "alice",
+        "name": "Alice Karimova",
+        "role": "customer"
+      },
+      "address": "12 Amir Temur Avenue, flat 7",
+      "items": [
+        {
+          "name": "Samsa",
+          "quantity": 2
+        },
+        {
+          "name": "Napoleon cake",
+          "quantity": 1
+        }
+      ]
+    },
+    "intruder": {
+      "id": 2,
+      "customer": {
+        "username": "bob",
+        "name": "Bob Tursunov",
+        "role": "customer"
+      },
+      "address": "4 Navoi Street",
+      "items": [
+        {
+          "name": "Non",
+          "quantity": 1
+        },
+        {
+          "name": "Medovik cake",
+          "quantity": 1
+        }
+      ]
+    },
+    "receipt_fields": [
+      "order_id",
+      "customer_name",
+      "delivery_address",
+      "items",
+      "total_cents"
+    ]
+  },
+  "model": {
+    "id": "qwen3.5-2b-q4_k_m",
+    "family": "Qwen3.5-2B",
+    "base_model": "Qwen/Qwen3.5-2B",
+    "repo": "bartowski/Qwen_Qwen3.5-2B-GGUF",
+    "file": "Qwen_Qwen3.5-2B-Q4_K_M.gguf",
+    "sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+    "size": 1396198496,
+    "quantization": "Q4_K_M",
+    "license": "apache-2.0"
+  },
+  "runtime_download": {
+    "release": "v0.5.0",
+    "backend": "vulkan",
+    "name": "llama-b11146-bin-win-vulkan-x64.zip",
+    "size": 32127004
+  },
+  "package": {
+    "archive_bytes": 97471080,
+    "archive_sha256": "d614855c61db3c311017be7d906eacf2358dc1f3edc90fe578d7b1e20ed4ae1b",
+    "inventoried_files": 2951,
+    "references_checked": 294,
+    "clean_user_profile": false
+  },
+  "software": {
+    "python": {
+      "collected": 2334,
+      "skipped": 3,
+      "failed_first_run": 1,
+      "passed_first_run": 2330,
+      "passed_on_isolated_retry": 1
+    },
+    "frontend_tests": 68
+  },
+  "development": {
+    "baseline": {
+      "cases": 65,
+      "vulnerable": 25,
+      "controls": 40,
+      "scanner": {
+        "controls_flagged": 0,
+        "authorization_found": 10,
+        "authorization_of": 20
+      },
+      "one_shot": {
+        "controls_flagged": 31,
+        "authorization_found": 17,
+        "authorization_of": 20
+      }
+    },
+    "family_run": {
+      "cases": 12,
+      "requests": 36,
+      "expected_rejections": 1,
+      "inconclusive": 11
+    },
+    "action_phone": [
+      {
+        "id": "D1",
+        "label": "unguarded action",
+        "conclusion": "Supported"
+      },
+      {
+        "id": "D1-L",
+        "label": "authenticated action",
+        "conclusion": "Rejected"
+      },
+      {
+        "id": "D2",
+        "label": "phone disclosure",
+        "conclusion": "Inconclusive"
+      },
+      {
+        "id": "D2-L",
+        "label": "minimized projection",
+        "conclusion": "Rejected"
+      }
+    ],
+    "phone_pair": [
+      {
+        "id": "D2",
+        "label": "phone disclosure",
+        "conclusion": "Inconclusive"
+      },
+      {
+        "id": "D2-L",
+        "label": "minimized projection",
+        "conclusion": "Rejected"
+      }
+    ],
+    "focused": [
+      {
+        "id": "B1",
+        "label": "dynamic SQL identifier",
+        "protected": false,
+        "original": "Inconclusive",
+        "focused": "Inconclusive"
+      },
+      {
+        "id": "B1-L",
+        "label": "allowlisted identifier",
+        "protected": true,
+        "original": "Inconclusive",
+        "focused": "Rejected"
+      },
+      {
+        "id": "B2-L",
+        "label": "argument-array command",
+        "protected": true,
+        "original": "Inconclusive",
+        "focused": "Inconclusive"
+      },
+      {
+        "id": "C1-L",
+        "label": "contained avatar path",
+        "protected": true,
+        "original": "Rejected",
+        "focused": "Rejected"
+      }
+    ]
+  },
+  "sources": {
+    "backend/setup/pins/llama_cpp.toml": "4e289c977fa76f257b37edcfc67769f71a39b142b60e67b6f4bbf754594c1fca",
+    "backend/setup/pins/models.toml": "5aaecdee08e3476305857284b3ace0ccb70a0540ede36e0eb8acaadabd620088",
+    "docs/results/2026-10-05-m4.2-invoice.json": "092ee3b2dc249ed520257b1684819dcaff314ae98949b3b72074525671915f3e",
+    "docs/results/2026-10-05-m4.2-receipt.json": "5c9be0fcdddf9b7ddd8e3a6bb75cb0cfa0fc9df728e74f262bd0984c6188c0ee",
+    "docs/results/2026-10-06-evaluation.md": "1d999b1820c1f2bc173f74795b3649a7e17d2783f8e2b23dd65ae34422f3688e",
+    "docs/results/2026-10-07-m4.5b-acceptance.json": "6dccbed8b5cb91e21bc743610cecc99a8e7f40150254edbcbbfd76d25bb1f90f",
+    "docs/results/2026-10-08-m6.9r-action-phone.md": "e8f68c56785731e23dd1ad71272d98f89eabcf6704db9476c8c6a0ff530836af",
+    "docs/results/2026-10-08-m6.9v-phone-client-binding.md": "857e7fbb287f0c7d6051714262a288aeae9d94f05d8d8649d19a3b84e7aff340",
+    "docs/results/2026-10-08-m7.7f-current-candidate.md": "46c133921a4c1f004711471649d9406cbc20a88c5f123c1e9ff8e45e9340cdfa",
+    "docs/results/2026-10-08-m7.7f-package-smoke.json": "ec552e33922b7a6be16d810564ed4e315ad374f59b26ef0c56fb76bd67e76113",
+    "docs/results/2026-10-08-m7.7f-python-checkpoint.json": "3dc9923725c571d91ff70ba7bb5c3df66fd6a42d67bcbc946fa7350bd8380495",
+    "docs/results/2026-10-08-m7.8-handoff-checks.json": "0cc4f51994d02ffbb2ba3d53171d5b694d9859ff1bdc294d46cbc58144cca9a8",
+    "docs/results/2026-10-08-m7.8a-journey.json": "58616fd1a115a1e30555d6d07af3236b9bcf03dd1b36781b8aa812447b6ea71c",
+    "docs/results/2026-10-08-m7.8a-preparation.json": "a1a333560d48997cf4002611554d98538dbfa124b4afb1a6d7cf4c969f29bb46",
+    "docs/results/2026-10-08-m7.8a-raw/questions.json": "7d69dc13ee68974204eefdf268378b00163ca416c40fdc59836f4c5d71c382c6",
+    "docs/results/2026-10-08-m7.8a-raw/report.html": "ef37b848232d9a2cf8d5dff4cda655e5d46cd124a2ee27525e25a8e2747607b5",
+    "docs/results/2026-10-08-m7.8a-raw/report.json": "9076a57cb8727ba1d2b21f25ee4e3e05cdab9c1ceabf906935686b1c46638a0f",
+    "docs/results/2026-10-08-m7.8a-raw/report.md": "95a1a3b451e51bd3015145da31219d7f088a159687d662f18c9128d498ce57f1",
+    "docs/results/2026-10-08-m7.8a-raw/report.sarif": "82d9d7b14f3ccf9a5102d1a91ad14b9000a49b1e7f6e30f7c0e8a23b0b11b022",
+    "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",
+    "labs/tandir/api/tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
+    "labs/tandir/api/tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",
+    "labs/tandir/api/tandir/security.py": "829a746b47bc94aa930ea468cedf6aeb8c95b6fbf70cefa1ebef3647c146b431",
+    "labs/tandir/api/tandir/seed.py": "0886d6338c73cd3d0ed92e8e03b114480dbee4a3fceca5dbf4d53f7ab3121de2",
+    "labs/tandir/api/tandir/services/orders.py": "fb5b6cc621f82affbf1d78bbd345572706cdbf0a4532a3f689246e4615afe008"
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "source_record": "docs/results/2026-10-06-m4.5-acceptance.json",
+  "source_sha256": "32297261907236578647d981627c5bfb453879a9e525aa4e3edfc7159200436a",
+  "kind": "Archived actual hash-pinned bundled replay; not a new run or attachment to the review case",
+  "replays": [
+    {
+      "change": {
+        "id": "change:lab-receipt",
+        "finding_id": "finding:lab-receipt",
+        "intent": "Scope the receipt loader to the signed-in order owner.",
+        "diff": "--- a/api/tandir/routers/orders.py\n+++ b/api/tandir/routers/orders.py\n@@ -85,9 +85,7 @@\n     user: User = Depends(current_user),\n     db: Session = Depends(get_db),\n ) -> ReceiptOut:\n-    order = db.get(Order, order_id)\n-    if order is None:\n-        raise HTTPException(status_code=404, detail=\"Order not found\")\n+    order = load_order_scoped(db, order_id, user)\n     return ReceiptOut.from_order(order)\n \n \n",
+        "files": [
+          "api/tandir/routers/orders.py"
+        ],
+        "status": "replayed_fixed",
+        "replay_probe_run_ids": [
+          "probe-run:e06b95029f2c4a54accc6a2e8875ff85"
+        ]
+      },
+      "before": {
+        "id": "probe-run:286a20db769e453ba1ce92441e6ea297",
+        "finding_id": "finding:lab-receipt",
+        "runner": "bundled_lab",
+        "runner_manifest_sha256": "98f819e90eb1b48bea92465c211f3ff211395c79deed120943fa5047b57a8984",
+        "snapshot_id": "2979b01019cb012a5873edba56aedc15de002ec7067f4cdb89aaa56ce099a46f",
+        "snapshot_role": "vulnerable",
+        "steps": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "method": "POST",
+            "path": "/orders",
+            "expected_if_safe": "allowed",
+            "status": 201,
+            "marker_present": false,
+            "error": null
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "denied",
+            "status": 200,
+            "marker_present": true,
+            "error": null
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "allowed",
+            "status": 200,
+            "marker_present": true,
+            "error": null
+          }
+        ],
+        "outcome": "reproduced",
+        "started_at": "2026-10-06T00:17:42.971250Z",
+        "finished_at": "2026-10-06T00:17:42.996538Z"
+      },
+      "after": {
+        "id": "probe-run:e06b95029f2c4a54accc6a2e8875ff85",
+        "finding_id": "finding:lab-receipt",
+        "runner": "bundled_lab",
+        "runner_manifest_sha256": "98f819e90eb1b48bea92465c211f3ff211395c79deed120943fa5047b57a8984",
+        "snapshot_id": "64e1b54cbfd1faf22cb1ffbcc7856e80b65207a6e824f8e4379f06b8d7db967f",
+        "snapshot_role": "patched",
+        "steps": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "method": "POST",
+            "path": "/orders",
+            "expected_if_safe": "allowed",
+            "status": 201,
+            "marker_present": false,
+            "error": null
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "denied",
+            "status": 404,
+            "marker_present": false,
+            "error": null
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "allowed",
+            "status": 200,
+            "marker_present": true,
+            "error": null
+          }
+        ],
+        "outcome": "fixed",
+        "started_at": "2026-10-06T00:17:44.896984Z",
+        "finished_at": "2026-10-06T00:17:44.910643Z"
+      }
+    },
+    {
+      "change": {
+        "id": "change:lab-receipt",
+        "finding_id": "finding:lab-receipt",
+        "intent": "Scope the receipt loader to the signed-in order owner.",
+        "diff": "--- a/api/tandir/routers/orders.py\n+++ b/api/tandir/routers/orders.py\n@@ -85,9 +85,7 @@\n     user: User = Depends(current_user),\n     db: Session = Depends(get_db),\n ) -> ReceiptOut:\n-    order = db.get(Order, order_id)\n-    if order is None:\n-        raise HTTPException(status_code=404, detail=\"Order not found\")\n+    order = load_order_scoped(db, order_id, user)\n     return ReceiptOut.from_order(order)\n \n \n",
+        "files": [
+          "api/tandir/routers/orders.py"
+        ],
+        "status": "replayed_fixed",
+        "replay_probe_run_ids": [
+          "probe-run:f9eb096b7e294441be8ad440996d2a98"
+        ]
+      },
+      "before": {
+        "id": "probe-run:f0bee6430b7d4ad38dc124a5dfa8f367",
+        "finding_id": "finding:lab-receipt",
+        "runner": "bundled_lab",
+        "runner_manifest_sha256": "98f819e90eb1b48bea92465c211f3ff211395c79deed120943fa5047b57a8984",
+        "snapshot_id": "2979b01019cb012a5873edba56aedc15de002ec7067f4cdb89aaa56ce099a46f",
+        "snapshot_role": "vulnerable",
+        "steps": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "method": "POST",
+            "path": "/orders",
+            "expected_if_safe": "allowed",
+            "status": 201,
+            "marker_present": false,
+            "error": null
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "denied",
+            "status": 200,
+            "marker_present": true,
+            "error": null
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "allowed",
+            "status": 200,
+            "marker_present": true,
+            "error": null
+          }
+        ],
+        "outcome": "reproduced",
+        "started_at": "2026-10-06T00:17:49.472922Z",
+        "finished_at": "2026-10-06T00:17:49.490441Z"
+      },
+      "after": {
+        "id": "probe-run:f9eb096b7e294441be8ad440996d2a98",
+        "finding_id": "finding:lab-receipt",
+        "runner": "bundled_lab",
+        "runner_manifest_sha256": "98f819e90eb1b48bea92465c211f3ff211395c79deed120943fa5047b57a8984",
+        "snapshot_id": "64e1b54cbfd1faf22cb1ffbcc7856e80b65207a6e824f8e4379f06b8d7db967f",
+        "snapshot_role": "patched",
+        "steps": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "method": "POST",
+            "path": "/orders",
+            "expected_if_safe": "allowed",
+            "status": 201,
+            "marker_present": false,
+            "error": null
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "denied",
+            "status": 404,
+            "marker_present": false,
+            "error": null
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "method": "GET",
+            "path": "/orders/3/receipt",
+            "expected_if_safe": "allowed",
+            "status": 200,
+            "marker_present": true,
+            "error": null
+          }
+        ],
+        "outcome": "fixed",
+        "started_at": "2026-10-06T00:17:51.424834Z",
+        "finished_at": "2026-10-06T00:17:51.440697Z"
+      }
+    }
+  ]
+}

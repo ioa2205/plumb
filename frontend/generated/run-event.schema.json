@@ -1,0 +1,178 @@
+{
+  "$defs": {
+    "Coverage": {
+      "additionalProperties": false,
+      "description": "True-denominator progress: every question is counted somewhere.",
+      "properties": {
+        "completed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Completed",
+          "type": "integer"
+        },
+        "excluded": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Excluded",
+          "type": "integer"
+        },
+        "pending": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Pending",
+          "type": "integer"
+        },
+        "total": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "unsupported": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Unsupported",
+          "type": "integer"
+        }
+      },
+      "title": "Coverage",
+      "type": "object"
+    },
+    "EventKind": {
+      "enum": [
+        "run.started",
+        "run.resumed",
+        "run.paused",
+        "run.canceled",
+        "run.failed",
+        "run.completed",
+        "run.queue_changed",
+        "question.started",
+        "question.stage",
+        "question.activity",
+        "question.finished"
+      ],
+      "title": "EventKind",
+      "type": "string"
+    },
+    "QuestionStage": {
+      "description": "FRAME -> GATHER -> HYPOTHESIZE -> CHALLENGE -> DECIDE -> [VERIFY] -> RECORD.",
+      "enum": [
+        "frame",
+        "gather",
+        "hypothesize",
+        "challenge",
+        "decide",
+        "verify",
+        "record"
+      ],
+      "title": "QuestionStage",
+      "type": "string"
+    },
+    "QuestionStatus": {
+      "enum": [
+        "pending",
+        "excluded",
+        "running",
+        "answered",
+        "rejected_by_validator",
+        "inconclusive",
+        "budget_exhausted",
+        "canceled",
+        "failed"
+      ],
+      "title": "QuestionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/RunEvent.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One entry of a run's activity log. ``seq`` counts from 1 within the run, without gaps,\nso a client that reconnects can ask for everything after the last one it saw.",
+  "properties": {
+    "at": {
+      "format": "date-time",
+      "title": "At",
+      "type": "string"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Coverage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "kind": {
+      "$ref": "#/$defs/EventKind"
+    },
+    "message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Message"
+    },
+    "question_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Question Id"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuestionStage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuestionStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "run_id",
+    "seq",
+    "at",
+    "kind"
+  ],
+  "title": "RunEvent",
+  "type": "object"
+}

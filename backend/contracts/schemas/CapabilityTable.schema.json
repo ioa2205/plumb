@@ -1,0 +1,210 @@
+{
+  "$defs": {
+    "CapabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "current_engine_acceptance": {
+          "const": false,
+          "default": false,
+          "title": "Current Engine Acceptance",
+          "type": "boolean"
+        },
+        "record": {
+          "title": "Record",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record",
+        "sha256",
+        "scope"
+      ],
+      "title": "CapabilityEvidence",
+      "type": "object"
+    },
+    "CapabilityRow": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "language",
+            "framework",
+            "family"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "indexed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Indexed",
+          "type": "string"
+        },
+        "indexed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Indexed Units"
+        },
+        "investigated": {
+          "const": false,
+          "default": false,
+          "title": "Investigated",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parsed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Parsed",
+          "type": "string"
+        },
+        "parsed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parsed Units"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "runtime_testable": {
+          "const": false,
+          "default": false,
+          "title": "Runtime Testable",
+          "type": "boolean"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units"
+        },
+        "workflow_implemented": {
+          "title": "Workflow Implemented",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "category",
+        "name",
+        "parsed",
+        "indexed",
+        "workflow_implemented",
+        "reason"
+      ],
+      "title": "CapabilityRow",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/CapabilityTable.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/CapabilityEvidence"
+      },
+      "maxItems": 10,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "quality_note": {
+      "title": "Quality Note",
+      "type": "string"
+    },
+    "registry_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Sha256",
+      "type": "string"
+    },
+    "rows": {
+      "items": {
+        "$ref": "#/$defs/CapabilityRow"
+      },
+      "maxItems": 10,
+      "title": "Rows",
+      "type": "array"
+    },
+    "runtime_note": {
+      "title": "Runtime Note",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Snapshot Id"
+    }
+  },
+  "required": [
+    "registry_sha256",
+    "rows",
+    "evidence",
+    "runtime_note",
+    "quality_note"
+  ],
+  "title": "CapabilityTable",
+  "type": "object"
+}

@@ -1,0 +1,24 @@
+{
+  "$id": "https://plumb.local/schemas/InspectRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authorized": {
+      "const": true,
+      "title": "Authorized",
+      "type": "boolean"
+    },
+    "folder": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Folder",
+      "type": "string"
+    }
+  },
+  "required": [
+    "folder",
+    "authorized"
+  ],
+  "title": "InspectRequest",
+  "type": "object"
+}

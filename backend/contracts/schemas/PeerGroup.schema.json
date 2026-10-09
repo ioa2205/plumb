@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "PeerColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "applied_site_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Applied Site Ids",
+          "type": "array"
+        },
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "applied_site_ids"
+      ],
+      "title": "PeerColumn",
+      "type": "object"
+    },
+    "PeerDeviation": {
+      "additionalProperties": false,
+      "properties": {
+        "missing": {
+          "title": "Missing",
+          "type": "string"
+        },
+        "peers_applying": {
+          "minimum": 0,
+          "title": "Peers Applying",
+          "type": "integer"
+        },
+        "peers_total": {
+          "minimum": 1,
+          "title": "Peers Total",
+          "type": "integer"
+        },
+        "site_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Site Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "missing",
+        "peers_applying",
+        "peers_total"
+      ],
+      "title": "PeerDeviation",
+      "type": "object"
+    },
+    "PeerExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "site_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Site Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "reason"
+      ],
+      "title": "PeerExclusion",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/PeerGroup.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Consensus for one resource type, and the sites that deviate from it (\u00a73.2).",
+  "properties": {
+    "columns": {
+      "items": {
+        "$ref": "#/$defs/PeerColumn"
+      },
+      "title": "Columns",
+      "type": "array"
+    },
+    "deviations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PeerDeviation"
+      },
+      "title": "Deviations",
+      "type": "array"
+    },
+    "excluded": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PeerExclusion"
+      },
+      "title": "Excluded",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "min_peers": {
+      "default": 3,
+      "minimum": 1,
+      "title": "Min Peers",
+      "type": "integer"
+    },
+    "min_share": {
+      "default": 0.75,
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "title": "Min Share",
+      "type": "number"
+    },
+    "resource": {
+      "title": "Resource",
+      "type": "string"
+    },
+    "site_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Site Ids",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "snapshot_id",
+    "resource",
+    "site_ids",
+    "columns"
+  ],
+  "title": "PeerGroup",
+  "type": "object"
+}

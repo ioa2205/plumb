@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/PeerExcerpt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A numbered page of a recorded peer citation, never an arbitrary source path.",
+  "properties": {
+    "citation": {
+      "maximum": 201,
+      "minimum": 0,
+      "title": "Citation",
+      "type": "integer"
+    },
+    "comments_are_not_evidence": {
+      "const": true,
+      "default": true,
+      "title": "Comments Are Not Evidence",
+      "type": "boolean"
+    },
+    "end_line": {
+      "minimum": 1,
+      "title": "End Line",
+      "type": "integer"
+    },
+    "finding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "lines": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 80,
+      "minItems": 1,
+      "title": "Lines",
+      "type": "array"
+    },
+    "next_offset": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Next Offset"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "site_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Site Id",
+      "type": "string"
+    },
+    "span": {
+      "$ref": "#/$defs/SourceSpan"
+    },
+    "start_line": {
+      "minimum": 1,
+      "title": "Start Line",
+      "type": "integer"
+    },
+    "text_is_redacted": {
+      "const": true,
+      "default": true,
+      "title": "Text Is Redacted",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "finding_id",
+    "site_id",
+    "citation",
+    "span",
+    "start_line",
+    "end_line",
+    "lines"
+  ],
+  "title": "PeerExcerpt",
+  "type": "object"
+}

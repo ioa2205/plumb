@@ -1,0 +1,28 @@
+.section { margin-top: var(--space-section); }
+.form label { display: flex; flex-direction: column; gap: var(--space-md); font: var(--ui); }
+.form input { width: 100%; min-height: var(--target-size); padding: var(--space-md); font: var(--identifier); color: var(--ink); background: var(--raised); border: 1px solid var(--control-rule); border-radius: var(--radius-control); }
+.controls { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-block: var(--space-lg); }
+.control { min-height: var(--target-size); padding: var(--space-md) var(--space-lg); border: 0; border-radius: var(--radius-control); background: var(--well); color: var(--ink); font: var(--ui); cursor: pointer; }
+.control[aria-pressed="true"] { background: var(--blue-wash); color: var(--blue); }
+.control[aria-disabled="true"] { color: var(--pencil); cursor: default; }
+.tableWrap { overflow-x: auto; padding: var(--space-xs); }
+.history { width: 100%; border-collapse: separate; border-spacing: 0 var(--space-sm); font: var(--metadata); }
+.history th, .history td { padding: var(--space-md); text-align: left; vertical-align: top; }
+.history th { color: var(--graphite); font: var(--ui); }
+.history tbody tr { background: var(--cite); }
+.history tbody th { font: inherit; color: var(--ink); }
+.history caption { text-align: left; font: var(--metadata); color: var(--graphite); }
+.history time, .history small { display: block; color: var(--graphite); margin-top: var(--space-sm); }
+.history code { overflow-wrap: anywhere; font: var(--metadata); }
+.linkControl { display: block; min-height: var(--target-size); background: transparent; color: var(--blue); border: 0; padding: var(--space-sm) 0; font: inherit; cursor: pointer; text-align: left; }
+.record > div { display: grid; grid-template-columns: minmax(10rem,1fr) minmax(0,2fr); gap: var(--space-xl); margin-block: var(--space-md); }
+.record dt { color: var(--graphite); font: var(--metadata); }
+.record dd { margin: 0; }
+.record code, .form code, .comparisons code { font: var(--identifier); overflow-wrap: anywhere; }
+.pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-xl); }
+.comparisons { padding: 0; list-style: none; }
+.comparisons > li { padding: var(--space-xl); margin-block: var(--space-xl); border-radius: var(--radius-sheet); background: var(--cite); }
+.comparisons h4 { margin-top: 0; }
+.reason { color: var(--graphite); font: var(--metadata); }
+.section summary, .comparisons summary { min-height: var(--target-size); align-content: center; cursor: pointer; }
+@media (max-width: 1023px) { .pair { grid-template-columns: minmax(0,1fr); } }

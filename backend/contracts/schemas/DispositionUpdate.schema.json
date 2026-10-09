@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "Disposition": {
+      "enum": [
+        "open",
+        "dismissed",
+        "accepted_risk",
+        "resolved"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/DispositionUpdate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Compare-and-append intent; no evidence or runtime fields are writable.",
+  "properties": {
+    "actor": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "disposition": {
+      "$ref": "#/$defs/Disposition"
+    },
+    "expected_version": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Expected Version",
+      "type": "integer"
+    },
+    "previous_disposition": {
+      "$ref": "#/$defs/Disposition"
+    },
+    "reason": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "resolution_commit": {
+      "anyOf": [
+        {
+          "maxLength": 40,
+          "minLength": 40,
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resolution Commit"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "expected_version",
+    "previous_disposition",
+    "disposition",
+    "reason",
+    "actor"
+  ],
+  "title": "DispositionUpdate",
+  "type": "object"
+}

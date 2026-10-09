@@ -1,0 +1,151 @@
+{
+  "$defs": {
+    "ExcludedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/ExclusionReason"
+        }
+      },
+      "required": [
+        "path",
+        "reason"
+      ],
+      "title": "ExcludedFile",
+      "type": "object"
+    },
+    "ExclusionReason": {
+      "enum": [
+        "too_large",
+        "binary",
+        "link",
+        "unsupported",
+        "secret",
+        "user_excluded",
+        "unreadable",
+        "sealed",
+        "default_ignored"
+      ],
+      "title": "ExclusionReason",
+      "type": "string"
+    },
+    "Language": {
+      "enum": [
+        "python",
+        "typescript",
+        "tsx",
+        "javascript"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "SnapshotFile": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Language"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "size"
+      ],
+      "title": "SnapshotFile",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ProjectSnapshot.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The exact files a review looked at, including uncommitted changes.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dirty": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dirty"
+    },
+    "excluded": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ExcludedFile"
+      },
+      "title": "Excluded",
+      "type": "array"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/SnapshotFile"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "git_commit": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Git Commit"
+    },
+    "id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "root_name": {
+      "title": "Root Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "root_name",
+    "created_at",
+    "files"
+  ],
+  "title": "ProjectSnapshot",
+  "type": "object"
+}

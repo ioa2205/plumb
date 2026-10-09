@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "GuardKind": {
+      "description": "Canonical guard kinds from the ``guard_summary`` question (PROJECT_PLAN \u00a73.1).",
+      "enum": [
+        "authenticated",
+        "owner",
+        "tenant",
+        "role",
+        "none",
+        "unknown",
+        "parameterized",
+        "allowlisted",
+        "contained",
+        "minimized"
+      ],
+      "title": "GuardKind",
+      "type": "string"
+    },
+    "PolicyStatus": {
+      "enum": [
+        "inferred",
+        "confirmed",
+        "declared"
+      ],
+      "title": "PolicyStatus",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/PolicyAssertion.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An access rule, inferred from code or declared by a person.\n\nKept separate from code-derived facts, with author and provenance. A policy\nnever expands what the agent is allowed to do.",
+  "properties": {
+    "author": {
+      "title": "Author",
+      "type": "string"
+    },
+    "canonical": {
+      "title": "Canonical",
+      "type": "string"
+    },
+    "confirmed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmed At"
+    },
+    "confirmed_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmed By"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/GuardKind"
+    },
+    "resource": {
+      "title": "Resource",
+      "type": "string"
+    },
+    "statement": {
+      "title": "Statement",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/PolicyStatus"
+    }
+  },
+  "required": [
+    "id",
+    "statement",
+    "resource",
+    "kind",
+    "canonical",
+    "status",
+    "author",
+    "created_at"
+  ],
+  "title": "PolicyAssertion",
+  "type": "object"
+}

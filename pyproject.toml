@@ -1,0 +1,75 @@
+[project]
+name = "plumb"
+version = "0.0.0"
+description = "Local AI security investigator for web applications"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi==0.142.2",
+    "httpx>=0.28.1",
+    "libcst>=1.9.0",
+    "mcp==2.3.0",
+    "packaging==26.3",
+    "psutil>=7.2.2",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "tree-sitter==0.26.0",
+    "tree-sitter-python==0.25.0",
+    "tree-sitter-typescript==0.23.2",
+    "uvicorn==0.54.0",
+]
+
+[project.scripts]
+plumb = "backend.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+# Flat layout from PROJECT_PLAN §14: each top-level folder is its own package.
+module-root = ""
+module-name = ["backend", "analysis", "agent", "verification", "eval", "knowledge"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["backend", "analysis", "agent", "verification", "eval", "knowledge"]
+addopts = ["--import-mode=importlib", "-ra", "--strict-markers", "--strict-config"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# The Tandir lab is deliberately vulnerable and gets its own project and lint config (M1.1).
+extend-exclude = ["labs", "eval/fixtures"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # import order
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "SIM", # simplify
+    "PTH", # pathlib over os.path
+    "S",   # bandit security checks
+    "ANN", # type annotations everywhere
+    "RUF", # ruff-specific
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101"]
+# Pydantic copies mutable defaults per instance; ruff cannot see that through the Contract base.
+"backend/contracts/*.py" = ["RUF012"]
+
+[dependency-groups]
+dev = [
+    "jsonschema>=4.26.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+    "ty==0.0.84",
+    "types-psutil>=7.2.2.20260906",
+]
+
+[tool.ty.src]
+# The Tandir lab is a separate project (M1.1); fixtures are input data, never imported.
+exclude = ["labs", "eval/fixtures"]

@@ -1,0 +1,659 @@
+{
+  "$defs": {
+    "AccessSite": {
+      "additionalProperties": false,
+      "description": "A place where a resource is loaded by a request-controlled identifier.",
+      "properties": {
+        "data_layer": {
+          "$ref": "#/$defs/DataLayer"
+        },
+        "entry_point_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Entry Point Id",
+          "type": "string"
+        },
+        "guard_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Guard Ids",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "key_origin": {
+          "$ref": "#/$defs/InputOrigin"
+        },
+        "operation": {
+          "$ref": "#/$defs/Operation"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "entry_point_id",
+        "resource",
+        "operation",
+        "key_origin",
+        "data_layer",
+        "span"
+      ],
+      "title": "AccessSite",
+      "type": "object"
+    },
+    "BoundPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/PolicyAssertion"
+        },
+        "forbidden_fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Forbidden Fields",
+          "type": "array"
+        },
+        "provenance": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "required_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z_][A-Za-z0-9_-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Role"
+        },
+        "sites": {
+          "items": {
+            "$ref": "#/$defs/AccessSite"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Sites",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assertion",
+        "snapshot_id",
+        "source_run_id",
+        "sites",
+        "provenance"
+      ],
+      "title": "BoundPolicy",
+      "type": "object"
+    },
+    "ChallengeCheck": {
+      "additionalProperties": false,
+      "description": "One acquittal checklist item and what the search found (negative evidence).",
+      "properties": {
+        "exhibit_tag": {
+          "anyOf": [
+            {
+              "pattern": "^E\\d{2,3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exhibit Tag"
+        },
+        "found": {
+          "title": "Found",
+          "type": "boolean"
+        },
+        "item": {
+          "title": "Item",
+          "type": "string"
+        },
+        "searched": {
+          "title": "Searched",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item",
+        "searched",
+        "found"
+      ],
+      "title": "ChallengeCheck",
+      "type": "object"
+    },
+    "Conclusion": {
+      "enum": [
+        "candidate",
+        "supported",
+        "rejected",
+        "inconclusive"
+      ],
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "DataLayer": {
+      "enum": [
+        "sqlalchemy",
+        "raw_sql",
+        "prisma",
+        "drizzle",
+        "other"
+      ],
+      "title": "DataLayer",
+      "type": "string"
+    },
+    "Disposition": {
+      "enum": [
+        "open",
+        "dismissed",
+        "accepted_risk",
+        "resolved"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "EvidenceStrength": {
+      "enum": [
+        "complete",
+        "partial",
+        "thin"
+      ],
+      "title": "EvidenceStrength",
+      "type": "string"
+    },
+    "Exhibit": {
+      "additionalProperties": false,
+      "properties": {
+        "gloss": {
+          "title": "Gloss",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ExhibitRole"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "tag": {
+          "pattern": "^E\\d{2,3}$",
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag",
+        "span",
+        "role",
+        "gloss"
+      ],
+      "title": "Exhibit",
+      "type": "object"
+    },
+    "ExhibitRole": {
+      "enum": [
+        "evidence",
+        "source",
+        "sink",
+        "guard",
+        "deviant",
+        "developer_note"
+      ],
+      "title": "ExhibitRole",
+      "type": "string"
+    },
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "FlowStep": {
+      "additionalProperties": false,
+      "properties": {
+        "exhibit_tag": {
+          "pattern": "^E\\d{2,3}$",
+          "title": "Exhibit Tag",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "exhibit_tag"
+      ],
+      "title": "FlowStep",
+      "type": "object"
+    },
+    "GuardKind": {
+      "description": "Canonical guard kinds from the ``guard_summary`` question (PROJECT_PLAN \u00a73.1).",
+      "enum": [
+        "authenticated",
+        "owner",
+        "tenant",
+        "role",
+        "none",
+        "unknown",
+        "parameterized",
+        "allowlisted",
+        "contained",
+        "minimized"
+      ],
+      "title": "GuardKind",
+      "type": "string"
+    },
+    "InputOrigin": {
+      "description": "Where a value comes from, as answered by the ``input_origin`` question.",
+      "enum": [
+        "path",
+        "query",
+        "body",
+        "header",
+        "session",
+        "constant",
+        "unknown"
+      ],
+      "title": "InputOrigin",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "read",
+        "list",
+        "create",
+        "update",
+        "delete"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "PolicyAssertion": {
+      "additionalProperties": false,
+      "description": "An access rule, inferred from code or declared by a person.\n\nKept separate from code-derived facts, with author and provenance. A policy\nnever expands what the agent is allowed to do.",
+      "properties": {
+        "author": {
+          "title": "Author",
+          "type": "string"
+        },
+        "canonical": {
+          "title": "Canonical",
+          "type": "string"
+        },
+        "confirmed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed At"
+        },
+        "confirmed_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed By"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/GuardKind"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/PolicyStatus"
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "resource",
+        "kind",
+        "canonical",
+        "status",
+        "author",
+        "created_at"
+      ],
+      "title": "PolicyAssertion",
+      "type": "object"
+    },
+    "PolicyStatus": {
+      "enum": [
+        "inferred",
+        "confirmed",
+        "declared"
+      ],
+      "title": "PolicyStatus",
+      "type": "string"
+    },
+    "RuntimeVerification": {
+      "enum": [
+        "not_attempted",
+        "unavailable",
+        "inconclusive",
+        "reproduced",
+        "not_reproduced"
+      ],
+      "title": "RuntimeVerification",
+      "type": "string"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/Finding.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A case file. The five evidence-contract fields are independent (PROJECT_PLAN \u00a76).",
+  "properties": {
+    "checks": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ChallengeCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "conclusion": {
+      "$ref": "#/$defs/Conclusion"
+    },
+    "cwe": {
+      "items": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "minItems": 1,
+      "title": "Cwe",
+      "type": "array"
+    },
+    "display_id": {
+      "pattern": "^F-\\d{2,}$",
+      "title": "Display Id",
+      "type": "string"
+    },
+    "disposition": {
+      "$ref": "#/$defs/Disposition",
+      "default": "open"
+    },
+    "disposition_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Disposition Reason"
+    },
+    "exhibits": {
+      "items": {
+        "$ref": "#/$defs/Exhibit"
+      },
+      "title": "Exhibits",
+      "type": "array"
+    },
+    "family": {
+      "$ref": "#/$defs/Family"
+    },
+    "flow": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FlowStep"
+      },
+      "title": "Flow",
+      "type": "array"
+    },
+    "gaps": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Gaps",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "lede": {
+      "title": "Lede",
+      "type": "string"
+    },
+    "peer_group_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Peer Group Id"
+    },
+    "policy_basis": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/BoundPolicy"
+      },
+      "maxItems": 100,
+      "title": "Policy Basis",
+      "type": "array"
+    },
+    "probe_run_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Probe Run Ids",
+      "type": "array"
+    },
+    "question_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Question Ids",
+      "type": "array"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "runtime_verification": {
+      "$ref": "#/$defs/RuntimeVerification",
+      "default": "not_attempted"
+    },
+    "severity": {
+      "$ref": "#/$defs/Severity"
+    },
+    "severity_rationale": {
+      "minLength": 1,
+      "title": "Severity Rationale",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "strength": {
+      "$ref": "#/$defs/EvidenceStrength"
+    },
+    "suggested_change_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suggested Change Id"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "unknowns": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "display_id",
+    "run_id",
+    "snapshot_id",
+    "family",
+    "cwe",
+    "title",
+    "lede",
+    "conclusion",
+    "severity",
+    "severity_rationale",
+    "strength",
+    "exhibits"
+  ],
+  "title": "Finding",
+  "type": "object"
+}

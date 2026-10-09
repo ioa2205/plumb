@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "Exhibit": {
+      "additionalProperties": false,
+      "properties": {
+        "gloss": {
+          "title": "Gloss",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ExhibitRole"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "tag": {
+          "pattern": "^E\\d{2,3}$",
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag",
+        "span",
+        "role",
+        "gloss"
+      ],
+      "title": "Exhibit",
+      "type": "object"
+    },
+    "ExhibitRole": {
+      "enum": [
+        "evidence",
+        "source",
+        "sink",
+        "guard",
+        "deviant",
+        "developer_note"
+      ],
+      "title": "ExhibitRole",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/CitedExcerpt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "comments_are_not_evidence": {
+      "const": true,
+      "default": true,
+      "title": "Comments Are Not Evidence",
+      "type": "boolean"
+    },
+    "end_line": {
+      "minimum": 1,
+      "title": "End Line",
+      "type": "integer"
+    },
+    "exhibit": {
+      "$ref": "#/$defs/Exhibit"
+    },
+    "finding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "lines": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 80,
+      "minItems": 1,
+      "title": "Lines",
+      "type": "array"
+    },
+    "next_offset": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Next Offset"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "start_line": {
+      "minimum": 1,
+      "title": "Start Line",
+      "type": "integer"
+    },
+    "text_is_redacted": {
+      "const": true,
+      "default": true,
+      "title": "Text Is Redacted",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "finding_id",
+    "snapshot_id",
+    "exhibit",
+    "start_line",
+    "end_line",
+    "lines"
+  ],
+  "title": "CitedExcerpt",
+  "type": "object"
+}

@@ -1,0 +1,197 @@
+{
+  "$defs": {
+    "Language": {
+      "enum": [
+        "python",
+        "typescript",
+        "tsx",
+        "javascript"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/SnapshotCodePage.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Display context from a cited frozen file; only citation is evidence.",
+  "properties": {
+    "after": {
+      "maximum": 80,
+      "minimum": 0,
+      "title": "After",
+      "type": "integer"
+    },
+    "before": {
+      "maximum": 80,
+      "minimum": 0,
+      "title": "Before",
+      "type": "integer"
+    },
+    "citation": {
+      "$ref": "#/$defs/SourceSpan"
+    },
+    "comments_are_not_evidence": {
+      "const": true,
+      "default": true,
+      "title": "Comments Are Not Evidence",
+      "type": "boolean"
+    },
+    "context_is_not_evidence": {
+      "const": true,
+      "default": true,
+      "title": "Context Is Not Evidence",
+      "type": "boolean"
+    },
+    "end_line": {
+      "minimum": 1,
+      "title": "End Line",
+      "type": "integer"
+    },
+    "file_line_count": {
+      "minimum": 1,
+      "title": "File Line Count",
+      "type": "integer"
+    },
+    "file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Sha256",
+      "type": "string"
+    },
+    "finding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "language": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Language"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "lines": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 80,
+      "minItems": 1,
+      "title": "Lines",
+      "type": "array"
+    },
+    "mode": {
+      "enum": [
+        "context",
+        "file"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "next_offset": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Next Offset"
+    },
+    "offset": {
+      "maximum": 1000000,
+      "minimum": 0,
+      "title": "Offset",
+      "type": "integer"
+    },
+    "range_end": {
+      "minimum": 1,
+      "title": "Range End",
+      "type": "integer"
+    },
+    "range_start": {
+      "minimum": 1,
+      "title": "Range Start",
+      "type": "integer"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "start_line": {
+      "minimum": 1,
+      "title": "Start Line",
+      "type": "integer"
+    },
+    "text_is_redacted": {
+      "const": true,
+      "default": true,
+      "title": "Text Is Redacted",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "finding_id",
+    "citation",
+    "file_sha256",
+    "file_line_count",
+    "mode",
+    "before",
+    "after",
+    "range_start",
+    "range_end",
+    "offset",
+    "start_line",
+    "end_line",
+    "lines"
+  ],
+  "title": "SnapshotCodePage",
+  "type": "object"
+}

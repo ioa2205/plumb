@@ -1,0 +1,35 @@
+{
+  "id": "review-efe914fb441a4374bd3ec22debc371dc",
+  "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+  "run_type": "live",
+  "lifecycle": "completed",
+  "stage": null,
+  "conditions": [],
+  "created_at": "2026-10-05T14:41:40.551581Z",
+  "started_at": "2026-10-05T14:41:43.727073Z",
+  "finished_at": "2026-10-05T14:44:12.696555Z",
+  "model": {
+    "id": "qwen3.5-2b-q4_k_m",
+    "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+    "quantization": "Q4_K_M"
+  },
+  "toolchain": {
+    "llama_cpp_release": "v0.5.0",
+    "llama_cpp_build": "b11146",
+    "backend": "vulkan",
+    "opengrep_version": null,
+    "opengrep_rules_sha256": null,
+    "knowledge_pack_date": null
+  },
+  "coverage": {
+    "total": 74,
+    "completed": 2,
+    "pending": 0,
+    "excluded": 72,
+    "unsupported": 0
+  },
+  "finding_ids": [
+    "finding:4decfd296bbe80e5589ee34c",
+    "finding:bd085b438c05b4fff8467bcd"
+  ]
+}

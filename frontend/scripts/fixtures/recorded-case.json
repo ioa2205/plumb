@@ -1,0 +1,241 @@
+{
+  "run": {
+    "id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "run_type": "live",
+    "lifecycle": "completed",
+    "stage": null,
+    "conditions": [],
+    "created_at": "2026-10-05T14:41:40.551581Z",
+    "started_at": "2026-10-05T14:41:43.727073Z",
+    "finished_at": "2026-10-05T14:44:12.696555Z",
+    "model": {
+      "id": "qwen3.5-2b-q4_k_m",
+      "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+      "quantization": "Q4_K_M"
+    },
+    "toolchain": {
+      "llama_cpp_release": "v0.5.0",
+      "llama_cpp_build": "b11146",
+      "backend": "vulkan",
+      "opengrep_version": null,
+      "opengrep_rules_sha256": null,
+      "knowledge_pack_date": null
+    },
+    "coverage": {
+      "total": 74,
+      "completed": 2,
+      "pending": 0,
+      "excluded": 72,
+      "unsupported": 0
+    },
+    "finding_ids": [
+      "finding:4decfd296bbe80e5589ee34c",
+      "finding:bd085b438c05b4fff8467bcd"
+    ]
+  },
+  "finding": {
+    "id": "finding:bd085b438c05b4fff8467bcd",
+    "display_id": "F-02",
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "family": "authorization",
+    "cwe": [
+      639,
+      862
+    ],
+    "title": "Order access: owner check",
+    "lede": "Peer deviation persists after three independent acquittal searches",
+    "conclusion": "supported",
+    "runtime_verification": "reproduced",
+    "severity": "unknown",
+    "severity_rationale": "Data sensitivity and impact remain unassessed",
+    "strength": "partial",
+    "gaps": [
+      "Bounded static analysis; only the recorded bundled-lab conditions were tested"
+    ],
+    "disposition": "open",
+    "disposition_reason": null,
+    "exhibits": [
+      {
+        "tag": "E01",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/orders.py",
+          "start_line": 82,
+          "end_line": 91,
+          "content_sha256": "5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E02",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/security.py",
+          "start_line": 42,
+          "end_line": 50,
+          "content_sha256": "480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E03",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/schemas.py",
+          "start_line": 60,
+          "end_line": 76,
+          "content_sha256": "aa7fd42fd67e92db6669a24495ab92bda3c22d0ccc29c0540d4a1094cf400a59"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E04",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/security.py",
+          "start_line": 35,
+          "end_line": 39,
+          "content_sha256": "3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E05",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/security.py",
+          "start_line": 45,
+          "end_line": 46,
+          "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+        },
+        "role": "guard",
+        "gloss": "Executable guard"
+      }
+    ],
+    "checks": [
+      {
+        "item": "A query filter scoped to the principal",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "An equivalent guard in the handler, router, dependency or DAL",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "An admin-only entry point",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "A resource public by executable policy",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "An unreachable route",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (unsupported: Runtime reachability is not established by static mounting)",
+        "found": false,
+        "exhibit_tag": null
+      }
+    ],
+    "flow": [],
+    "peer_group_id": "peers:b1dde5d4157f86f40944051a",
+    "unknowns": [
+      "Other deployment conditions and general detection coverage remain untested"
+    ],
+    "question_ids": [
+      "question:access:ffb0ea24ed0b07eb3940e2d4"
+    ],
+    "probe_run_ids": [
+      "probe-run:89daac97745d4c9ca78b967493a8f9c7"
+    ],
+    "suggested_change_id": null
+  },
+  "probe_runs": [
+    {
+      "id": "probe-run:89daac97745d4c9ca78b967493a8f9c7",
+      "finding_id": "finding:bd085b438c05b4fff8467bcd",
+      "runner": "bundled_lab",
+      "runner_manifest_sha256": "02c8011d6d60461be8cb409de851bf17d7afd39085a3805306240049b9be64ff",
+      "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+      "snapshot_role": "vulnerable",
+      "steps": [
+        {
+          "role": "setup",
+          "principal": "alice",
+          "method": "POST",
+          "path": "/orders",
+          "expected_if_safe": "allowed",
+          "status": 201,
+          "marker_present": false,
+          "error": null
+        },
+        {
+          "role": "attack",
+          "principal": "bob",
+          "method": "GET",
+          "path": "/orders/3/receipt",
+          "expected_if_safe": "denied",
+          "status": 200,
+          "marker_present": true,
+          "error": null
+        },
+        {
+          "role": "control",
+          "principal": "alice",
+          "method": "GET",
+          "path": "/orders/3/receipt",
+          "expected_if_safe": "allowed",
+          "status": 200,
+          "marker_present": true,
+          "error": null
+        }
+      ],
+      "outcome": "reproduced",
+      "started_at": "2026-10-05T17:42:53.314407Z",
+      "finished_at": "2026-10-05T17:42:53.331223Z"
+    }
+  ],
+  "suggested_change": null,
+  "limitations": [
+    "Static support does not establish runtime reproduction.",
+    "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+    "Valid citations establish grounding, not the correctness of a security judgment.",
+    "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+    "This review investigates FastAPI object authorization only. Other families remain uninvestigated.",
+    "Python resolution uses the static import fallback. Dynamic dispatch and unsupported guards remain gaps.",
+    "Coverage counts discovered access sites, not every possible vulnerability or source file.",
+    "Peer analysis covers the selected resources; excluded resources cannot establish their policies.",
+    "Opengrep signals are not yet integrated into the review queue.",
+    "api/.pytest_cache: excluded (default_ignored).",
+    "api/.ruff_cache: excluded (default_ignored).",
+    "api/.venv: excluded (default_ignored).",
+    "api/tandir/__pycache__: excluded (default_ignored).",
+    "api/tandir/routers/__pycache__: excluded (default_ignored).",
+    "api/tandir/services/__pycache__: excluded (default_ignored).",
+    "api/tests/__pycache__: excluded (default_ignored).",
+    "fixed/api.patch: excluded (unsupported).",
+    "fixed/web.patch: excluded (unsupported).",
+    "web/.next: excluded (default_ignored).",
+    "web/node_modules: excluded (default_ignored).",
+    "web/tsconfig.tsbuildinfo: excluded (unsupported).",
+    "Only the hash-pinned bundled Tandir receipt and invoice templates were executed, on loopback with fresh databases. Arbitrary targets remain source-only; severity is unassessed.",
+    "F-01: Bounded static analysis; only the recorded bundled-lab conditions were tested",
+    "F-01: Other deployment conditions and general detection coverage remain untested",
+    "F-02: Bounded static analysis; only the recorded bundled-lab conditions were tested",
+    "F-02: Other deployment conditions and general detection coverage remain untested"
+  ],
+  "peer_comparison": "not_recorded"
+}

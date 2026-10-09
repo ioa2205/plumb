@@ -1,0 +1,449 @@
+{
+  "provenance": "Actual installed-laptop readiness and source-only Tandir inspection; no model or target execution",
+  "setup_preview": {
+    "mode": "review",
+    "data_dir": "D:\\plumb-data",
+    "profile": "mx350-vulkan-8k",
+    "doctor": {
+      "inventory": {
+        "os": "Windows",
+        "architecture": "AMD64",
+        "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+        "physical_cores": 4,
+        "logical_cores": 8,
+        "memory": {
+          "total_bytes": 8358518784,
+          "available_bytes": 1085546496,
+          "commit_limit_bytes": 23893696512,
+          "commit_used_bytes": 14233239552
+        },
+        "gpu_names": [
+          "Intel(R) Iris(R) Xe Graphics",
+          "NVIDIA GeForce MX350"
+        ],
+        "dedicated_free_bytes": 2074083328,
+        "disk_free_bytes": 85521518592,
+        "issues": []
+      },
+      "profiles": [
+        {
+          "id": "mx350-vulkan-8k",
+          "model_id": "qwen3.5-2b-q4_k_m",
+          "model_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "runtime_commit": "7fe450e19305b828c199d602c23a8337aaa1f03b",
+          "backend": "vulkan",
+          "context": 8192,
+          "threads": 4,
+          "batch": 256,
+          "microbatch": 64,
+          "offload_layers": 99,
+          "host_required_bytes": 1361051648,
+          "device_required_bytes": 1776287744,
+          "device": "Vulkan1",
+          "device_name": "NVIDIA GeForce MX350",
+          "extra_args": [
+            "--fit",
+            "off",
+            "--no-repack",
+            "--device",
+            "Vulkan1",
+            "--load-mode",
+            "dio"
+          ],
+          "stateless": true,
+          "reasoning": "off",
+          "quantization": "Q4_K_M",
+          "compatible_measured_host": true,
+          "pins_match": true,
+          "model_verified": true,
+          "runtime_verified": true,
+          "runtime_compatible": true,
+          "estimated_memory_fit": false,
+          "dedicated_free_bytes": 1987051520,
+          "minimum_missing_download_bytes": 0,
+          "minimum_download_disk_fit": true,
+          "ready": false,
+          "runtime_validation": "ADR-0006; schema/canary acceptance on i5-1135G7/MX350",
+          "evaluated_capability": "Scoped invoice/receipt and guard development slices; wider quality gaps remain",
+          "all_security_quality_gates_met": false,
+          "launch_rechecks_memory": true,
+          "live_stop_bytes": 268435456
+        }
+      ],
+      "recommended_profile": "mx350-vulkan-8k",
+      "selection_ready": false,
+      "messages": [
+        "Insufficient or unknown RAM/dedicated VRAM; close apps and rerun doctor"
+      ],
+      "model_candidates": [
+        {
+          "id": "qwen3.5-2b-q4_k_m",
+          "size_bytes": 1396198496,
+          "quantization": "Q4_K_M",
+          "license": "apache-2.0",
+          "source": "https://huggingface.co/bartowski/Qwen_Qwen3.5-2B-GGUF/resolve/7d26695454df6de5fbcce2e58681e62dae06ce43/Qwen_Qwen3.5-2B-Q4_K_M.gguf",
+          "sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "requires_download_approval": true,
+          "validated_profile": "mx350-vulkan-8k",
+          "verified_installed": true
+        },
+        {
+          "id": "qwen3.5-0.8b-q4_k_m",
+          "size_bytes": 579615840,
+          "quantization": "Q4_K_M",
+          "license": "apache-2.0",
+          "source": "https://huggingface.co/bartowski/Qwen_Qwen3.5-0.8B-GGUF/resolve/f36b1ea49a332ede8fe5f389bbf5b3575ef71f48/Qwen_Qwen3.5-0.8B-Q4_K_M.gguf",
+          "sha256": "fb044e93939a70469c905781334f5de1e6c8b608ced6cbc8c9249bd4127d9526",
+          "requires_download_approval": true,
+          "validated_profile": null,
+          "verified_installed": false
+        },
+        {
+          "id": "qwen3.5-4b-q4_k_m",
+          "size_bytes": 3013027808,
+          "quantization": "Q4_K_M",
+          "license": "apache-2.0",
+          "source": "https://huggingface.co/bartowski/Qwen_Qwen3.5-4B-GGUF/resolve/4168f45a16a1290d65a4ec0fa312ae917a4c15d6/Qwen_Qwen3.5-4B-Q4_K_M.gguf",
+          "sha256": "13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983",
+          "requires_download_approval": true,
+          "validated_profile": null,
+          "verified_installed": false
+        },
+        {
+          "id": "gemma-4-e2b-it-qat-q4_0",
+          "size_bytes": 3349516256,
+          "quantization": "Q4_0 (official QAT)",
+          "license": "apache-2.0",
+          "source": "https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/675cff42a74c774d6cb76f76d8eacb49b48c9b93/gemma-4-E2B_q4_0-it.gguf",
+          "sha256": "fa401b55b07ee70a54c6dae3903c783a6e65064312529ea57175cb5f8dec6634",
+          "requires_download_approval": true,
+          "validated_profile": null,
+          "verified_installed": false
+        },
+        {
+          "id": "qwen3-4b-instruct-2507-q4_k_m",
+          "size_bytes": 2497280736,
+          "quantization": "Q4_K_M",
+          "license": "apache-2.0",
+          "source": "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/ae44f08e1392f39c0e474af10c3ff8355c8b6688/Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+          "sha256": "2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e",
+          "requires_download_approval": true,
+          "validated_profile": null,
+          "verified_installed": false
+        }
+      ],
+      "model_loaded": false,
+      "downloads_started": false,
+      "memory_note": "Dedicated VRAM and host RAM are separate; shared GPU memory is not added to either",
+      "disk_note": "Download space is a lower bound; extracted files, snapshots and caches need additional space"
+    },
+    "typescript_helper": {
+      "node_binary": "C:\\Program Files\\nodejs\\node.exe",
+      "node_version": "v24.11.0",
+      "node_compatible": true,
+      "typescript_version_matches_pin": true,
+      "pnpm_available": true,
+      "pnpm_command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\example\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs"
+      ],
+      "ready": true,
+      "action": "Install Node.js 24+ and pnpm if missing; PLUMB_NODE_BINARY accepts an absolute path"
+    },
+    "missing_downloads": [],
+    "missing_download_bytes": 0,
+    "requires_large_download_approval": false,
+    "model_loaded": false,
+    "ready": false,
+    "next": "plumb setup --install"
+  },
+  "readiness": {
+    "checked_at": "2026-10-06T18:09:46.979588Z",
+    "ready": false,
+    "inspect_ready": true,
+    "profile_id": "mx350-vulkan-8k",
+    "model_id": "qwen3.5-2b-q4_k_m",
+    "model_size_bytes": 1396198496,
+    "model_verified": true,
+    "runtime_verified": true,
+    "measured_host": true,
+    "memory_fit": false,
+    "available_ram_bytes": 1095892992,
+    "required_ram_bytes": 1361051648,
+    "available_vram_bytes": 1987051520,
+    "required_vram_bytes": 1776287744,
+    "missing_download_bytes": 0,
+    "requires_large_download_approval": false,
+    "conditions": [
+      {
+        "kind": "model_too_large",
+        "message": "1.10 GB RAM free; this measured profile requires 1.36 GB RAM and 1.78 GB dedicated VRAM. Dedicated VRAM available: 1.99 GB.",
+        "action": "Close other apps if needed, then check readiness again. Source inspection uses no model."
+      },
+      {
+        "kind": "runner_unavailable",
+        "message": "General runtime verification is unavailable. Source investigations retain their static evidence. The bundled hash-pinned Tandir runner is a separate capability.",
+        "action": "Use source inspection and review; optional isolation setup is documented in README."
+      }
+    ],
+    "limitations": [
+      "A current readiness observation is not a reservation of memory. Every model launch repeats the unchanged memory gate.",
+      "Dedicated VRAM and host RAM are separate; shared GPU memory is not added to either",
+      "Download space is a lower bound; extracted files, snapshots and caches need additional space",
+      "Scoped invoice/receipt and guard development slices; wider quality gaps remain",
+      "Only the existing measured profile can be selected; unmeasured models or hardware are not automatically approved."
+    ],
+    "model_loaded": false,
+    "downloads_started": false
+  },
+  "inspection": {
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "name": "tandir",
+    "captured_at": "2026-10-05T17:48:48.145787Z",
+    "languages": {
+      "javascript": 1,
+      "python": 26,
+      "tsx": 11,
+      "typescript": 22
+    },
+    "frameworks": {
+      "fastapi": 26,
+      "nextjs": 13
+    },
+    "resources": {
+      "Branch": 1,
+      "LoginSession": 22,
+      "MenuItem": 3,
+      "Order": 15,
+      "OrderItem": 1,
+      "User": 22,
+      "order_items": 1,
+      "orders": 7,
+      "phone_changes": 1,
+      "users": 1
+    },
+    "included_files": 71,
+    "excluded_files": 12,
+    "exclusion_reasons": {
+      "default_ignored": 9,
+      "unsupported": 3
+    },
+    "entries": [
+      {
+        "id": "entry:49dd5837f459995722dc3135",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/health",
+        "handler_symbol_id": "sym:ea284090acf7a932449e3e83",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/main.py",
+          "start_line": 18,
+          "end_line": 20,
+          "content_sha256": "3c6aba5471946f977402418346752c3fc093ce16efd29439f590e1bac844af1b"
+        }
+      },
+      {
+        "id": "entry:6229cac73bf3470c311c4a9c",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/admin/orders",
+        "handler_symbol_id": "sym:acfc7590ee0653cfaf6637e4",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/admin.py",
+          "start_line": 18,
+          "end_line": 33,
+          "content_sha256": "3a27b2fbe16d5d1aa5d8681de7cb49ae9f0091e98ed2ce36bc7269e2c0f80f04"
+        }
+      },
+      {
+        "id": "entry:d3661d7a06618552e4dd2712",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/admin/customers",
+        "handler_symbol_id": "sym:2738cda36e3a480d7d612741",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/admin.py",
+          "start_line": 36,
+          "end_line": 53,
+          "content_sha256": "c948bc8bd238b38ec129f0cb3cba1e61ba3e880b5d28ef270aa3304da583ce1c"
+        }
+      },
+      {
+        "id": "entry:c0fcb61344609aad89bf528e",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/admin/orders/{order_id}",
+        "handler_symbol_id": "sym:27483eae27fdf91e82d7c6d2",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/admin.py",
+          "start_line": 56,
+          "end_line": 65,
+          "content_sha256": "8ccbca7ee241443b2baaba426fb2d2cdc470139d8f052ef183abe60783bc4325"
+        }
+      },
+      {
+        "id": "entry:3e4c73ef41dc6475e540ee6c",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "POST",
+        "route": "/auth/login",
+        "handler_symbol_id": "sym:80d2b3d02c8becdc3f352e46",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/auth.py",
+          "start_line": 13,
+          "end_line": 18,
+          "content_sha256": "97080d8db1781d67d3c7654e8ff3c38b8a282c1dffa8f7cd42717562fbb5a7b2"
+        }
+      },
+      {
+        "id": "entry:dd80025c9aa46a89ebf50f3e",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "POST",
+        "route": "/auth/logout",
+        "handler_symbol_id": "sym:61a418ef05a9a85f0cc23748",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/auth.py",
+          "start_line": 21,
+          "end_line": 24,
+          "content_sha256": "b9ada3e509fc1bc138f7065050e2e78cbe265490cf554cc1d7161499ba2ab8b9"
+        }
+      },
+      {
+        "id": "entry:22b6ee36e610318e17d1ab22",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/auth/me",
+        "handler_symbol_id": "sym:9dc4d6ba1ed17cd53fb49e48",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/auth.py",
+          "start_line": 27,
+          "end_line": 35,
+          "content_sha256": "a3811abd6b8b699f0a3d387a9befe819799d25683b3d5d7faf37a8a3d797a2b4"
+        }
+      },
+      {
+        "id": "entry:7250c7f12acec75af23e6c4f",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/branches/{branch_id}/menu",
+        "handler_symbol_id": "sym:d061ddbdcd22884c2c744bbe",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/branches.py",
+          "start_line": 25,
+          "end_line": 28,
+          "content_sha256": "34d9368613a86c124c52bb22119dcceed78adbdc4eff832b2d863f484361e2b1"
+        }
+      },
+      {
+        "id": "entry:addae4e90d241d2f3c132630",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "PUT",
+        "route": "/branches/{branch_id}/menu/{item_id}",
+        "handler_symbol_id": "sym:360b237270e83da5ee85239e",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/branches.py",
+          "start_line": 31,
+          "end_line": 46,
+          "content_sha256": "c08a787346d00d0921eeaea343f68881954b8ba61ebab38d20a3686c38c31500"
+        }
+      },
+      {
+        "id": "entry:46d3b59b05a05d8d899d2678",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "PUT",
+        "route": "/branches/{branch_id}/hours",
+        "handler_symbol_id": "sym:87aa91be19f448d788302c34",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/branches.py",
+          "start_line": 49,
+          "end_line": 70,
+          "content_sha256": "a16262d70ee4af728c39d003be1bd09e9ad5b81a0a8fe70e0bec25d599817230"
+        }
+      },
+      {
+        "id": "entry:b538a42031268cb0b7051030",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/branches/{branch_id}/orders",
+        "handler_symbol_id": "sym:0fb2f073a2350052ea12a240",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/branches.py",
+          "start_line": 73,
+          "end_line": 82,
+          "content_sha256": "9038e72ac37e1895ead3319474bfffb47cc20d0d9d7a2a630ad541ad30900a05"
+        }
+      },
+      {
+        "id": "entry:6bd76a499552060aa7198917",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "kind": "http_route",
+        "framework": "fastapi",
+        "method": "GET",
+        "route": "/courier/deliveries",
+        "handler_symbol_id": "sym:e2eb47532cb5bf540e89f800",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/courier.py",
+          "start_line": 24,
+          "end_line": 29,
+          "content_sha256": "1a01eb311e2680d78d4e06c76c47584117d5384224ebd2700b447a60392b67c6"
+        }
+      }
+    ],
+    "entries_total": 39,
+    "unresolved_links": 1144,
+    "conditions": [
+      {
+        "kind": "partial_coverage",
+        "message": "71 files included; 12 paths or directories excluded. Discovered entry points do not cover every security issue.",
+        "action": "Read the excluded-path reasons and unsupported scope before reviewing."
+      }
+    ],
+    "limitations": [
+      "Static source map, not a runtime trace or a vulnerability verdict.",
+      "Guard candidates are unconfirmed; may_check links do not establish authorization.",
+      "Proxy and middleware coverage is optimistic, never a security boundary.",
+      "Dynamic/external calls and uncertain input origins remain unresolved.",
+      "Framework-generated routes, custom configuration and unsupported query forms may be absent.",
+      "Project overview only; no model judgments or security verdicts were run.",
+      "Review units are possible static flows, not runtime traces; dependencies and guard candidates do not prove protection.",
+      "Resource labels and peer links aid navigation, not business policy or data sensitivity.",
+      "Language counts include snapshot source files; framework counts include discovered entries, not every installed dependency.",
+      "Included files without discovered entries may contain unsupported security flows; exclusions remain in the snapshot."
+    ],
+    "model_loaded": false,
+    "target_executed": false
+  }
+}

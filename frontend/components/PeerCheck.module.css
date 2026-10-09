@@ -1,0 +1,40 @@
+.peerCheck { min-width: 0; }
+.peerCheck .claim { font: var(--lede); color: var(--ink); }
+.peerCheck .lead { color: var(--carmine); }
+.lead > span:last-child { display: block; color: var(--graphite); font: var(--metadata); margin-top: var(--space-md); }
+.matrix { table-layout: fixed; width: 100%; border-collapse: separate; border-spacing: 0 3px; font: var(--ui); }
+.matrix caption { text-align: left; color: var(--pencil); font: var(--metadata); padding-block: var(--space-md); }
+.matrix th { text-align: center; vertical-align: bottom; font: var(--metadata); font-weight: 400; color: var(--pencil); }
+.matrix thead th { width: 58px; padding-block: var(--space-sm); padding-inline: 0; }
+.matrix thead th:first-child { width: auto; text-align: left; }
+.matrix tbody th { text-align: left; color: var(--ink); padding: var(--space-sm); vertical-align: middle; }
+.matrix td { padding: var(--space-sm) 0; text-align: center; }
+.site, .cell, .action { border: 0; color: var(--ink); font: var(--ui); cursor: pointer; min-height: var(--target-size); }
+.site { display: block; padding: var(--space-sm); width: 100%; text-align: left; background: transparent; font: var(--identifier); overflow-wrap: anywhere; }
+.site > span:first-child { color: var(--pencil); font: var(--metadata); }
+.where { display: block; color: var(--pencil); font: var(--metadata); margin-top: var(--space-xs); }
+.cell { display: inline-flex; align-items: center; justify-content: center; position: relative; background: transparent; min-width: var(--target-size); border-radius: var(--radius-control); }
+.cell[aria-pressed="true"] { background: var(--well); }
+.action { background: var(--well); border-radius: var(--radius-control); padding: var(--space-md); margin-bottom: var(--space-sm); overflow-wrap: anywhere; max-width: 100%; }
+.deviant th, .deviant td { background: var(--carmine-wash); }
+.deviant th { border-radius: var(--radius-control) 0 0 var(--radius-control); }
+.deviant td:last-child { border-radius: 0 var(--radius-control) var(--radius-control) 0; }
+.thisRoute { display: block; color: var(--ink); font: var(--metadata); padding-left: var(--space-sm); font-weight: 600; }
+.deviant .thisRoute { color: var(--carmine); }
+.mark { position: absolute; width: 46px; height: 30px; transform: rotate(-4deg); pointer-events: none; overflow: visible; }
+.mark path { fill: none; stroke: var(--carmine); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 150; stroke-dashoffset: 150; animation: draw 620ms ease-out 550ms forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.note { color: var(--pencil); font: var(--metadata); margin-top: var(--space-md); }
+.search { background: var(--cite); border-radius: var(--radius-control); padding: var(--space-lg); margin-block: var(--space-lg); }
+.search p { color: var(--graphite); font: var(--metadata); }
+.search code { display: block; font: var(--identifier); overflow-wrap: anywhere; }
+.exclusions summary { min-height: var(--target-size); cursor: pointer; align-content: center; font: var(--ui); }
+.exclusions li { color: var(--graphite); font: var(--metadata); margin-bottom: var(--space-md); overflow-wrap: anywhere; }
+.exclusions ul { padding-left: var(--space-lg); }
+@media (max-width: 779px) {
+  .matrix thead th { width: 46px; padding-inline: 0; }
+  .where { display: none; }
+  .matrix tbody th { padding: 0; }
+  .site { padding-inline: var(--space-xs); font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .mark path { animation: none; stroke-dashoffset: 0; } }

@@ -1,0 +1,13 @@
+# Pinned Opengrep release (PROJECT_PLAN §5; ADR-0003). v1.30.0 is the latest
+# stable release on 2026-10-03; the 2.0 alphas are prereleases and are not used.
+# The hash is GitHub's asset digest and is re-verified after download.
+
+release = "v1.30.0"
+commit = "acf67b45c97c4b63626536605c77064ef536806d"
+published = 2026-09-07
+
+[asset]
+name = "opengrep_windows_x86.exe"
+url = "https://github.com/opengrep/opengrep/releases/download/v1.30.0/opengrep_windows_x86.exe"
+sha256 = "b5cf4f8fe9f44e030aab2d579d96bd395c139db1f1ba66633676ff4d5ebc7c39"
+size = 53652992

@@ -1,0 +1,109 @@
+/* Generated from tokens.json; do not edit. */
+:root {
+  --sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-section: 44px;
+  --space-3xl: 64px;
+  --radius-sheet: 14px;
+  --radius-control: 8px;
+  --radius-tag: 4px;
+  --prose: 400 16px/1.55 var(--sans);
+  --title: 600 36px/1.15 var(--sans);
+  --heading: 600 15px/1.3 var(--sans);
+  --lede: 400 17.5px/1.6 var(--sans);
+  --ui: 600 14px/1.3 var(--sans);
+  --metadata: 400 13px/1.3 var(--sans);
+  --identifier: 500 12px/1.4 var(--mono);
+  --code: 400 13px/1.68 var(--mono);
+  --wordmark: 700 19px/1 var(--sans);
+  --specimen: 500 28px/1.4 var(--mono);
+  --focus-width: 2px;
+  --target-size: 44px;
+  --glyph-size: 12px;
+  --mark-width: 10px;
+  --mark-height: 22px;
+  --swatch-size: 24px;
+  --desk: #ECEDE9;
+  --sheet: #F9F9F7;
+  --raised: #FFFFFF;
+  --well: #E3E4DF;
+  --cite: #EDEEE9;
+  --ink: #1B1D20;
+  --graphite: #4F545B;
+  --pencil: #5F646B;
+  --carmine: #B0282C;
+  --carmine-wash: #F7E4E2;
+  --blue: #1F6185;
+  --blue-line: #3A86AE;
+  --blue-wash: #DCEEF6;
+  --ochre: #85570A;
+  --ochre-wash: #F5EBD3;
+  --umber: #6E5530;
+  --control-rule: #7A7F87;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]) {
+  --desk: #111214;
+  --sheet: #18191C;
+  --raised: #202226;
+  --well: #24262A;
+  --cite: #202226;
+  --ink: #E8E8E4;
+  --graphite: #B4B7BD;
+  --pencil: #959AA2;
+  --carmine: #F2756D;
+  --carmine-wash: #3A2022;
+  --blue: #82BEDF;
+  --blue-line: #4F9CC6;
+  --blue-wash: #16303E;
+  --ochre: #D8A548;
+  --ochre-wash: #33291A;
+  --umber: #CDB58A;
+  --control-rule: #6C7178;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="night"] {
+  --desk: #111214;
+  --sheet: #18191C;
+  --raised: #202226;
+  --well: #24262A;
+  --cite: #202226;
+  --ink: #E8E8E4;
+  --graphite: #B4B7BD;
+  --pencil: #959AA2;
+  --carmine: #F2756D;
+  --carmine-wash: #3A2022;
+  --blue: #82BEDF;
+  --blue-line: #4F9CC6;
+  --blue-wash: #16303E;
+  --ochre: #D8A548;
+  --ochre-wash: #33291A;
+  --umber: #CDB58A;
+  --control-rule: #6C7178;
+  color-scheme: dark;
+}
+.token-swatch[data-token="desk"] { background-color: var(--desk); }
+.token-swatch[data-token="sheet"] { background-color: var(--sheet); }
+.token-swatch[data-token="raised"] { background-color: var(--raised); }
+.token-swatch[data-token="well"] { background-color: var(--well); }
+.token-swatch[data-token="cite"] { background-color: var(--cite); }
+.token-swatch[data-token="ink"] { background-color: var(--ink); }
+.token-swatch[data-token="graphite"] { background-color: var(--graphite); }
+.token-swatch[data-token="pencil"] { background-color: var(--pencil); }
+.token-swatch[data-token="carmine"] { background-color: var(--carmine); }
+.token-swatch[data-token="carmine-wash"] { background-color: var(--carmine-wash); }
+.token-swatch[data-token="blue"] { background-color: var(--blue); }
+.token-swatch[data-token="blue-line"] { background-color: var(--blue-line); }
+.token-swatch[data-token="blue-wash"] { background-color: var(--blue-wash); }
+.token-swatch[data-token="ochre"] { background-color: var(--ochre); }
+.token-swatch[data-token="ochre-wash"] { background-color: var(--ochre-wash); }
+.token-swatch[data-token="umber"] { background-color: var(--umber); }
+.token-swatch[data-token="control-rule"] { background-color: var(--control-rule); }

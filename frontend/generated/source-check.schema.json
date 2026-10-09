@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConditionKind"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "ConditionKind": {
+      "enum": [
+        "setup_required",
+        "model_too_large",
+        "runner_unavailable",
+        "stale_source",
+        "unsupported_framework",
+        "unreadable_file",
+        "partial_coverage"
+      ],
+      "title": "ConditionKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/SourceCheck.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "added_files": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Added Files"
+    },
+    "changed_files": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Changed Files"
+    },
+    "checked_at": {
+      "format": "date-time",
+      "title": "Checked At",
+      "type": "string"
+    },
+    "conditions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Condition"
+      },
+      "title": "Conditions",
+      "type": "array"
+    },
+    "current_snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Snapshot Id"
+    },
+    "excluded_scope_changed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Excluded Scope Changed"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "model_loaded": {
+      "const": false,
+      "default": false,
+      "title": "Model Loaded",
+      "type": "boolean"
+    },
+    "removed_files": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Removed Files"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "current",
+        "changed",
+        "unavailable",
+        "unassociated"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "target_executed": {
+      "const": false,
+      "default": false,
+      "title": "Target Executed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "snapshot_id",
+    "checked_at",
+    "state",
+    "limitations"
+  ],
+  "title": "SourceCheck",
+  "type": "object"
+}

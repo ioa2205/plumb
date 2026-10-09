@@ -1,0 +1,285 @@
+# Safe handler templates for the mutation corpus (PROJECT_PLAN §10.2).
+# Each template is its own template family: variants of one template never
+# cross splits. These files are input data; they are never imported or run.
+
+[[templates]]
+name = "order_receipt"
+family = "authorization"
+handler = "get_receipt"
+var = "order"
+model = "Order"
+id_param = "order_id"
+owner_field = "customer_id"
+principal = "user"
+wrong_field = "branch_id"
+
+[[templates]]
+name = "address_entry"
+family = "authorization"
+handler = "get_address"
+var = "address"
+model = "Address"
+id_param = "address_id"
+owner_field = "user_id"
+principal = "user"
+wrong_field = "id"
+
+[[templates]]
+name = "invoice_pdf"
+family = "authorization"
+handler = "download_invoice"
+var = "invoice"
+model = "Invoice"
+id_param = "invoice_id"
+owner_field = "account_id"
+principal = "account"
+wrong_field = "issuer_id"
+
+[[templates]]
+name = "message_thread"
+family = "authorization"
+handler = "read_thread"
+var = "thread"
+model = "Thread"
+id_param = "thread_id"
+owner_field = "owner_id"
+principal = "user"
+wrong_field = "last_sender_id"
+
+[[templates]]
+name = "saved_card"
+family = "authorization"
+handler = "delete_card"
+var = "card"
+model = "PaymentCard"
+id_param = "card_id"
+owner_field = "holder_id"
+principal = "user"
+wrong_field = "id"
+
+[[templates]]
+name = "support_ticket"
+family = "authorization"
+handler = "update_ticket"
+var = "ticket"
+model = "Ticket"
+id_param = "ticket_id"
+owner_field = "requester_id"
+principal = "current"
+wrong_field = "assignee_id"
+
+[[templates]]
+name = "customer_search"
+family = "injection"
+handler = "search_customers"
+param = "q"
+
+[[templates]]
+name = "product_lookup"
+family = "injection"
+handler = "product_by_sku"
+param = "sku"
+
+[[templates]]
+name = "order_status_filter"
+family = "injection"
+handler = "orders_by_status"
+param = "status"
+
+# Added for task M1.6a.
+
+[[templates]]
+name = "wishlist_item"
+family = "authorization"
+handler = "remove_from_wishlist"
+var = "item"
+model = "WishlistItem"
+id_param = "item_id"
+owner_field = "user_id"
+principal = "user"
+wrong_field = "product_id"
+
+[[templates]]
+name = "loyalty_card"
+family = "authorization"
+handler = "loyalty_balance"
+var = "card"
+model = "LoyaltyCard"
+id_param = "card_id"
+owner_field = "customer_id"
+principal = "customer"
+wrong_field = "id"
+
+[[templates]]
+name = "subscription_cancel"
+family = "authorization"
+handler = "cancel_subscription"
+var = "subscription"
+model = "Subscription"
+id_param = "subscription_id"
+owner_field = "subscriber_id"
+principal = "user"
+wrong_field = "plan_id"
+
+[[templates]]
+name = "document_download"
+family = "authorization"
+handler = "download_document"
+var = "document"
+model = "Document"
+id_param = "document_id"
+owner_field = "owner_id"
+principal = "user"
+wrong_field = "folder_id"
+
+[[templates]]
+name = "review_edit"
+family = "authorization"
+handler = "edit_review"
+var = "review"
+model = "Review"
+id_param = "review_id"
+owner_field = "author_id"
+principal = "user"
+wrong_field = "product_id"
+
+[[templates]]
+name = "booking_detail"
+family = "authorization"
+handler = "booking_detail"
+var = "booking"
+model = "Booking"
+id_param = "booking_id"
+owner_field = "guest_id"
+principal = "me"
+wrong_field = "room_id"
+
+[[templates]]
+name = "payout_detail"
+family = "authorization"
+handler = "payout_detail"
+var = "payout"
+model = "Payout"
+id_param = "payout_id"
+owner_field = "merchant_id"
+principal = "merchant"
+wrong_field = "id"
+
+[[templates]]
+name = "project_settings"
+family = "authorization"
+handler = "update_project_settings"
+var = "project"
+model = "Project"
+id_param = "project_id"
+owner_field = "owner_id"
+principal = "user"
+wrong_field = "team_id"
+
+[[templates]]
+name = "notification_read"
+family = "authorization"
+handler = "mark_read"
+var = "notification"
+model = "Notification"
+id_param = "notification_id"
+owner_field = "recipient_id"
+principal = "user"
+wrong_field = "sender_id"
+
+[[templates]]
+name = "medical_record"
+family = "authorization"
+handler = "read_record"
+var = "record"
+model = "Record"
+id_param = "record_id"
+owner_field = "patient_id"
+principal = "patient"
+wrong_field = "doctor_id"
+
+[[templates]]
+name = "cart_line"
+family = "authorization"
+handler = "remove_cart_line"
+var = "line"
+model = "CartLine"
+id_param = "line_id"
+owner_field = "cart_owner_id"
+principal = "user"
+wrong_field = "id"
+
+[[templates]]
+name = "api_key_revoke"
+family = "authorization"
+handler = "revoke_api_key"
+var = "key"
+model = "ApiKey"
+id_param = "key_id"
+owner_field = "user_id"
+principal = "current"
+wrong_field = "id"
+
+[[templates]]
+name = "refund_request"
+family = "authorization"
+handler = "request_refund"
+var = "order"
+model = "Order"
+id_param = "order_id"
+owner_field = "buyer_id"
+principal = "user"
+wrong_field = "seller_id"
+
+[[templates]]
+name = "photo_album"
+family = "authorization"
+handler = "view_album"
+var = "album"
+model = "Album"
+id_param = "album_id"
+owner_field = "owner_id"
+principal = "user"
+wrong_field = "cover_photo_id"
+
+[[templates]]
+name = "invoice_number_search"
+family = "injection"
+handler = "find_invoice"
+param = "number"
+
+[[templates]]
+name = "catalog_category"
+family = "injection"
+handler = "list_category"
+param = "category"
+
+[[templates]]
+name = "user_by_email"
+family = "injection"
+handler = "user_by_email"
+param = "email"
+
+[[templates]]
+name = "archive_orders"
+family = "injection"
+handler = "archive_orders"
+param = "before"
+
+[[templates]]
+name = "coupon_check"
+family = "injection"
+handler = "coupon_discount"
+param = "code"
+
+[[templates]]
+name = "audit_log_filter"
+family = "injection"
+handler = "audit_entries"
+param = "actor"
+
+[[templates]]
+name = "session_by_device"
+family = "injection"
+handler = "sign_out_device"
+param = "device"

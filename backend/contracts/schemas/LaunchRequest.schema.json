@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/LaunchRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authorized": {
+      "const": true,
+      "title": "Authorized",
+      "type": "boolean"
+    },
+    "families": {
+      "default": [
+        "authorization"
+      ],
+      "items": {
+        "$ref": "#/$defs/Family"
+      },
+      "maxItems": 4,
+      "minItems": 1,
+      "title": "Families",
+      "type": "array"
+    },
+    "inspection_id": {
+      "pattern": "^inspect-[0-9a-f]{32}$",
+      "title": "Inspection Id",
+      "type": "string"
+    },
+    "limit": {
+      "default": 5,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "resources": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Resources",
+      "type": "array"
+    },
+    "routes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Routes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "inspection_id",
+    "authorized"
+  ],
+  "title": "LaunchRequest",
+  "type": "object"
+}

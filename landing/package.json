@@ -1,0 +1,17 @@
+{
+  "name": "plumb-landing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Public explanatory site for Plumb. Static, dependency-free, built from saved records.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "extract": "node scripts/extract.mjs",
+    "extract:check": "node scripts/extract.mjs --check",
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test": "node --test scripts/*.test.mjs"
+  }
+}

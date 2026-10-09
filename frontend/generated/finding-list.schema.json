@@ -1,0 +1,777 @@
+{
+  "$defs": {
+    "Conclusion": {
+      "enum": [
+        "candidate",
+        "supported",
+        "rejected",
+        "inconclusive"
+      ],
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConditionKind"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "ConditionKind": {
+      "enum": [
+        "setup_required",
+        "model_too_large",
+        "runner_unavailable",
+        "stale_source",
+        "unsupported_framework",
+        "unreadable_file",
+        "partial_coverage"
+      ],
+      "title": "ConditionKind",
+      "type": "string"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "description": "True-denominator progress: every question is counted somewhere.",
+      "properties": {
+        "completed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Completed",
+          "type": "integer"
+        },
+        "excluded": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Excluded",
+          "type": "integer"
+        },
+        "pending": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Pending",
+          "type": "integer"
+        },
+        "total": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "unsupported": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Unsupported",
+          "type": "integer"
+        }
+      },
+      "title": "Coverage",
+      "type": "object"
+    },
+    "Disposition": {
+      "enum": [
+        "open",
+        "dismissed",
+        "accepted_risk",
+        "resolved"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "FindingRow": {
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {
+          "$ref": "#/$defs/Conclusion"
+        },
+        "display_id": {
+          "title": "Display Id",
+          "type": "string"
+        },
+        "disposition": {
+          "$ref": "#/$defs/Disposition"
+        },
+        "family": {
+          "$ref": "#/$defs/Family"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runtime_verification": {
+          "$ref": "#/$defs/RuntimeVerification"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "display_id",
+        "title",
+        "family",
+        "conclusion",
+        "severity",
+        "runtime_verification",
+        "disposition",
+        "location"
+      ],
+      "title": "FindingRow",
+      "type": "object"
+    },
+    "ModelRef": {
+      "additionalProperties": false,
+      "properties": {
+        "file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "quantization": {
+          "title": "Quantization",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "file_sha256",
+        "quantization"
+      ],
+      "title": "ModelRef",
+      "type": "object"
+    },
+    "ReviewRun": {
+      "additionalProperties": false,
+      "properties": {
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage",
+          "default": {
+            "completed": 0,
+            "excluded": 0,
+            "pending": 0,
+            "total": 0,
+            "unsupported": 0
+          }
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "finding_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Finding Ids",
+          "type": "array"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/RunLifecycle"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModelRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "run_type": {
+          "$ref": "#/$defs/RunType"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RunStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "toolchain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Toolchain"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "run_type",
+        "lifecycle",
+        "created_at"
+      ],
+      "title": "ReviewRun",
+      "type": "object"
+    },
+    "RunLifecycle": {
+      "enum": [
+        "queued",
+        "running",
+        "paused",
+        "canceled",
+        "failed",
+        "completed"
+      ],
+      "title": "RunLifecycle",
+      "type": "string"
+    },
+    "RunStage": {
+      "enum": [
+        "indexing",
+        "scanning",
+        "investigating",
+        "verifying",
+        "reporting"
+      ],
+      "title": "RunStage",
+      "type": "string"
+    },
+    "RunType": {
+      "description": "Live, replayed, and saved runs are always labeled differently (PROJECT_PLAN \u00a715).",
+      "enum": [
+        "live",
+        "replay",
+        "saved"
+      ],
+      "title": "RunType",
+      "type": "string"
+    },
+    "RuntimeVerification": {
+      "enum": [
+        "not_attempted",
+        "unavailable",
+        "inconclusive",
+        "reproduced",
+        "not_reproduced"
+      ],
+      "title": "RuntimeVerification",
+      "type": "string"
+    },
+    "SecuritySignal": {
+      "additionalProperties": false,
+      "properties": {
+        "advisory_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Advisory Id"
+        },
+        "category": {
+          "enum": [
+            "secret",
+            "configuration",
+            "dependency"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "ecosystem": {
+          "anyOf": [
+            {
+              "enum": [
+                "npm",
+                "PyPI"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ecosystem"
+        },
+        "fingerprint": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fingerprint"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "package": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_version": {
+          "maxLength": 100,
+          "title": "Rule Version",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "status": {
+          "enum": [
+            "observed",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 600,
+          "title": "Summary",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "status",
+        "source",
+        "rule_id",
+        "rule_version",
+        "summary",
+        "limitations"
+      ],
+      "title": "SecuritySignal",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "SignalSet": {
+      "additionalProperties": false,
+      "properties": {
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "pack_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pack Date"
+        },
+        "pack_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pack Sha256"
+        },
+        "pack_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pack Source"
+        },
+        "run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "signals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SecuritySignal"
+          },
+          "maxItems": 100,
+          "title": "Signals",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "partial",
+            "not_run"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "tool_version": {
+          "title": "Tool Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "snapshot_id",
+        "tool_version",
+        "status"
+      ],
+      "title": "SignalSet",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "Toolchain": {
+      "additionalProperties": false,
+      "description": "Everything needed to reproduce a run (design.md \u00a712, Runs).",
+      "properties": {
+        "backend": {
+          "title": "Backend",
+          "type": "string"
+        },
+        "knowledge_pack_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Knowledge Pack Date"
+        },
+        "llama_cpp_build": {
+          "title": "Llama Cpp Build",
+          "type": "string"
+        },
+        "llama_cpp_release": {
+          "title": "Llama Cpp Release",
+          "type": "string"
+        },
+        "opengrep_rules_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opengrep Rules Sha256"
+        },
+        "opengrep_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opengrep Version"
+        }
+      },
+      "required": [
+        "llama_cpp_release",
+        "llama_cpp_build",
+        "backend"
+      ],
+      "title": "Toolchain",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/FindingList.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/Conclusion"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/FindingRow"
+      },
+      "maxItems": 20,
+      "title": "Findings",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "next_offset": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Next Offset"
+    },
+    "offset": {
+      "minimum": 0,
+      "title": "Offset",
+      "type": "integer"
+    },
+    "run": {
+      "$ref": "#/$defs/ReviewRun"
+    },
+    "supplementary": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SignalSet"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "total": {
+      "minimum": 0,
+      "title": "Total",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run",
+    "findings",
+    "limitations",
+    "counts",
+    "total",
+    "offset",
+    "next_offset"
+  ],
+  "title": "FindingList",
+  "type": "object"
+}

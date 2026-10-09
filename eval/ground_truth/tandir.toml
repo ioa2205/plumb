@@ -1,0 +1,382 @@
+# Ground truth for the hand-written Tandir lab (PROJECT_PLAN §10.1, task M1.4, ADR-0005).
+#
+# Paths are relative to the lab root, which is what Plumb reviews. `lines` is the
+# symbol's whole span (decorators through its last line), as in the mutation corpus.
+# Validated against the code by `uv run python -m eval.ground_truth check`:
+# spans, anchors, guards, and the fixed snapshot (labs/tandir/fixed).
+#
+# kind = "flaw"      intentional flaw; expected "supported"; `fix` says what the fixed snapshot changes
+# kind = "lookalike" its protected twin (same `pair`); expected "rejected", citing `guard`
+# kind = "control"   another defended site of the same kind; expected "rejected", citing `guard`
+
+root = "labs/tandir"
+
+# A. Object- and tenant-level authorization
+
+[[case]]
+id = "TANDIR-A1"
+kind = "flaw"
+family = "authorization"
+cwe = "CWE-639"
+title = "Receipt loads any customer's order"
+route = "GET /orders/{order_id}/receipt"
+path = "api/tandir/routers/orders.py"
+symbol = "get_receipt"
+lines = [82, 91]
+expected = "supported"
+pair = "order-documents"
+anchors = ["order = db.get(Order, order_id)", "return ReceiptOut.from_order(order)"]
+fix = { removes = ["order = db.get(Order, order_id)"], adds = ["load_order_scoped(db, order_id, user)"] }
+
+[[case]]
+id = "TANDIR-A1-L"
+kind = "lookalike"
+family = "authorization"
+cwe = "CWE-639"
+title = "Invoice uses a scoped loader defined in another file"
+route = "GET /orders/{order_id}/invoice"
+path = "api/tandir/routers/orders.py"
+symbol = "get_invoice"
+lines = [94, 101]
+expected = "rejected"
+pair = "order-documents"
+anchors = ["return InvoiceOut.from_order(order)"]
+guard = "load_order_scoped(db, order_id, user)"
+guard_definition = "api/tandir/services/orders.py::load_order_scoped"
+
+[[case]]
+id = "TANDIR-A2"
+kind = "flaw"
+family = "authorization"
+cwe = "CWE-863"
+title = "Branch manager edits another branch's menu (role checked, branch not)"
+route = "PUT /branches/{branch_id}/menu/{item_id}"
+path = "api/tandir/routers/branches.py"
+symbol = "update_menu_item"
+lines = [31, 46]
+expected = "supported"
+pair = "branch-scope"
+anchors = ["user: User = Depends(manager)", "if item is None or item.branch_id != branch_id:"]
+fix = { adds = ["if user.branch_id != branch_id:"] }
+
+[[case]]
+id = "TANDIR-A2-L"
+kind = "lookalike"
+family = "authorization"
+cwe = "CWE-863"
+title = "Branch hours update checks branch membership"
+route = "PUT /branches/{branch_id}/hours"
+path = "api/tandir/routers/branches.py"
+symbol = "update_hours"
+lines = [49, 70]
+expected = "rejected"
+pair = "branch-scope"
+anchors = ["user: User = Depends(manager)"]
+guard = "if user.branch_id != branch_id:"
+
+[[case]]
+id = "TANDIR-A-C1"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Order detail filters by owner in the query"
+route = "GET /orders/{order_id}"
+path = "api/tandir/routers/orders.py"
+symbol = "get_order"
+lines = [68, 79]
+expected = "rejected"
+anchors = ["select(Order)"]
+guard = "Order.customer_id == user.id"
+
+[[case]]
+id = "TANDIR-A-C2"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Cancel compares the owner inline"
+route = "POST /orders/{order_id}/cancel"
+path = "api/tandir/routers/orders.py"
+symbol = "cancel_order"
+lines = [104, 117]
+expected = "rejected"
+anchors = ["order = db.get(Order, order_id)"]
+guard = "order.customer_id != user.id"
+
+[[case]]
+id = "TANDIR-A-C3"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Order items load through an ownership dependency"
+route = "GET /orders/{order_id}/items"
+path = "api/tandir/routers/orders.py"
+symbol = "list_items"
+lines = [120, 130]
+expected = "rejected"
+anchors = ["for i in order.items"]
+guard = "Depends(owned_order)"
+guard_definition = "api/tandir/services/orders.py::owned_order"
+
+[[case]]
+id = "TANDIR-A-C4"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Tracking loads the order, then calls an owner check"
+route = "GET /orders/{order_id}/tracking"
+path = "api/tandir/routers/orders.py"
+symbol = "track_order"
+lines = [133, 145]
+expected = "rejected"
+anchors = ["order = db.get(Order, order_id)"]
+guard = "ensure_owner(order, user)"
+guard_definition = "api/tandir/services/orders.py::ensure_owner"
+
+[[case]]
+id = "TANDIR-A-C5"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Photo upload loads the order through the ownership dependency"
+route = "POST /orders/{order_id}/photos"
+path = "api/tandir/routers/orders.py"
+symbol = "upload_photo"
+lines = [148, 164]
+expected = "rejected"
+anchors = ["(folder / name).write_bytes(await file.read())"]
+guard = "Depends(owned_order)"
+guard_definition = "api/tandir/services/orders.py::owned_order"
+
+[[case]]
+id = "TANDIR-A-C6"
+kind = "control"
+family = "authorization"
+cwe = "CWE-863"
+title = "Branch order list checks branch membership"
+route = "GET /branches/{branch_id}/orders"
+path = "api/tandir/routers/branches.py"
+symbol = "branch_orders"
+lines = [73, 82]
+expected = "rejected"
+anchors = ["select(Order).where(Order.branch_id == branch_id)"]
+guard = "if user.branch_id != branch_id:"
+
+[[case]]
+id = "TANDIR-A-C7"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Courier sees only orders assigned to them"
+route = "GET /courier/orders/{order_id}"
+path = "api/tandir/routers/courier.py"
+symbol = "delivery_detail"
+lines = [32, 41]
+expected = "rejected"
+anchors = ["order = db.get(Order, order_id)"]
+guard = "order.courier_id != user.id"
+
+[[case]]
+id = "TANDIR-A-C8"
+kind = "control"
+family = "authorization"
+cwe = "CWE-639"
+title = "Admin order lookup reads any order by design"
+route = "GET /admin/orders/{order_id}"
+path = "api/tandir/routers/admin.py"
+symbol = "admin_get_order"
+lines = [56, 65]
+expected = "rejected"
+anchors = ["order = db.get(Order, order_id)"]
+guard = "Depends(admin_only)"
+note = "Intentional exception: the admin role may read every order (PROGRESS M3.5 expects it excluded with a reason)."
+
+# B. SQL and OS command injection
+
+[[case]]
+id = "TANDIR-B1"
+kind = "flaw"
+family = "injection"
+cwe = "CWE-89"
+title = "Admin order search builds ORDER BY from a query parameter"
+route = "GET /admin/orders"
+path = "api/tandir/routers/admin.py"
+symbol = "search_orders"
+lines = [18, 33]
+expected = "supported"
+pair = "admin-search"
+anchors = ['sort: str = "created_at"', 'f"WHERE users.display_name LIKE :q ORDER BY {sort}"']
+fix = { removes = ["ORDER BY {sort}"], adds = ["ORDER_SORTS.get(sort)"] }
+
+[[case]]
+id = "TANDIR-B1-L"
+kind = "lookalike"
+family = "injection"
+cwe = "CWE-89"
+title = "Customer search binds the name and sorts through an allowlist"
+route = "GET /admin/customers"
+path = "api/tandir/routers/admin.py"
+symbol = "search_customers"
+lines = [36, 53]
+expected = "rejected"
+pair = "admin-search"
+anchors = ['''f"WHERE role = 'customer' AND display_name LIKE :name ORDER BY {column}"''', '{"name": f"%{name}%"}']
+guard = "CUSTOMER_SORTS.get(sort)"
+
+[[case]]
+id = "TANDIR-B2"
+kind = "flaw"
+family = "injection"
+cwe = "CWE-78"
+title = "Cake inscription reaches a label-printer command run with shell=True"
+route = "POST /kitchen/orders/{order_id}/items/{item_id}/label"
+path = "api/tandir/routers/kitchen.py"
+symbol = "print_cake_label"
+lines = [27, 42]
+expected = "supported"
+pair = "kitchen-printing"
+anchors = ["item.inscription or item.name", "subprocess.run(command, shell=True, check=True, timeout=10)"]
+fix = { removes = ["shell=True"], adds = ['["tandir-label", "--order", str(order.id), "--text", item.inscription or item.name]'] }
+
+[[case]]
+id = "TANDIR-B2-L"
+kind = "lookalike"
+family = "injection"
+cwe = "CWE-78"
+title = "Receipt printing passes an argument list"
+route = "POST /kitchen/orders/{order_id}/receipt"
+path = "api/tandir/routers/kitchen.py"
+symbol = "print_receipt"
+lines = [45, 60]
+expected = "rejected"
+pair = "kitchen-printing"
+anchors = ["customer = order.customer.display_name"]
+guard = '["tandir-receipt", "--order", str(order.id), "--customer", customer]'
+
+# C. Path traversal
+
+[[case]]
+id = "TANDIR-C1"
+kind = "flaw"
+family = "path_traversal"
+cwe = "CWE-22"
+title = "Cake reference-photo download joins a user-supplied file name"
+route = "GET /orders/{order_id}/photos?name="
+path = "api/tandir/routers/orders.py"
+symbol = "download_photo"
+lines = [167, 179]
+expected = "supported"
+pair = "file-download"
+anchors = ["name: str", "path = request.app.state.settings.photo_dir / str(order.id) / name", "return FileResponse(path)"]
+fix = { removes = ["path = request.app.state.settings.photo_dir / str(order.id) / name"], adds = ["path.is_relative_to(folder)"] }
+
+[[case]]
+id = "TANDIR-C1-L"
+kind = "lookalike"
+family = "path_traversal"
+cwe = "CWE-22"
+title = "Avatar download resolves the path and checks containment"
+route = "GET /avatars?name="
+path = "api/tandir/routers/files.py"
+symbol = "get_avatar"
+lines = [7, 13]
+expected = "rejected"
+pair = "file-download"
+anchors = ["path = (root / name).resolve()", "return FileResponse(path)"]
+guard = "if not path.is_relative_to(root) or not path.is_file():"
+
+# D. Next.js boundary exposure
+
+[[case]]
+id = "TANDIR-D1"
+kind = "flaw"
+family = "nextjs_exposure"
+cwe = "CWE-862"
+title = "Server Action refundOrder has no authorization"
+route = "Server Action refundOrder (app/backoffice)"
+path = "web/app/backoffice/actions.ts"
+symbol = "refundOrder"
+lines = [7, 11]
+expected = "supported"
+pair = "order-actions"
+anchors = ["UPDATE orders SET status = 'refunded'"]
+note = "The back office page checks the role, but a Server Action is a public POST endpoint (PROJECT_PLAN §4)."
+fix = { removes = ["UPDATE orders SET status = 'refunded'"], adds = ["await refundOrderAsStaff(orderId);"] }
+
+[[case]]
+id = "TANDIR-D1-L"
+kind = "lookalike"
+family = "nextjs_exposure"
+cwe = "CWE-862"
+title = "Server Action cancelOrder verifies the session in the Data Access Layer"
+route = "Server Action cancelOrder (app/orders)"
+path = "web/app/orders/actions.ts"
+symbol = "cancelOrder"
+lines = [7, 11]
+expected = "rejected"
+pair = "order-actions"
+anchors = ['const orderId = Number(formData.get("orderId"));']
+guard = "await cancelOrderFor(orderId);"
+guard_definition = "web/lib/dal.ts::cancelOrderFor"
+
+[[case]]
+id = "TANDIR-D2"
+kind = "flaw"
+family = "nextjs_exposure"
+cwe = "CWE-200"
+title = "Courier page passes the full customer record, with phone history, to a Client Component"
+route = "GET /courier/{id}"
+path = "web/app/courier/[id]/page.tsx"
+symbol = "DeliveryPage"
+lines = [5, 9]
+expected = "supported"
+pair = "client-props"
+anchors = ["<DeliveryCard order={delivery.order} customer={delivery.customer} />"]
+note = "The card shows only the name and address; the phone and phone history are serialized to the browser unused."
+fix = { path = "web/lib/dal.ts", symbol = "getDelivery", removes = ["customerRecord(order.customer_id)"], adds = ["deliveryCustomer(order.customer_id)"] }
+
+[[case]]
+id = "TANDIR-D2-L"
+kind = "lookalike"
+family = "nextjs_exposure"
+cwe = "CWE-200"
+title = "Order page passes a minimal DTO to its Client Component"
+route = "GET /orders/{id}"
+path = "web/app/orders/[id]/page.tsx"
+symbol = "OrderPage"
+lines = [5, 9]
+expected = "rejected"
+pair = "client-props"
+anchors = ["<OrderSummary order={order} />"]
+guard = "await getOrderDTO(Number(id))"
+guard_definition = "web/lib/dal.ts::getOrderDTO"
+
+[[case]]
+id = "TANDIR-D3"
+kind = "flaw"
+family = "nextjs_exposure"
+cwe = "CWE-862"
+title = "/api/admin/export is protected only by the proxy.ts matcher"
+route = "GET /api/admin/export"
+path = "web/app/api/admin/export/route.ts"
+symbol = "GET"
+lines = [9, 20]
+expected = "supported"
+pair = "admin-routes"
+anchors = ["export function GET(): Response {", "SELECT id, display_name, phone FROM users"]
+note = "proxy.ts checks the admin role for this path; the handler itself does not (proxy is an optimistic layer, PROJECT_PLAN §4)."
+fix = { removes = ["export function GET(): Response {"], adds = ['if (!viewer.is("admin"))'] }
+
+[[case]]
+id = "TANDIR-D3-L"
+kind = "lookalike"
+family = "nextjs_exposure"
+cwe = "CWE-862"
+title = "/api/admin/reports checks the role in the handler"
+route = "GET /api/admin/reports"
+path = "web/app/api/admin/reports/route.ts"
+symbol = "GET"
+lines = [6, 18]
+expected = "rejected"
+pair = "admin-routes"
+anchors = ["viewerForToken(request.cookies.get(SESSION_COOKIE)?.value)"]
+guard = 'if (!viewer.is("admin"))'

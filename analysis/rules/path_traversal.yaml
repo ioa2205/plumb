@@ -1,0 +1,29 @@
+# Plumb's own Opengrep rules, family C: path traversal (CWE-22).
+rules:
+  - id: plumb.path.request-value-in-file-path
+    languages: [python]
+    mode: taint
+    severity: ERROR
+    message: A request value is joined into a file path that is read or served.
+    metadata:
+      family: path_traversal
+      cwe: [22]
+    pattern-sources:
+      - patterns:
+          - pattern-inside: |
+              @$ROUTER.$METHOD(...)
+              def $HANDLER(..., $PARAM, ...):
+                ...
+          - focus-metavariable: $PARAM
+    pattern-sanitizers:
+      - pattern: os.path.basename(...)
+      - pattern: Path(...).name
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: FileResponse($PATH, ...)
+              - pattern: open($PATH, ...)
+              - pattern: $PATH.read_bytes()
+              - pattern: $PATH.read_text(...)
+              - pattern: $PATH.write_bytes(...)
+          - focus-metavariable: $PATH

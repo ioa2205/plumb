@@ -1,0 +1,9 @@
+# Build output and local preview captures
+/dist/
+/shots/
+
+# Vercel project link (account and project identifiers)
+.vercel/
+
+# Words the privacy checks guard against; local only
+/.private-words

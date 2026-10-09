@@ -1,0 +1,52 @@
+# Plumb's own Opengrep rules, family D: Next.js boundary exposure (CWE-862, CWE-200).
+# Server Actions are public POST endpoints. A scanner can only look for a call
+# whose name sounds like a check, which is exactly what Plumb does not trust.
+rules:
+  - id: plumb.nextjs.server-action-without-session-check
+    languages: [typescript]
+    severity: WARNING
+    message: Server Action $ACTION calls no session or authorization function.
+    metadata:
+      family: nextjs_exposure
+      cwe: [862]
+    patterns:
+      - pattern-inside: |
+          "use server";
+          ...
+      - pattern: |
+          export async function $ACTION(...) { ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... verifySession(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... await verifySession(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... const $S = await verifySession(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... const $S = await auth(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... const $S = await getSession(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... await requireUser(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... const $S = await requireUser(...); ... }
+      - pattern-not: |
+          export async function $ACTION(...) { ... await requireRole(...); ... }
+
+  - id: plumb.nextjs.admin-route-handler-without-role-check
+    languages: [typescript]
+    severity: WARNING
+    message: Route handler $METHOD under an admin path checks no role in the handler.
+    paths:
+      include:
+        - "**/app/api/admin/**/route.ts"
+    metadata:
+      family: nextjs_exposure
+      cwe: [862]
+    patterns:
+      - pattern: |
+          export async function $METHOD(...) { ... }
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(GET|POST|PUT|PATCH|DELETE)$
+      - pattern-not: |
+          export async function $METHOD(...) { ... if (<... $X.role ...>) { ... } ... }

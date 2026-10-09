@@ -1,0 +1,24 @@
+.back { display: inline-flex; align-items: center; min-height: var(--target-size); color: var(--ink); font: var(--ui); margin-bottom: var(--space-lg); }
+.list { padding: 0; list-style: none; display: grid; gap: var(--space-md); margin-block: var(--space-xl); }
+.list a { display: grid; gap: var(--space-sm); min-height: var(--target-size); padding: var(--space-xl); border-radius: var(--radius-control); background: var(--cite); text-decoration: none; color: var(--ink); }
+.list a:hover { background: var(--well); }
+.list span, .scope { font: var(--metadata); color: var(--graphite); }
+.list code { font: var(--identifier); overflow-wrap: anywhere; }
+.list strong { font: var(--lede); }
+.action { min-height: var(--target-size); padding: var(--space-md); border: 0; border-radius: var(--radius-control); background: var(--well); color: var(--ink); font: var(--ui); cursor: pointer; }
+.paging { display: flex; gap: var(--space-md); }
+.scope { margin-top: var(--space-xl); }
+.filters { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-lg); margin-block: var(--space-xl); }
+.filters label { display: grid; gap: var(--space-sm); font: var(--metadata); color: var(--graphite); min-width: 0; }
+.filters select { min-height: var(--target-size); max-width: 100%; padding: var(--space-md); border: 0; border-bottom: 1.5px solid var(--control-rule); background: var(--well); color: var(--ink); font: var(--ui); border-radius: var(--radius-control); }
+.group { margin-block: var(--space-section); }
+.group summary { min-height: var(--target-size); align-content: center; cursor: pointer; font: var(--heading); }
+.identity, .status { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+.status[data-risk="true"] { color: var(--carmine); }
+.gauge { display: inline-flex; gap: 2px; align-items: end; }
+.gauge i { width: 3px; height: 12px; background: var(--well); }
+.gauge i[data-active="true"] { background: currentColor; }
+.gauge[data-unknown="true"] i { background: none; border-inline-start: 2px dotted currentColor; }
+.action[aria-disabled="true"] { color: var(--pencil); cursor: default; }
+@media (max-width: 480px) { .filters { display: grid; grid-template-columns: minmax(0,1fr); } .list a { padding: var(--space-lg); } }
+.paging ~ details summary { min-height: var(--target-size); align-content: center; cursor: pointer; }

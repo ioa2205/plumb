@@ -1,0 +1,769 @@
+{
+  "provenance": "Read-only replay of the original saved local run. No new model run.",
+  "review": {
+    "run": {
+      "id": "review-efe914fb441a4374bd3ec22debc371dc",
+      "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+      "run_type": "live",
+      "lifecycle": "completed",
+      "stage": null,
+      "conditions": [],
+      "created_at": "2026-10-05T14:41:40.551581Z",
+      "started_at": "2026-10-05T14:41:43.727073Z",
+      "finished_at": "2026-10-05T14:44:12.696555Z",
+      "model": {
+        "id": "qwen3.5-2b-q4_k_m",
+        "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+        "quantization": "Q4_K_M"
+      },
+      "toolchain": {
+        "llama_cpp_release": "v0.5.0",
+        "llama_cpp_build": "b11146",
+        "backend": "vulkan",
+        "opengrep_version": null,
+        "opengrep_rules_sha256": null,
+        "knowledge_pack_date": null
+      },
+      "coverage": {
+        "total": 74,
+        "completed": 2,
+        "pending": 0,
+        "excluded": 72,
+        "unsupported": 0
+      },
+      "finding_ids": [
+        "finding:4decfd296bbe80e5589ee34c",
+        "finding:bd085b438c05b4fff8467bcd"
+      ]
+    },
+    "questions": [
+      {
+        "id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "position": 1,
+        "type": "intentional_exception",
+        "family": "authorization",
+        "stage": "record",
+        "status": "answered",
+        "location": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/services/orders.py",
+          "start_line": 11,
+          "end_line": 13,
+          "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+        },
+        "priority_reasons": [
+          "Order holds payment data, going by its name",
+          "Order is selected by an ID from the URL path"
+        ],
+        "exploration": false
+      },
+      {
+        "id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "position": 2,
+        "type": "intentional_exception",
+        "family": "authorization",
+        "stage": "record",
+        "status": "answered",
+        "location": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/orders.py",
+          "start_line": 88,
+          "end_line": 88,
+          "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+        },
+        "priority_reasons": [
+          "Order holds payment data, going by its name",
+          "Order is selected by an ID from the URL path"
+        ],
+        "exploration": false
+      }
+    ],
+    "total": 2,
+    "offset": 0,
+    "next_offset": null,
+    "events": [
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 1,
+        "at": "2026-10-05T14:41:43.727073Z",
+        "kind": "run.started",
+        "question_id": null,
+        "stage": null,
+        "status": null,
+        "message": null,
+        "coverage": {
+          "total": 74,
+          "completed": 0,
+          "pending": 2,
+          "excluded": 72,
+          "unsupported": 0
+        }
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 2,
+        "at": "2026-10-05T14:41:43.747368Z",
+        "kind": "question.started",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": null,
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 3,
+        "at": "2026-10-05T14:41:43.747368Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "frame",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 4,
+        "at": "2026-10-05T14:41:43.753265Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "frame",
+        "status": null,
+        "message": "Framed authorization check for Order",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 5,
+        "at": "2026-10-05T14:41:43.753265Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 6,
+        "at": "2026-10-05T14:41:44.421375Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/services/orders.py:10-16 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 7,
+        "at": "2026-10-05T14:41:44.421375Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/security.py:42-50 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 8,
+        "at": "2026-10-05T14:41:44.421375Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/schemas.py:82-85 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 9,
+        "at": "2026-10-05T14:41:44.421375Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/security.py:35-39 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 10,
+        "at": "2026-10-05T14:41:44.421375Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 11,
+        "at": "2026-10-05T14:41:50.339250Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/services/orders.py:11-13 (query_text)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 12,
+        "at": "2026-10-05T14:41:50.339250Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 13,
+        "at": "2026-10-05T14:41:53.276899Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/routers/orders.py:94-101 (router_config)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 14,
+        "at": "2026-10-05T14:41:53.276899Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 15,
+        "at": "2026-10-05T14:41:56.985858Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/routers/orders.py:94-101 (callers)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 16,
+        "at": "2026-10-05T14:41:56.985858Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "gather",
+        "status": null,
+        "message": "Stopped gathering after 4 looks, the limit for a question.",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 17,
+        "at": "2026-10-05T14:41:56.985858Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "hypothesize",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 18,
+        "at": "2026-10-05T14:42:00.834199Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "hypothesize",
+        "status": null,
+        "message": "Testing ownership; peer differences are leads until challenged",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 19,
+        "at": "2026-10-05T14:42:00.834199Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "challenge",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 20,
+        "at": "2026-10-05T14:42:00.842757Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "challenge",
+        "status": null,
+        "message": "Three judgments cite executable protection on the access path",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 21,
+        "at": "2026-10-05T14:42:00.842757Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "decide",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 22,
+        "at": "2026-10-05T14:42:29.004031Z",
+        "kind": "question.activity",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "decide",
+        "status": null,
+        "message": "Conclusion: rejected; runtime not attempted",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 23,
+        "at": "2026-10-05T14:42:29.004031Z",
+        "kind": "question.stage",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "record",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 24,
+        "at": "2026-10-05T14:42:29.028039Z",
+        "kind": "question.finished",
+        "question_id": "question:access:f55c0f3a2d93e70d18a86db7",
+        "stage": "record",
+        "status": "answered",
+        "message": null,
+        "coverage": {
+          "total": 74,
+          "completed": 1,
+          "pending": 1,
+          "excluded": 72,
+          "unsupported": 0
+        }
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 25,
+        "at": "2026-10-05T14:42:29.054047Z",
+        "kind": "run.paused",
+        "question_id": null,
+        "stage": null,
+        "status": null,
+        "message": null,
+        "coverage": {
+          "total": 74,
+          "completed": 1,
+          "pending": 1,
+          "excluded": 72,
+          "unsupported": 0
+        }
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 26,
+        "at": "2026-10-05T14:43:30.673860Z",
+        "kind": "run.resumed",
+        "question_id": null,
+        "stage": null,
+        "status": null,
+        "message": null,
+        "coverage": {
+          "total": 74,
+          "completed": 1,
+          "pending": 1,
+          "excluded": 72,
+          "unsupported": 0
+        }
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 27,
+        "at": "2026-10-05T14:43:30.692861Z",
+        "kind": "question.started",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": null,
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 28,
+        "at": "2026-10-05T14:43:30.692861Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "frame",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 29,
+        "at": "2026-10-05T14:43:30.700893Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "frame",
+        "status": null,
+        "message": "Framed authorization check for Order",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 30,
+        "at": "2026-10-05T14:43:30.700893Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 31,
+        "at": "2026-10-05T14:43:31.371773Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/security.py:42-50 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 32,
+        "at": "2026-10-05T14:43:31.371773Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/schemas.py:60-76 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 33,
+        "at": "2026-10-05T14:43:31.371773Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/security.py:35-39 (helper_body)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 34,
+        "at": "2026-10-05T14:43:31.371773Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 35,
+        "at": "2026-10-05T14:43:37.324813Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/routers/orders.py:88-88 (query_text)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 36,
+        "at": "2026-10-05T14:43:37.324813Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 37,
+        "at": "2026-10-05T14:43:40.187513Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": "Read api/tandir/routers/orders.py:82-91 (router_config)",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 38,
+        "at": "2026-10-05T14:43:40.187513Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 39,
+        "at": "2026-10-05T14:43:43.924192Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "gather",
+        "status": null,
+        "message": "Gathering ended at the model's enough choice",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 40,
+        "at": "2026-10-05T14:43:43.924192Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "hypothesize",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 41,
+        "at": "2026-10-05T14:43:50.389856Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "hypothesize",
+        "status": null,
+        "message": "Testing ownership; peer differences are leads until challenged",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 42,
+        "at": "2026-10-05T14:43:50.389856Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "challenge",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 43,
+        "at": "2026-10-05T14:43:50.398016Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "challenge",
+        "status": null,
+        "message": "Peer deviation persists after three independent acquittal searches",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 44,
+        "at": "2026-10-05T14:43:50.398016Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "decide",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 45,
+        "at": "2026-10-05T14:44:12.647467Z",
+        "kind": "question.activity",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "decide",
+        "status": null,
+        "message": "Conclusion: supported; runtime not attempted",
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 46,
+        "at": "2026-10-05T14:44:12.647467Z",
+        "kind": "question.stage",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "record",
+        "status": null,
+        "message": null,
+        "coverage": null
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 47,
+        "at": "2026-10-05T14:44:12.678166Z",
+        "kind": "question.finished",
+        "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+        "stage": "record",
+        "status": "answered",
+        "message": null,
+        "coverage": {
+          "total": 74,
+          "completed": 2,
+          "pending": 0,
+          "excluded": 72,
+          "unsupported": 0
+        }
+      },
+      {
+        "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "seq": 48,
+        "at": "2026-10-05T14:44:12.696555Z",
+        "kind": "run.completed",
+        "question_id": null,
+        "stage": null,
+        "status": null,
+        "message": null,
+        "coverage": {
+          "total": 74,
+          "completed": 2,
+          "pending": 0,
+          "excluded": 72,
+          "unsupported": 0
+        }
+      }
+    ],
+    "cursor": 48,
+    "requested": null
+  },
+  "findings": {
+    "run": {
+      "id": "review-efe914fb441a4374bd3ec22debc371dc",
+      "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+      "run_type": "live",
+      "lifecycle": "completed",
+      "stage": null,
+      "conditions": [],
+      "created_at": "2026-10-05T14:41:40.551581Z",
+      "started_at": "2026-10-05T14:41:43.727073Z",
+      "finished_at": "2026-10-05T14:44:12.696555Z",
+      "model": {
+        "id": "qwen3.5-2b-q4_k_m",
+        "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+        "quantization": "Q4_K_M"
+      },
+      "toolchain": {
+        "llama_cpp_release": "v0.5.0",
+        "llama_cpp_build": "b11146",
+        "backend": "vulkan",
+        "opengrep_version": null,
+        "opengrep_rules_sha256": null,
+        "knowledge_pack_date": null
+      },
+      "coverage": {
+        "total": 74,
+        "completed": 2,
+        "pending": 0,
+        "excluded": 72,
+        "unsupported": 0
+      },
+      "finding_ids": [
+        "finding:4decfd296bbe80e5589ee34c",
+        "finding:bd085b438c05b4fff8467bcd"
+      ]
+    },
+    "findings": [
+      {
+        "id": "finding:bd085b438c05b4fff8467bcd",
+        "display_id": "F-02",
+        "title": "Order access: owner check",
+        "family": "authorization",
+        "conclusion": "supported",
+        "severity": "unknown",
+        "runtime_verification": "reproduced",
+        "disposition": "open",
+        "location": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/orders.py",
+          "start_line": 82,
+          "end_line": 91,
+          "content_sha256": "5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e"
+        }
+      },
+      {
+        "id": "finding:4decfd296bbe80e5589ee34c",
+        "display_id": "F-01",
+        "title": "Order access: owner check",
+        "family": "authorization",
+        "conclusion": "rejected",
+        "severity": "unknown",
+        "runtime_verification": "not_reproduced",
+        "disposition": "open",
+        "location": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/orders.py",
+          "start_line": 94,
+          "end_line": 101,
+          "content_sha256": "1082adcb6f2c04ed23ca08bfc8e01776fcc33175bed0e07d316f42d89992a627"
+        }
+      }
+    ],
+    "limitations": [
+      "Static support does not establish runtime reproduction.",
+      "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+      "Valid citations establish grounding, not the correctness of a security judgment.",
+      "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+      "This review investigates FastAPI object authorization only. Other families remain uninvestigated.",
+      "Python resolution uses the static import fallback. Dynamic dispatch and unsupported guards remain gaps.",
+      "Coverage counts discovered access sites, not every possible vulnerability or source file.",
+      "Peer analysis covers the selected resources; excluded resources cannot establish their policies.",
+      "Opengrep signals are not yet integrated into the review queue.",
+      "api/.pytest_cache: excluded (default_ignored).",
+      "api/.ruff_cache: excluded (default_ignored).",
+      "api/.venv: excluded (default_ignored).",
+      "api/tandir/__pycache__: excluded (default_ignored).",
+      "api/tandir/routers/__pycache__: excluded (default_ignored).",
+      "api/tandir/services/__pycache__: excluded (default_ignored).",
+      "api/tests/__pycache__: excluded (default_ignored).",
+      "fixed/api.patch: excluded (unsupported).",
+      "fixed/web.patch: excluded (unsupported).",
+      "web/.next: excluded (default_ignored).",
+      "web/node_modules: excluded (default_ignored).",
+      "web/tsconfig.tsbuildinfo: excluded (unsupported).",
+      "Only the hash-pinned bundled Tandir receipt and invoice templates were executed, on loopback with fresh databases. Arbitrary targets remain source-only; severity is unassessed.",
+      "F-01: Bounded static analysis; only the recorded bundled-lab conditions were tested",
+      "F-01: Other deployment conditions and general detection coverage remain untested",
+      "F-02: Bounded static analysis; only the recorded bundled-lab conditions were tested",
+      "F-02: Other deployment conditions and general detection coverage remain untested"
+    ],
+    "counts": {
+      "candidate": 0,
+      "supported": 1,
+      "rejected": 1,
+      "inconclusive": 0
+    },
+    "total": 2,
+    "offset": 0,
+    "next_offset": null
+  },
+  "report_sha256": {
+    "report.html": "ac916511002b2c328753b975ea131be9afe1117ee427f5880aa3ab5a6849c530",
+    "report.json": "600f9c0a1d97cbd1ea05527af91090ed50664d6c2422e78d576a24c630e9283d",
+    "report.md": "b70b1211544c6d26a311e28a681ee413484f84e9d2dcb4edb0d024bc3bbaa35b",
+    "report.sarif": "6b20f75f4c2049f286f5b4eb78478bbf302ca8af40ad749aea4c9161a1cccd06"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$id": "https://plumb.local/schemas/PolicyConfirm.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "proposal_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_sha256"
+  ],
+  "title": "PolicyConfirm",
+  "type": "object"
+}

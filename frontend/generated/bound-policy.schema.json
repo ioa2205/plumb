@@ -1,0 +1,310 @@
+{
+  "$defs": {
+    "AccessSite": {
+      "additionalProperties": false,
+      "description": "A place where a resource is loaded by a request-controlled identifier.",
+      "properties": {
+        "data_layer": {
+          "$ref": "#/$defs/DataLayer"
+        },
+        "entry_point_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Entry Point Id",
+          "type": "string"
+        },
+        "guard_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Guard Ids",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "key_origin": {
+          "$ref": "#/$defs/InputOrigin"
+        },
+        "operation": {
+          "$ref": "#/$defs/Operation"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "entry_point_id",
+        "resource",
+        "operation",
+        "key_origin",
+        "data_layer",
+        "span"
+      ],
+      "title": "AccessSite",
+      "type": "object"
+    },
+    "DataLayer": {
+      "enum": [
+        "sqlalchemy",
+        "raw_sql",
+        "prisma",
+        "drizzle",
+        "other"
+      ],
+      "title": "DataLayer",
+      "type": "string"
+    },
+    "GuardKind": {
+      "description": "Canonical guard kinds from the ``guard_summary`` question (PROJECT_PLAN \u00a73.1).",
+      "enum": [
+        "authenticated",
+        "owner",
+        "tenant",
+        "role",
+        "none",
+        "unknown",
+        "parameterized",
+        "allowlisted",
+        "contained",
+        "minimized"
+      ],
+      "title": "GuardKind",
+      "type": "string"
+    },
+    "InputOrigin": {
+      "description": "Where a value comes from, as answered by the ``input_origin`` question.",
+      "enum": [
+        "path",
+        "query",
+        "body",
+        "header",
+        "session",
+        "constant",
+        "unknown"
+      ],
+      "title": "InputOrigin",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "read",
+        "list",
+        "create",
+        "update",
+        "delete"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "PolicyAssertion": {
+      "additionalProperties": false,
+      "description": "An access rule, inferred from code or declared by a person.\n\nKept separate from code-derived facts, with author and provenance. A policy\nnever expands what the agent is allowed to do.",
+      "properties": {
+        "author": {
+          "title": "Author",
+          "type": "string"
+        },
+        "canonical": {
+          "title": "Canonical",
+          "type": "string"
+        },
+        "confirmed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed At"
+        },
+        "confirmed_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed By"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/GuardKind"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/PolicyStatus"
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "resource",
+        "kind",
+        "canonical",
+        "status",
+        "author",
+        "created_at"
+      ],
+      "title": "PolicyAssertion",
+      "type": "object"
+    },
+    "PolicyStatus": {
+      "enum": [
+        "inferred",
+        "confirmed",
+        "declared"
+      ],
+      "title": "PolicyStatus",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/BoundPolicy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assertion": {
+      "$ref": "#/$defs/PolicyAssertion"
+    },
+    "forbidden_fields": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Forbidden Fields",
+      "type": "array"
+    },
+    "provenance": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Provenance",
+      "type": "string"
+    },
+    "required_role": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Role"
+    },
+    "sites": {
+      "items": {
+        "$ref": "#/$defs/AccessSite"
+      },
+      "maxItems": 1000,
+      "minItems": 1,
+      "title": "Sites",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Source Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assertion",
+    "snapshot_id",
+    "source_run_id",
+    "sites",
+    "provenance"
+  ],
+  "title": "BoundPolicy",
+  "type": "object"
+}

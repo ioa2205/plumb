@@ -1,0 +1,13 @@
+--- a/api/tandir/routers/orders.py
++++ b/api/tandir/routers/orders.py
+@@ -85,9 +85,7 @@
+     user: User = Depends(current_user),
+     db: Session = Depends(get_db),
+ ) -> ReceiptOut:
+-    order = db.get(Order, order_id)
+-    if order is None:
+-        raise HTTPException(status_code=404, detail="Order not found")
++    order = load_order_scoped(db, order_id, user)
+     return ReceiptOut.from_order(order)
+ 
+ 

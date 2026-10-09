@@ -1,0 +1,87 @@
+# Candidate models (PROJECT_PLAN §9). Each entry pins a Hugging Face repository
+# revision, file, LFS SHA256, and size, as published on 2026-10-03.
+#
+# Downloads over 500 MB need the owner's approval (AGENTS.md). Approved so far:
+# qwen3.5-2b-q4_k_m (2026-10-03). The others wait for experiment E1.
+#
+# Qwen publishes no official GGUF for Qwen3.5, so the Qwen files are bartowski's
+# llama.cpp quantizations. Gemma 4 E2B uses Google's official QAT Q4_0 GGUF.
+#
+# kv_bytes_per_token = full-attention layers x KV heads x head dim x 2 (K and V)
+# x 2 bytes (f16), from each model's config.json on Hugging Face, checked
+# 2026-10-03 (HARDWARE.md, "KV cache"). Gemma 4 E2B mixes sliding-window and
+# shared-KV layers, so its value is left out until it is measured.
+
+[[models]]
+id = "qwen3.5-2b-q4_k_m"
+family = "Qwen3.5-2B"
+role = "main track"
+repo = "bartowski/Qwen_Qwen3.5-2B-GGUF"
+revision = "7d26695454df6de5fbcce2e58681e62dae06ce43"
+file = "Qwen_Qwen3.5-2B-Q4_K_M.gguf"
+sha256 = "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8"
+size = 1396198496
+quantization = "Q4_K_M"
+license = "apache-2.0"
+license_source = "Hugging Face model card of bartowski/Qwen_Qwen3.5-2B-GGUF and Qwen/Qwen3.5-2B"
+base_model = "Qwen/Qwen3.5-2B"
+kv_bytes_per_token = 12288
+
+[[models]]
+id = "qwen3.5-0.8b-q4_k_m"
+family = "Qwen3.5-0.8B"
+role = "screener for the cascade experiment (E7); cheapest fine-tuning base (E5)"
+repo = "bartowski/Qwen_Qwen3.5-0.8B-GGUF"
+revision = "f36b1ea49a332ede8fe5f389bbf5b3575ef71f48"
+file = "Qwen_Qwen3.5-0.8B-Q4_K_M.gguf"
+sha256 = "fb044e93939a70469c905781334f5de1e6c8b608ced6cbc8c9249bd4127d9526"
+size = 579615840
+quantization = "Q4_K_M"
+license = "apache-2.0"
+license_source = "Hugging Face model card of bartowski/Qwen_Qwen3.5-0.8B-GGUF"
+base_model = "Qwen/Qwen3.5-0.8B"
+kv_bytes_per_token = 12288
+
+[[models]]
+id = "qwen3.5-4b-q4_k_m"
+family = "Qwen3.5-4B"
+role = "quality ceiling that may fit"
+repo = "bartowski/Qwen_Qwen3.5-4B-GGUF"
+revision = "4168f45a16a1290d65a4ec0fa312ae917a4c15d6"
+file = "Qwen_Qwen3.5-4B-Q4_K_M.gguf"
+sha256 = "13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983"
+size = 3013027808
+quantization = "Q4_K_M"
+license = "apache-2.0"
+license_source = "Hugging Face model card of bartowski/Qwen_Qwen3.5-4B-GGUF"
+base_model = "Qwen/Qwen3.5-4B"
+kv_bytes_per_token = 32768
+
+[[models]]
+id = "gemma-4-e2b-it-qat-q4_0"
+family = "Gemma 4 E2B"
+role = "second model family"
+repo = "google/gemma-4-E2B-it-qat-q4_0-gguf"
+revision = "675cff42a74c774d6cb76f76d8eacb49b48c9b93"
+file = "gemma-4-E2B_q4_0-it.gguf"
+sha256 = "fa401b55b07ee70a54c6dae3903c783a6e65064312529ea57175cb5f8dec6634"
+size = 3349516256
+quantization = "Q4_0 (official QAT)"
+license = "apache-2.0"
+license_source = "Hugging Face model card of google/gemma-4-E2B-it-qat-q4_0-gguf"
+base_model = "google/gemma-4-E2B-it"
+
+[[models]]
+id = "qwen3-4b-instruct-2507-q4_k_m"
+family = "Qwen3-4B-Instruct-2507"
+role = "dense full-attention control"
+repo = "bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF"
+revision = "ae44f08e1392f39c0e474af10c3ff8355c8b6688"
+file = "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+sha256 = "2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e"
+size = 2497280736
+quantization = "Q4_K_M"
+license = "apache-2.0"
+license_source = "Model card of Qwen/Qwen3-4B-Instruct-2507 (the GGUF repo card states none)"
+base_model = "Qwen/Qwen3-4B-Instruct-2507"
+kv_bytes_per_token = 147456

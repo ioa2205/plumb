@@ -1,0 +1,42 @@
+[project]
+name = "tandir-api"
+version = "0.1.0"
+description = "Tandir: a deliberately vulnerable bakery-ordering API, the Plumb evaluation lab. Loopback only."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.142.2",
+    "python-multipart>=0.0.32",
+    "sqlalchemy>=2.0",
+    "uvicorn>=0.54.0",
+]
+
+[tool.uv]
+# An application run from source, never installed or imported by Plumb.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["-ra", "--strict-markers"]
+markers = [
+    "fixed_only: a protection that only the fixed snapshot has (M1.3); skipped on the vulnerable lab",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# Style only. The security rules would flag the intentional flaws.
+select = ["E", "W", "F", "I", "B", "UP"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency injection is declared with calls in argument defaults.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]

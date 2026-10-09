@@ -1,0 +1,41 @@
+{
+  "$id": "https://plumb.local/schemas/QueueEdit.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "up",
+        "down",
+        "exclude",
+        "include"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "expected_cursor": {
+      "minimum": 0,
+      "title": "Expected Cursor",
+      "type": "integer"
+    },
+    "offset": {
+      "default": 0,
+      "maximum": 1000000,
+      "minimum": 0,
+      "title": "Offset",
+      "type": "integer"
+    },
+    "question_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Question Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "question_id",
+    "action",
+    "expected_cursor"
+  ],
+  "title": "QueueEdit",
+  "type": "object"
+}

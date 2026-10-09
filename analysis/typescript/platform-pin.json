@@ -1,0 +1,9 @@
+{
+  "version": "typescript-platform-2",
+  "typescript": "6.0.3",
+  "files": {
+    "lib.es5.d.ts": "bcd24271a113971ba9eb71ff8cb01bc6b0f872a85c23fdbe5d93065b375933cd",
+    "lib.dom.d.ts": "d6b1eba8496bdd0eed6fc8a685768fe01b2da4a0388b5fe7df558290bffcf32f",
+    "lib.es2016.array.include.d.ts": "32cafbc484dea6b0ab62cf8473182bbcb23020d70845b406f80b7526f38ae862"
+  }
+}

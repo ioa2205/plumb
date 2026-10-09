@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "Access": {
+      "enum": [
+        "allowed",
+        "denied"
+      ],
+      "title": "Access",
+      "type": "string"
+    },
+    "ProbeOutcome": {
+      "enum": [
+        "reproduced",
+        "not_reproduced",
+        "fixed",
+        "not_fixed",
+        "inconclusive"
+      ],
+      "title": "ProbeOutcome",
+      "type": "string"
+    },
+    "ProbeStep": {
+      "additionalProperties": false,
+      "description": "One request made by the trusted runner and what came back.\n\n``marker_present`` says whether the victim's marker (data or effect) was observed.",
+      "properties": {
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "expected_if_safe": {
+          "$ref": "#/$defs/Access"
+        },
+        "marker_present": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker Present"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "principal": {
+          "title": "Principal",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/StepRole"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maximum": 599,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "role",
+        "principal",
+        "method",
+        "path",
+        "expected_if_safe"
+      ],
+      "title": "ProbeStep",
+      "type": "object"
+    },
+    "RunnerKind": {
+      "enum": [
+        "bundled_lab",
+        "windows_sandbox",
+        "docker"
+      ],
+      "title": "RunnerKind",
+      "type": "string"
+    },
+    "SnapshotRole": {
+      "enum": [
+        "vulnerable",
+        "patched"
+      ],
+      "title": "SnapshotRole",
+      "type": "string"
+    },
+    "StepRole": {
+      "enum": [
+        "setup",
+        "attack",
+        "control"
+      ],
+      "title": "StepRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ProbeRun.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "finding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "outcome": {
+      "$ref": "#/$defs/ProbeOutcome"
+    },
+    "runner": {
+      "$ref": "#/$defs/RunnerKind"
+    },
+    "runner_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Runner Manifest Sha256",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "snapshot_role": {
+      "$ref": "#/$defs/SnapshotRole"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/ProbeStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "finding_id",
+    "runner",
+    "runner_manifest_sha256",
+    "snapshot_id",
+    "snapshot_role",
+    "steps",
+    "outcome",
+    "started_at",
+    "finished_at"
+  ],
+  "title": "ProbeRun",
+  "type": "object"
+}

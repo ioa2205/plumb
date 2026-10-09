@@ -1,0 +1,11 @@
+.disposition { margin-left: auto; max-width: 100%; color: var(--ink); }
+.disposition summary { cursor: pointer; min-height: var(--target-size); align-content: center; }
+.disposition[open] { flex-basis: 100%; background: var(--well); padding: var(--space-lg); border-radius: var(--radius-control); }
+.disposition p, .disposition li { font: var(--metadata); color: var(--graphite); overflow-wrap: anywhere; }
+.disposition code { overflow-wrap: anywhere; }
+.disposition form, .disposition label { display: grid; gap: var(--space-sm); }
+.disposition form { margin-block: var(--space-lg); gap: var(--space-lg); }
+.disposition input { min-height: var(--target-size); min-width: 0; width: 100%; padding: var(--space-md); border: 0; border-bottom: 1.5px solid var(--control-rule); background: var(--sheet); color: var(--ink); font: var(--ui); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-md); }
+.actions button, .actions a { min-height: var(--target-size); padding: var(--space-md); border: 0; border-radius: var(--radius-control); background: var(--sheet); color: var(--ink); font: var(--ui); cursor: pointer; align-content: center; }
+.actions button:disabled { cursor: wait; }

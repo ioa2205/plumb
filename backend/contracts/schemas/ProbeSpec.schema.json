@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "Access": {
+      "enum": [
+        "allowed",
+        "denied"
+      ],
+      "title": "Access",
+      "type": "string"
+    },
+    "HTTPProbeRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "capture": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 3,
+          "title": "Capture",
+          "type": "object"
+        },
+        "expected_if_safe": {
+          "$ref": "#/$defs/Access"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "principal": {
+          "pattern": "^[a-z][a-z0-9_]{0,31}$",
+          "title": "Principal",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/StepRole"
+        }
+      },
+      "required": [
+        "role",
+        "principal",
+        "method",
+        "path",
+        "expected_if_safe"
+      ],
+      "title": "HTTPProbeRequest",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "StepRole": {
+      "enum": [
+        "setup",
+        "attack",
+        "control"
+      ],
+      "title": "StepRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ProbeSpec.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Data for a trusted transport; never a script or a model-written command.",
+  "properties": {
+    "finding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "marker": {
+      "pattern": "^[A-Za-z0-9_-]{8,128}$",
+      "title": "Marker",
+      "type": "string"
+    },
+    "requests": {
+      "items": {
+        "$ref": "#/$defs/HTTPProbeRequest"
+      },
+      "maxItems": 8,
+      "minItems": 2,
+      "title": "Requests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "finding_id",
+    "marker",
+    "requests"
+  ],
+  "title": "ProbeSpec",
+  "type": "object"
+}

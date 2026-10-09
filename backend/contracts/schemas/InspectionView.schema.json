@@ -1,0 +1,516 @@
+{
+  "$defs": {
+    "CapabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "current_engine_acceptance": {
+          "const": false,
+          "default": false,
+          "title": "Current Engine Acceptance",
+          "type": "boolean"
+        },
+        "record": {
+          "title": "Record",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record",
+        "sha256",
+        "scope"
+      ],
+      "title": "CapabilityEvidence",
+      "type": "object"
+    },
+    "CapabilityRow": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "language",
+            "framework",
+            "family"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "indexed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Indexed",
+          "type": "string"
+        },
+        "indexed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Indexed Units"
+        },
+        "investigated": {
+          "const": false,
+          "default": false,
+          "title": "Investigated",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parsed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Parsed",
+          "type": "string"
+        },
+        "parsed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parsed Units"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "runtime_testable": {
+          "const": false,
+          "default": false,
+          "title": "Runtime Testable",
+          "type": "boolean"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units"
+        },
+        "workflow_implemented": {
+          "title": "Workflow Implemented",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "category",
+        "name",
+        "parsed",
+        "indexed",
+        "workflow_implemented",
+        "reason"
+      ],
+      "title": "CapabilityRow",
+      "type": "object"
+    },
+    "CapabilityTable": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/CapabilityEvidence"
+          },
+          "maxItems": 10,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "quality_note": {
+          "title": "Quality Note",
+          "type": "string"
+        },
+        "registry_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Sha256",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/CapabilityRow"
+          },
+          "maxItems": 10,
+          "title": "Rows",
+          "type": "array"
+        },
+        "runtime_note": {
+          "title": "Runtime Note",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot Id"
+        }
+      },
+      "required": [
+        "registry_sha256",
+        "rows",
+        "evidence",
+        "runtime_note",
+        "quality_note"
+      ],
+      "title": "CapabilityTable",
+      "type": "object"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConditionKind"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "ConditionKind": {
+      "enum": [
+        "setup_required",
+        "model_too_large",
+        "runner_unavailable",
+        "stale_source",
+        "unsupported_framework",
+        "unreadable_file",
+        "partial_coverage"
+      ],
+      "title": "ConditionKind",
+      "type": "string"
+    },
+    "EntryPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "framework": {
+          "$ref": "#/$defs/Framework"
+        },
+        "handler_symbol_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Handler Symbol Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EntryPointKind"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        },
+        "route": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Route"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "kind",
+        "framework",
+        "handler_symbol_id",
+        "span"
+      ],
+      "title": "EntryPoint",
+      "type": "object"
+    },
+    "EntryPointKind": {
+      "enum": [
+        "http_route",
+        "route_handler",
+        "server_action",
+        "page"
+      ],
+      "title": "EntryPointKind",
+      "type": "string"
+    },
+    "Framework": {
+      "enum": [
+        "fastapi",
+        "nextjs"
+      ],
+      "title": "Framework",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/InspectionView.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CapabilityTable"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "conditions": {
+      "items": {
+        "$ref": "#/$defs/Condition"
+      },
+      "title": "Conditions",
+      "type": "array"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/EntryPoint"
+      },
+      "maxItems": 12,
+      "title": "Entries",
+      "type": "array"
+    },
+    "entries_total": {
+      "minimum": 0,
+      "title": "Entries Total",
+      "type": "integer"
+    },
+    "excluded_files": {
+      "minimum": 0,
+      "title": "Excluded Files",
+      "type": "integer"
+    },
+    "exclusion_reasons": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Exclusion Reasons",
+      "type": "object"
+    },
+    "frameworks": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Frameworks",
+      "type": "object"
+    },
+    "included_files": {
+      "minimum": 0,
+      "title": "Included Files",
+      "type": "integer"
+    },
+    "inspection_id": {
+      "anyOf": [
+        {
+          "pattern": "^inspect-[0-9a-f]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inspection Id"
+    },
+    "languages": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Languages",
+      "type": "object"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "model_loaded": {
+      "const": false,
+      "default": false,
+      "title": "Model Loaded",
+      "type": "boolean"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "resources": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Resources",
+      "type": "object"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "target_executed": {
+      "const": false,
+      "default": false,
+      "title": "Target Executed",
+      "type": "boolean"
+    },
+    "unresolved_links": {
+      "minimum": 0,
+      "title": "Unresolved Links",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "name",
+    "captured_at",
+    "languages",
+    "frameworks",
+    "resources",
+    "included_files",
+    "excluded_files",
+    "exclusion_reasons",
+    "entries",
+    "entries_total",
+    "unresolved_links",
+    "conditions",
+    "limitations"
+  ],
+  "title": "InspectionView",
+  "type": "object"
+}

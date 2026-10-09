@@ -1,0 +1,346 @@
+{
+  "$defs": {
+    "CaseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "predictions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Prediction"
+          },
+          "maxItems": 20,
+          "title": "Predictions",
+          "type": "array"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "completed",
+            "failed",
+            "unparseable",
+            "unrun"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "state",
+        "reason"
+      ],
+      "title": "CaseResult",
+      "type": "object"
+    },
+    "Conclusion": {
+      "enum": [
+        "candidate",
+        "supported",
+        "rejected",
+        "inconclusive"
+      ],
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "Prediction": {
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {
+          "$ref": "#/$defs/Conclusion"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "family": {
+          "$ref": "#/$defs/Family"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "family",
+        "path",
+        "start_line",
+        "end_line",
+        "conclusion"
+      ],
+      "title": "Prediction",
+      "type": "object"
+    },
+    "RequestRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer"
+        },
+        "body": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Body",
+          "type": "object"
+        },
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "completion_tokens": {
+          "minimum": 0,
+          "title": "Completion Tokens",
+          "type": "integer"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "prompt_tokens": {
+          "minimum": 0,
+          "title": "Prompt Tokens",
+          "type": "integer"
+        },
+        "raw_answer": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Answer"
+        },
+        "seconds": {
+          "minimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "case_id",
+        "body",
+        "prompt_tokens",
+        "completion_tokens",
+        "seconds"
+      ],
+      "title": "RequestRecord",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/CaseResult"
+      },
+      "maxItems": 100,
+      "title": "Cases",
+      "type": "array"
+    },
+    "evidence_kind": {
+      "enum": [
+        "fresh_local",
+        "saved_answer_replay",
+        "software_fixture"
+      ],
+      "title": "Evidence Kind",
+      "type": "string"
+    },
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "implementation": {
+      "additionalProperties": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Implementation",
+      "type": "object"
+    },
+    "judgments": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Judgments",
+      "type": "integer"
+    },
+    "machine_end": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Machine End",
+      "type": "object"
+    },
+    "machine_start": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Machine Start",
+      "type": "object"
+    },
+    "method": {
+      "enum": [
+        "full_plumb",
+        "opengrep",
+        "one_shot",
+        "no_peer",
+        "no_challenge",
+        "no_grammar",
+        "no_self_consistency",
+        "no_verification"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "model": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Model",
+      "type": "object"
+    },
+    "preflight": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preflight"
+    },
+    "preparation_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Preparation Sha256",
+      "type": "string"
+    },
+    "profile": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Profile",
+      "type": "object"
+    },
+    "reason": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "requests": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RequestRecord"
+      },
+      "maxItems": 1000,
+      "title": "Requests",
+      "type": "array"
+    },
+    "runtime": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Runtime",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "completed",
+        "failed",
+        "preflight_refused",
+        "unrun"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "preparation_sha256",
+    "method",
+    "evidence_kind",
+    "state",
+    "reason",
+    "started_at",
+    "finished_at",
+    "implementation",
+    "model",
+    "runtime",
+    "profile",
+    "machine_start",
+    "machine_end",
+    "judgments",
+    "cases"
+  ],
+  "title": "Result",
+  "type": "object"
+}

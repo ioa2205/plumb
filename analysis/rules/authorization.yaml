@@ -1,0 +1,33 @@
+# Plumb's own Opengrep rules, family A: object-level authorization (CWE-639).
+# A pattern scanner cannot know intent; this rule is the honest best effort a
+# scanner can make, and the Opengrep-only baseline (task M1.8) measures it.
+rules:
+  - id: plumb.authz.load-by-id-without-owner-comparison
+    languages: [python]
+    severity: WARNING
+    message: >-
+      $MODEL is loaded by an ID inside a route handler, and no comparison of one of its
+      fields with the caller's ID, and no helper taking both, follows in the handler.
+    metadata:
+      family: authorization
+      cwe: [639]
+    patterns:
+      - pattern-inside: |
+          @$ROUTER.$METHOD(...)
+          def $HANDLER(...):
+            ...
+      - pattern: $VAR = $DB.get($MODEL, $ID)
+      - pattern-not-inside: |
+          $VAR = $DB.get($MODEL, $ID)
+          ...
+          if <... $VAR.$FIELD != $PRINCIPAL.id ...>:
+            ...
+      - pattern-not-inside: |
+          $VAR = $DB.get($MODEL, $ID)
+          ...
+          if <... $PRINCIPAL.id != $VAR.$FIELD ...>:
+            ...
+      - pattern-not-inside: |
+          $VAR = $DB.get($MODEL, $ID)
+          ...
+          $HELPER($VAR, $PRINCIPAL)

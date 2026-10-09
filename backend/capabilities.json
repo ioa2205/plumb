@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "current_engine_acceptance": "unrun",
+  "evidence": [
+    {
+      "record": "docs/results/2026-10-05-142716-m3.6-challenge.json",
+      "sha256": "f33660549900ddbc713ddff4b3dccb9ea76090259854baacd7ba012d9b0e7e9a",
+      "scope": "Historical FastAPI authorization slice: receipt Supported and invoice Rejected. Predates the current engine; no general family qualification.",
+      "current_engine_acceptance": false
+    },
+    {
+      "record": "docs/results/2026-10-05-170400-m3.10-families.json",
+      "sha256": "6186a63db7041d0fc62033f02c9847d979fd56ad46c873594aa4d3b11143cce8",
+      "scope": "Historical remaining-family run records mostly Inconclusive judgments and an unmet breadth gate. Software repairs need fresh acceptance.",
+      "current_engine_acceptance": false
+    },
+    {
+      "record": "docs/results/2026-10-05-m4.2-receipt.json",
+      "sha256": "5c9be0fcdddf9b7ddd8e3a6bb75cb0cfa0fc9df728e74f262bd0984c6188c0ee",
+      "scope": "Historical actual pinned bundled receipt attack and owner control. This exception is not arbitrary-code isolation.",
+      "current_engine_acceptance": false
+    },
+    {
+      "record": "docs/results/2026-10-05-m4.2-invoice.json",
+      "sha256": "092ee3b2dc249ed520257b1684819dcaff314ae98949b3b72074525671915f3e",
+      "scope": "Historical actual pinned bundled invoice denial with owner control. This exception is not general runtime-testable support.",
+      "current_engine_acceptance": false
+    },
+    {
+      "record": "docs/decisions/ADR-0017-unavailable-isolated-runners.md",
+      "sha256": "82755e14d83e73d9d1cd97beefca5922bd89f4096cc9920c0f76ca4fca5c4f7a",
+      "scope": "Current environment decision: no available isolated backend; general replay and isolation acceptance remain blocked.",
+      "current_engine_acceptance": false
+    }
+  ]
+}

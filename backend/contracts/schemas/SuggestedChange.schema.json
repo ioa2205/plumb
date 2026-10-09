@@ -1,0 +1,176 @@
+{
+  "$defs": {
+    "ChangeStatus": {
+      "enum": [
+        "proposed",
+        "replayed_fixed",
+        "replayed_not_fixed",
+        "replay_failed"
+      ],
+      "title": "ChangeStatus",
+      "type": "string"
+    },
+    "SourceEdit": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "replace",
+            "insert_before",
+            "insert_after",
+            "delete"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 4000,
+          "title": "Code",
+          "type": "string"
+        },
+        "file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "source",
+        "file_sha256",
+        "action",
+        "code"
+      ],
+      "title": "SourceEdit",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/SuggestedChange.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A minimal diff, applied only to a disposable copy for fix replay.",
+  "properties": {
+    "diff": {
+      "title": "Diff",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Files",
+      "type": "array"
+    },
+    "finding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "intent": {
+      "title": "Intent",
+      "type": "string"
+    },
+    "replay_probe_run_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Replay Probe Run Ids",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Snapshot Id"
+    },
+    "source_edits": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceEdit"
+      },
+      "maxItems": 4,
+      "title": "Source Edits",
+      "type": "array"
+    },
+    "source_scope": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "$ref": "#/$defs/ChangeStatus",
+      "default": "proposed"
+    }
+  },
+  "required": [
+    "id",
+    "finding_id",
+    "intent",
+    "diff",
+    "files"
+  ],
+  "title": "SuggestedChange",
+  "type": "object"
+}

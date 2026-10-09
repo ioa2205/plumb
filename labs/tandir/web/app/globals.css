@@ -1,0 +1,115 @@
+:root {
+  --paper: #fbf8f3;
+  --ink: #2b2620;
+  --muted: #6f665b;
+  --line: #e6dfd4;
+  --accent: #9a4a1c;
+  --surface: #ffffff;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1d1a17;
+    --ink: #eee7dc;
+    --muted: #b3a999;
+    --line: #3a342d;
+    --accent: #e39a68;
+    --surface: #262220;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.5 system-ui, "Segoe UI", sans-serif;
+}
+
+a {
+  color: var(--accent);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: baseline;
+  padding: 16px max(16px, calc((100vw - 960px) / 2));
+  border-bottom: 1px solid var(--line);
+}
+
+.bar strong {
+  font-size: 20px;
+  margin-right: auto;
+}
+
+.lab-note {
+  padding: 8px max(16px, calc((100vw - 960px) / 2));
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+form.stack {
+  display: grid;
+  gap: 12px;
+  max-width: 320px;
+}
+
+.error {
+  color: #b3261e;
+}

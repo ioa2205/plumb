@@ -1,0 +1,557 @@
+{
+  "provenance": "Software worker/store replay, no model or target execution. Each view was produced by actual persisted queue controls.",
+  "actions": [
+    [
+      "fixture:receipt",
+      "up"
+    ],
+    [
+      "fixture:exploration",
+      "exclude"
+    ],
+    [
+      "fixture:exploration",
+      "include"
+    ]
+  ],
+  "states": [
+    {
+      "run": {
+        "id": "run:1",
+        "snapshot_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "run_type": "live",
+        "lifecycle": "paused",
+        "stage": "investigating",
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-06T16:04:53.120609Z",
+        "finished_at": null,
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 7,
+          "completed": 0,
+          "pending": 3,
+          "excluded": 4,
+          "unsupported": 0
+        },
+        "finding_ids": []
+      },
+      "questions": [
+        {
+          "id": "fixture:invoice",
+          "position": 1,
+          "original_position": 1,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:receipt",
+          "position": 2,
+          "original_position": 2,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:exploration",
+          "position": 3,
+          "original_position": 3,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        }
+      ],
+      "total": 3,
+      "offset": 0,
+      "next_offset": null,
+      "events": [
+        {
+          "run_id": "run:1",
+          "seq": 1,
+          "at": "2026-10-06T16:04:53.120609Z",
+          "kind": "run.started",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 2,
+          "at": "2026-10-06T16:04:53.130919Z",
+          "kind": "run.paused",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        }
+      ],
+      "cursor": 2,
+      "requested": null,
+      "queue_excluded": 0
+    },
+    {
+      "run": {
+        "id": "run:1",
+        "snapshot_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "run_type": "live",
+        "lifecycle": "paused",
+        "stage": "investigating",
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-06T16:04:53.120609Z",
+        "finished_at": null,
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 7,
+          "completed": 0,
+          "pending": 3,
+          "excluded": 4,
+          "unsupported": 0
+        },
+        "finding_ids": []
+      },
+      "questions": [
+        {
+          "id": "fixture:receipt",
+          "position": 1,
+          "original_position": 2,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:invoice",
+          "position": 2,
+          "original_position": 1,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:exploration",
+          "position": 3,
+          "original_position": 3,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        }
+      ],
+      "total": 3,
+      "offset": 0,
+      "next_offset": null,
+      "events": [
+        {
+          "run_id": "run:1",
+          "seq": 1,
+          "at": "2026-10-06T16:04:53.120609Z",
+          "kind": "run.started",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 2,
+          "at": "2026-10-06T16:04:53.130919Z",
+          "kind": "run.paused",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 3,
+          "at": "2026-10-06T16:04:53.141933Z",
+          "kind": "run.queue_changed",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": "Moved fixture:receipt from position 2 to 1; coverage unchanged.",
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        }
+      ],
+      "cursor": 3,
+      "requested": null,
+      "queue_excluded": 0
+    },
+    {
+      "run": {
+        "id": "run:1",
+        "snapshot_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "run_type": "live",
+        "lifecycle": "paused",
+        "stage": "investigating",
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-06T16:04:53.120609Z",
+        "finished_at": null,
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 7,
+          "completed": 0,
+          "pending": 2,
+          "excluded": 5,
+          "unsupported": 0
+        },
+        "finding_ids": []
+      },
+      "questions": [
+        {
+          "id": "fixture:receipt",
+          "position": 1,
+          "original_position": 2,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:invoice",
+          "position": 2,
+          "original_position": 1,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:exploration",
+          "position": 3,
+          "original_position": 3,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "excluded",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        }
+      ],
+      "total": 3,
+      "offset": 0,
+      "next_offset": null,
+      "events": [
+        {
+          "run_id": "run:1",
+          "seq": 1,
+          "at": "2026-10-06T16:04:53.120609Z",
+          "kind": "run.started",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 2,
+          "at": "2026-10-06T16:04:53.130919Z",
+          "kind": "run.paused",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 3,
+          "at": "2026-10-06T16:04:53.141933Z",
+          "kind": "run.queue_changed",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": "Moved fixture:receipt from position 2 to 1; coverage unchanged.",
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 4,
+          "at": "2026-10-06T16:04:53.150146Z",
+          "kind": "run.queue_changed",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": "Excluded fixture:exploration by user choice; 2 pending, 5 excluded, 7 total.",
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 2,
+            "excluded": 5,
+            "unsupported": 0
+          }
+        }
+      ],
+      "cursor": 4,
+      "requested": null,
+      "queue_excluded": 1
+    },
+    {
+      "run": {
+        "id": "run:1",
+        "snapshot_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "run_type": "live",
+        "lifecycle": "paused",
+        "stage": "investigating",
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-06T16:04:53.120609Z",
+        "finished_at": null,
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 7,
+          "completed": 0,
+          "pending": 3,
+          "excluded": 4,
+          "unsupported": 0
+        },
+        "finding_ids": []
+      },
+      "questions": [
+        {
+          "id": "fixture:receipt",
+          "position": 1,
+          "original_position": 2,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:invoice",
+          "position": 2,
+          "original_position": 1,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        },
+        {
+          "id": "fixture:exploration",
+          "position": 3,
+          "original_position": 3,
+          "type": "guard_summary",
+          "family": "authorization",
+          "stage": "frame",
+          "status": "pending",
+          "location": null,
+          "priority_reasons": [
+            "Software fixture: request-controlled identifier"
+          ],
+          "exploration": true
+        }
+      ],
+      "total": 3,
+      "offset": 0,
+      "next_offset": null,
+      "events": [
+        {
+          "run_id": "run:1",
+          "seq": 1,
+          "at": "2026-10-06T16:04:53.120609Z",
+          "kind": "run.started",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 2,
+          "at": "2026-10-06T16:04:53.130919Z",
+          "kind": "run.paused",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": null,
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 3,
+          "at": "2026-10-06T16:04:53.141933Z",
+          "kind": "run.queue_changed",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": "Moved fixture:receipt from position 2 to 1; coverage unchanged.",
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 4,
+          "at": "2026-10-06T16:04:53.150146Z",
+          "kind": "run.queue_changed",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": "Excluded fixture:exploration by user choice; 2 pending, 5 excluded, 7 total.",
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 2,
+            "excluded": 5,
+            "unsupported": 0
+          }
+        },
+        {
+          "run_id": "run:1",
+          "seq": 5,
+          "at": "2026-10-06T16:04:53.157713Z",
+          "kind": "run.queue_changed",
+          "question_id": null,
+          "stage": null,
+          "status": null,
+          "message": "Included fixture:exploration by user choice; 3 pending, 4 excluded, 7 total.",
+          "coverage": {
+            "total": 7,
+            "completed": 0,
+            "pending": 3,
+            "excluded": 4,
+            "unsupported": 0
+          }
+        }
+      ],
+      "cursor": 5,
+      "requested": null,
+      "queue_excluded": 0
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$id": "https://plumb.local/schemas/ResumeRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "limit": {
+      "default": 5,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    }
+  },
+  "title": "ResumeRequest",
+  "type": "object"
+}

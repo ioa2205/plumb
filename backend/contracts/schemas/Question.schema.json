@@ -1,0 +1,229 @@
+{
+  "$defs": {
+    "Budget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_looks": {
+          "default": 4,
+          "minimum": 0,
+          "title": "Max Looks",
+          "type": "integer"
+        },
+        "max_prompt_tokens": {
+          "default": 3000,
+          "exclusiveMinimum": 0,
+          "title": "Max Prompt Tokens",
+          "type": "integer"
+        },
+        "max_retries": {
+          "default": 2,
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 120.0,
+          "exclusiveMinimum": 0,
+          "title": "Max Seconds",
+          "type": "number"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "QuestionStage": {
+      "description": "FRAME -> GATHER -> HYPOTHESIZE -> CHALLENGE -> DECIDE -> [VERIFY] -> RECORD.",
+      "enum": [
+        "frame",
+        "gather",
+        "hypothesize",
+        "challenge",
+        "decide",
+        "verify",
+        "record"
+      ],
+      "title": "QuestionStage",
+      "type": "string"
+    },
+    "QuestionStatus": {
+      "enum": [
+        "pending",
+        "excluded",
+        "running",
+        "answered",
+        "rejected_by_validator",
+        "inconclusive",
+        "budget_exhausted",
+        "canceled",
+        "failed"
+      ],
+      "title": "QuestionStatus",
+      "type": "string"
+    },
+    "QuestionType": {
+      "enum": [
+        "guard_summary",
+        "guard_equivalent",
+        "input_origin",
+        "sink_safety",
+        "intentional_exception",
+        "client_exposure",
+        "fix_sketch"
+      ],
+      "title": "QuestionType",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/Question.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One narrow judgment asked of the model, with its evidence and budget.",
+  "properties": {
+    "answer": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer"
+    },
+    "budget": {
+      "$ref": "#/$defs/Budget",
+      "default": {
+        "max_looks": 4,
+        "max_prompt_tokens": 3000,
+        "max_retries": 2,
+        "max_seconds": 120.0
+      }
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "exploration": {
+      "default": false,
+      "title": "Exploration",
+      "type": "boolean"
+    },
+    "family": {
+      "$ref": "#/$defs/Family"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "observation_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Observation Ids",
+      "type": "array"
+    },
+    "priority_reasons": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Priority Reasons",
+      "type": "array"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stage": {
+      "$ref": "#/$defs/QuestionStage"
+    },
+    "status": {
+      "$ref": "#/$defs/QuestionStatus"
+    },
+    "subject_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Subject Ids",
+      "type": "array"
+    },
+    "type": {
+      "$ref": "#/$defs/QuestionType"
+    }
+  },
+  "required": [
+    "id",
+    "run_id",
+    "type",
+    "family",
+    "stage",
+    "status",
+    "subject_ids",
+    "evidence"
+  ],
+  "title": "Question",
+  "type": "object"
+}

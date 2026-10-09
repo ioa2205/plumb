@@ -1,0 +1,2041 @@
+{
+  "run": {
+    "id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "run_type": "live",
+    "lifecycle": "completed",
+    "stage": null,
+    "conditions": [],
+    "created_at": "2026-10-05T14:41:40.551581Z",
+    "started_at": "2026-10-05T14:41:43.727073Z",
+    "finished_at": "2026-10-05T14:44:12.696555Z",
+    "model": {
+      "id": "qwen3.5-2b-q4_k_m",
+      "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+      "quantization": "Q4_K_M"
+    },
+    "toolchain": {
+      "llama_cpp_release": "v0.5.0",
+      "llama_cpp_build": "b11146",
+      "backend": "vulkan",
+      "opengrep_version": null,
+      "opengrep_rules_sha256": null,
+      "knowledge_pack_date": null
+    },
+    "coverage": {
+      "total": 74,
+      "completed": 2,
+      "pending": 0,
+      "excluded": 72,
+      "unsupported": 0
+    },
+    "finding_ids": [
+      "finding:4decfd296bbe80e5589ee34c",
+      "finding:bd085b438c05b4fff8467bcd"
+    ]
+  },
+  "finding": {
+    "id": "finding:bd085b438c05b4fff8467bcd",
+    "display_id": "F-02",
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "family": "authorization",
+    "cwe": [
+      639,
+      862
+    ],
+    "title": "Order access: owner check",
+    "lede": "Peer deviation persists after three independent acquittal searches",
+    "conclusion": "supported",
+    "runtime_verification": "reproduced",
+    "severity": "unknown",
+    "severity_rationale": "Data sensitivity and impact remain unassessed",
+    "strength": "partial",
+    "gaps": [
+      "Bounded static analysis; only the recorded bundled-lab conditions were tested"
+    ],
+    "disposition": "open",
+    "disposition_reason": null,
+    "exhibits": [
+      {
+        "tag": "E01",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/routers/orders.py",
+          "start_line": 82,
+          "end_line": 91,
+          "content_sha256": "5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E02",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/security.py",
+          "start_line": 42,
+          "end_line": 50,
+          "content_sha256": "480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E03",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/schemas.py",
+          "start_line": 60,
+          "end_line": 76,
+          "content_sha256": "aa7fd42fd67e92db6669a24495ab92bda3c22d0ccc29c0540d4a1094cf400a59"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E04",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/security.py",
+          "start_line": 35,
+          "end_line": 39,
+          "content_sha256": "3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997"
+        },
+        "role": "evidence",
+        "gloss": "Code inspected during the acquittal search"
+      },
+      {
+        "tag": "E05",
+        "span": {
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "path": "api/tandir/security.py",
+          "start_line": 45,
+          "end_line": 46,
+          "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+        },
+        "role": "guard",
+        "gloss": "Executable guard"
+      }
+    ],
+    "checks": [
+      {
+        "item": "A query filter scoped to the principal",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "An equivalent guard in the handler, router, dependency or DAL",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "An admin-only entry point",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "A resource public by executable policy",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)",
+        "found": false,
+        "exhibit_tag": null
+      },
+      {
+        "item": "An unreachable route",
+        "searched": "api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (unsupported: Runtime reachability is not established by static mounting)",
+        "found": false,
+        "exhibit_tag": null
+      }
+    ],
+    "flow": [],
+    "peer_group_id": "peers:b1dde5d4157f86f40944051a",
+    "unknowns": [
+      "Other deployment conditions and general detection coverage remain untested"
+    ],
+    "question_ids": [
+      "question:access:ffb0ea24ed0b07eb3940e2d4"
+    ],
+    "probe_run_ids": [
+      "probe-run:89daac97745d4c9ca78b967493a8f9c7"
+    ],
+    "suggested_change_id": null
+  },
+  "probe_runs": [
+    {
+      "id": "probe-run:89daac97745d4c9ca78b967493a8f9c7",
+      "finding_id": "finding:bd085b438c05b4fff8467bcd",
+      "runner": "bundled_lab",
+      "runner_manifest_sha256": "02c8011d6d60461be8cb409de851bf17d7afd39085a3805306240049b9be64ff",
+      "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+      "snapshot_role": "vulnerable",
+      "steps": [
+        {
+          "role": "setup",
+          "principal": "alice",
+          "method": "POST",
+          "path": "/orders",
+          "expected_if_safe": "allowed",
+          "status": 201,
+          "marker_present": false,
+          "error": null
+        },
+        {
+          "role": "attack",
+          "principal": "bob",
+          "method": "GET",
+          "path": "/orders/3/receipt",
+          "expected_if_safe": "denied",
+          "status": 200,
+          "marker_present": true,
+          "error": null
+        },
+        {
+          "role": "control",
+          "principal": "alice",
+          "method": "GET",
+          "path": "/orders/3/receipt",
+          "expected_if_safe": "allowed",
+          "status": 200,
+          "marker_present": true,
+          "error": null
+        }
+      ],
+      "outcome": "reproduced",
+      "started_at": "2026-10-05T17:42:53.314407Z",
+      "finished_at": "2026-10-05T17:42:53.331223Z"
+    }
+  ],
+  "suggested_change": null,
+  "limitations": [
+    "Static support does not establish runtime reproduction.",
+    "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+    "Valid citations establish grounding, not the correctness of a security judgment.",
+    "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+    "This review investigates FastAPI object authorization only. Other families remain uninvestigated.",
+    "Python resolution uses the static import fallback. Dynamic dispatch and unsupported guards remain gaps.",
+    "Coverage counts discovered access sites, not every possible vulnerability or source file.",
+    "Peer analysis covers the selected resources; excluded resources cannot establish their policies.",
+    "Opengrep signals are not yet integrated into the review queue.",
+    "api/.pytest_cache: excluded (default_ignored).",
+    "api/.ruff_cache: excluded (default_ignored).",
+    "api/.venv: excluded (default_ignored).",
+    "api/tandir/__pycache__: excluded (default_ignored).",
+    "api/tandir/routers/__pycache__: excluded (default_ignored).",
+    "api/tandir/services/__pycache__: excluded (default_ignored).",
+    "api/tests/__pycache__: excluded (default_ignored).",
+    "fixed/api.patch: excluded (unsupported).",
+    "fixed/web.patch: excluded (unsupported).",
+    "web/.next: excluded (default_ignored).",
+    "web/node_modules: excluded (default_ignored).",
+    "web/tsconfig.tsbuildinfo: excluded (unsupported).",
+    "Only the hash-pinned bundled Tandir receipt and invoice templates were executed, on loopback with fresh databases. Arbitrary targets remain source-only; severity is unassessed.",
+    "F-01: Bounded static analysis; only the recorded bundled-lab conditions were tested",
+    "F-01: Other deployment conditions and general detection coverage remain untested",
+    "F-02: Bounded static analysis; only the recorded bundled-lab conditions were tested",
+    "F-02: Other deployment conditions and general detection coverage remain untested"
+  ],
+  "peer_comparison": {
+    "finding_id": "finding:bd085b438c05b4fff8467bcd",
+    "question_id": "question:access:ffb0ea24ed0b07eb3940e2d4",
+    "subject_site_id": "access:ffb0ea24ed0b07eb3940e2d4",
+    "group": {
+      "id": "peers:b1dde5d4157f86f40944051a",
+      "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+      "resource": "Order",
+      "site_ids": [
+        "access:2e0c46fe90931ef75cc79c29",
+        "access:325a77ca6ddd1fab14044c25",
+        "access:3e7c979be201d2175b8062dc",
+        "access:482dfd5b97f4f8e958ea5a45",
+        "access:8987cdaa54c5804fd5ceaae8",
+        "access:a1d59f6039b3151fd618fc38",
+        "access:b0a88d36af91cfeb0400facc",
+        "access:bce923f64e6dee00a8cfbe40",
+        "access:c42904f03cbba04a760ed7a3",
+        "access:c8dedc4648eed54116fbf431",
+        "access:d6c35fbf2efb00fb2cda2939",
+        "access:e762e143df858264024d693a",
+        "access:ed378f0cfa63b5c5de8b150f",
+        "access:f55c0f3a2d93e70d18a86db7",
+        "access:ffb0ea24ed0b07eb3940e2d4"
+      ],
+      "columns": [
+        {
+          "key": "authenticated",
+          "label": "authenticated",
+          "applied_site_ids": [
+            "access:2e0c46fe90931ef75cc79c29",
+            "access:325a77ca6ddd1fab14044c25",
+            "access:482dfd5b97f4f8e958ea5a45",
+            "access:8987cdaa54c5804fd5ceaae8",
+            "access:a1d59f6039b3151fd618fc38",
+            "access:b0a88d36af91cfeb0400facc",
+            "access:bce923f64e6dee00a8cfbe40",
+            "access:c8dedc4648eed54116fbf431",
+            "access:ed378f0cfa63b5c5de8b150f",
+            "access:f55c0f3a2d93e70d18a86db7",
+            "access:ffb0ea24ed0b07eb3940e2d4"
+          ]
+        },
+        {
+          "key": "owner",
+          "label": "owner",
+          "applied_site_ids": [
+            "access:2e0c46fe90931ef75cc79c29",
+            "access:325a77ca6ddd1fab14044c25",
+            "access:482dfd5b97f4f8e958ea5a45",
+            "access:8987cdaa54c5804fd5ceaae8",
+            "access:a1d59f6039b3151fd618fc38",
+            "access:b0a88d36af91cfeb0400facc",
+            "access:bce923f64e6dee00a8cfbe40",
+            "access:c8dedc4648eed54116fbf431",
+            "access:ed378f0cfa63b5c5de8b150f",
+            "access:f55c0f3a2d93e70d18a86db7"
+          ]
+        },
+        {
+          "key": "role",
+          "label": "role",
+          "applied_site_ids": [
+            "access:325a77ca6ddd1fab14044c25",
+            "access:bce923f64e6dee00a8cfbe40"
+          ]
+        }
+      ],
+      "excluded": [
+        {
+          "site_id": "access:3e7c979be201d2175b8062dc",
+          "reason": "Admin-only dependency: literal admin binding and enforcing role body cited"
+        },
+        {
+          "site_id": "access:c42904f03cbba04a760ed7a3",
+          "reason": "Separate tenant-scoped role policy: resource scope and literal role binding cited"
+        },
+        {
+          "site_id": "access:d6c35fbf2efb00fb2cda2939",
+          "reason": "Separate tenant-scoped role policy: resource scope and literal role binding cited"
+        },
+        {
+          "site_id": "access:e762e143df858264024d693a",
+          "reason": "Separate tenant-scoped role policy: resource scope and literal role binding cited"
+        }
+      ],
+      "min_peers": 3,
+      "min_share": 0.75,
+      "deviations": [
+        {
+          "site_id": "access:ffb0ea24ed0b07eb3940e2d4",
+          "missing": "owner",
+          "peers_applying": 10,
+          "peers_total": 10
+        }
+      ]
+    },
+    "rows": [
+      {
+        "site": {
+          "id": "access:2e0c46fe90931ef75cc79c29",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:a2e91da7380b0b976155522e",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 29,
+            "end_line": 29,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:a2e91da7380b0b976155522e",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "POST",
+          "route": "/orders/{order_id}/photos",
+          "handler_symbol_id": "sym:28e0a24bf42629d4e5ddcf6a",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 148,
+            "end_line": 164,
+            "content_sha256": "d3cfe8935ecd1bc8af0c8852183e2c7f68d9374125f24fffb5509ebe3e40a961"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:5b637bfe72b496238bd22ec6",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "comparison",
+            "subject": "user.id",
+            "object": "order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/services/orders.py",
+              "start_line": 30,
+              "end_line": 31,
+              "content_sha256": "baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03"
+            },
+            "via_symbol_id": "sym:7b4313fccdb28dff81318b43",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 26,
+            "end_line": 26,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 30,
+            "end_line": 31,
+            "content_sha256": "baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:325a77ca6ddd1fab14044c25",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:6bd76a499552060aa7198917",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "unknown",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 28,
+            "end_line": 28,
+            "content_sha256": "aa1972acf81efaa418b22b7e4bc9549ce4a83fdf9594c5971c1fd15a891d458c"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:6bd76a499552060aa7198917",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/courier/deliveries",
+          "handler_symbol_id": "sym:e2eb47532cb5bf540e89f800",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 24,
+            "end_line": 29,
+            "content_sha256": "1a01eb311e2680d78d4e06c76c47584117d5384224ebd2700b447a60392b67c6"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:cc47b7c41c1e556a05309575",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "role",
+            "canonical": "ROLE(roles)",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": "roles",
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 55,
+              "end_line": 56,
+              "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+            },
+            "via_symbol_id": "sym:b27e01a7eb2cbb682f35502a",
+            "confirmed": true
+          },
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:98aae42978c5454ccdd1deed",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.courier_id = principal.id)",
+            "mechanism": "query_filter",
+            "subject": "user.id",
+            "object": "Order.courier_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/courier.py",
+              "start_line": 28,
+              "end_line": 28,
+              "content_sha256": "aa1972acf81efaa418b22b7e4bc9549ce4a83fdf9594c5971c1fd15a891d458c"
+            },
+            "via_symbol_id": "sym:e2eb47532cb5bf540e89f800",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 26,
+            "end_line": 26,
+            "content_sha256": "582a5ada38761b5ea9906ce17ee076545da2afa94e277a19e344eaf988af2b00"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 12,
+            "end_line": 12,
+            "content_sha256": "3b715d8a677848f8797f58282b0bd6f9daac499a44199a0c93129f70fc925e1a"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 54,
+            "end_line": 54,
+            "content_sha256": "09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 55,
+            "end_line": 56,
+            "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 28,
+            "end_line": 28,
+            "content_sha256": "aa1972acf81efaa418b22b7e4bc9549ce4a83fdf9594c5971c1fd15a891d458c"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:3e7c979be201d2175b8062dc",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:c0fcb61344609aad89bf528e",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/admin.py",
+            "start_line": 62,
+            "end_line": 62,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:c0fcb61344609aad89bf528e",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/admin/orders/{order_id}",
+          "handler_symbol_id": "sym:27483eae27fdf91e82d7c6d2",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/admin.py",
+            "start_line": 56,
+            "end_line": 65,
+            "content_sha256": "8ccbca7ee241443b2baaba426fb2d2cdc470139d8f052ef183abe60783bc4325"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:cc47b7c41c1e556a05309575",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "role",
+            "canonical": "ROLE(roles)",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": "roles",
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 55,
+              "end_line": 56,
+              "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+            },
+            "via_symbol_id": "sym:b27e01a7eb2cbb682f35502a",
+            "confirmed": true
+          },
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/admin.py",
+            "start_line": 59,
+            "end_line": 59,
+            "content_sha256": "5aa72f97aff105a75588fd71e24377d31a6588a20565ed626450d54e9a505ca4"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/admin.py",
+            "start_line": 13,
+            "end_line": 13,
+            "content_sha256": "0671422abe39816df97eb77055ecd015ee720511637f0f583e459b9fc29252fc"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 54,
+            "end_line": 54,
+            "content_sha256": "09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 55,
+            "end_line": 56,
+            "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          }
+        ],
+        "exclusion": "Admin-only dependency: literal admin binding and enforcing role body cited",
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:482dfd5b97f4f8e958ea5a45",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:484c14f6067f23eddc7b9a9e",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 74,
+            "end_line": 76,
+            "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:484c14f6067f23eddc7b9a9e",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders/{order_id}",
+          "handler_symbol_id": "sym:b66fde6817375a921dd5b93e",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 68,
+            "end_line": 79,
+            "content_sha256": "4661b61fcd82ac88aca13fc49d51aff08dc3331981c78f439059ed88b7210576"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:d917a15adfe3182a434b63c4",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "query_filter",
+            "subject": "user.id",
+            "object": "Order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/orders.py",
+              "start_line": 74,
+              "end_line": 76,
+              "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+            },
+            "via_symbol_id": "sym:b66fde6817375a921dd5b93e",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 71,
+            "end_line": 71,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 74,
+            "end_line": 76,
+            "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:8987cdaa54c5804fd5ceaae8",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:0e5056e5e763e0c21a7f9e53",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 110,
+            "end_line": 110,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:0e5056e5e763e0c21a7f9e53",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "POST",
+          "route": "/orders/{order_id}/cancel",
+          "handler_symbol_id": "sym:c0ab43452ad446818ddb471c",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 104,
+            "end_line": 117,
+            "content_sha256": "5e1d17a0ab437efa1a0a650bb81a71380880a3779414a1e44ee108d5b9ece369"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:ee1087cadcce7774e4c2d896",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "comparison",
+            "subject": "user.id",
+            "object": "order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/orders.py",
+              "start_line": 111,
+              "end_line": 112,
+              "content_sha256": "baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03"
+            },
+            "via_symbol_id": "sym:c0ab43452ad446818ddb471c",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 107,
+            "end_line": 107,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 111,
+            "end_line": 112,
+            "content_sha256": "baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:a1d59f6039b3151fd618fc38",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:60c38dd12b1bd6b1a6f5aa13",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 29,
+            "end_line": 29,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:60c38dd12b1bd6b1a6f5aa13",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders/{order_id}/items",
+          "handler_symbol_id": "sym:1ca04191eb02e72a962d4719",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 120,
+            "end_line": 130,
+            "content_sha256": "e51035095060eb0756e256385356dcc0684768e9335c23049370d627e5f74868"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:5b637bfe72b496238bd22ec6",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "comparison",
+            "subject": "user.id",
+            "object": "order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/services/orders.py",
+              "start_line": 30,
+              "end_line": 31,
+              "content_sha256": "baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03"
+            },
+            "via_symbol_id": "sym:7b4313fccdb28dff81318b43",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 26,
+            "end_line": 26,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 30,
+            "end_line": 31,
+            "content_sha256": "baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:b0a88d36af91cfeb0400facc",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:8dacef0f5ff5f2928558655b",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 11,
+            "end_line": 13,
+            "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:8dacef0f5ff5f2928558655b",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders/{order_id}/photos",
+          "handler_symbol_id": "sym:6c5c8aede374df39c55f1f03",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 167,
+            "end_line": 179,
+            "content_sha256": "e529991bdef2764a1cf13db6051ac586e1aed6881c94490b718798ac95bf048b"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:f90c39530063b6c6329a5f26",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "query_filter",
+            "subject": "user.id",
+            "object": "Order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/services/orders.py",
+              "start_line": 11,
+              "end_line": 13,
+              "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+            },
+            "via_symbol_id": "sym:174f66ac71924c7ad017976f",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 172,
+            "end_line": 172,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 11,
+            "end_line": 13,
+            "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:bce923f64e6dee00a8cfbe40",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:009ff45b4326cef135875beb",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 38,
+            "end_line": 38,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:009ff45b4326cef135875beb",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/courier/orders/{order_id}",
+          "handler_symbol_id": "sym:4511cca78eea0b0e5c03ca30",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 32,
+            "end_line": 41,
+            "content_sha256": "9cd857f71be79c2a587ce549f50ca96184e749e4bd23a2722bea4ed52243057c"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:cc47b7c41c1e556a05309575",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "role",
+            "canonical": "ROLE(roles)",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": "roles",
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 55,
+              "end_line": 56,
+              "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+            },
+            "via_symbol_id": "sym:b27e01a7eb2cbb682f35502a",
+            "confirmed": true
+          },
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:00d04fb9af833eb85aac2a20",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.courier_id = principal.id)",
+            "mechanism": "comparison",
+            "subject": "user.id",
+            "object": "order.courier_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/courier.py",
+              "start_line": 39,
+              "end_line": 40,
+              "content_sha256": "6de004926f27b988baa029967ce01287807b832a748a36abbe7c26bf2835b665"
+            },
+            "via_symbol_id": "sym:4511cca78eea0b0e5c03ca30",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 35,
+            "end_line": 35,
+            "content_sha256": "a4799d7b2bf0654089ba4bff1f2ade3d94df502c173bafda44c7c992e3fe41e6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 12,
+            "end_line": 12,
+            "content_sha256": "3b715d8a677848f8797f58282b0bd6f9daac499a44199a0c93129f70fc925e1a"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 54,
+            "end_line": 54,
+            "content_sha256": "09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 55,
+            "end_line": 56,
+            "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/courier.py",
+            "start_line": 39,
+            "end_line": 40,
+            "content_sha256": "6de004926f27b988baa029967ce01287807b832a748a36abbe7c26bf2835b665"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:c42904f03cbba04a760ed7a3",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:b538a42031268cb0b7051030",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/branches.py",
+            "start_line": 81,
+            "end_line": 81,
+            "content_sha256": "85e18407ca4b2a52206208715ef0d2bacb3a1197b3b911ab3b14d8558b5c53b2"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:b538a42031268cb0b7051030",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/branches/{branch_id}/orders",
+          "handler_symbol_id": "sym:0fb2f073a2350052ea12a240",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/branches.py",
+            "start_line": 73,
+            "end_line": 82,
+            "content_sha256": "9038e72ac37e1895ead3319474bfffb47cc20d0d9d7a2a630ad541ad30900a05"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:cc47b7c41c1e556a05309575",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "role",
+            "canonical": "ROLE(roles)",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": "roles",
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 55,
+              "end_line": 56,
+              "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+            },
+            "via_symbol_id": "sym:b27e01a7eb2cbb682f35502a",
+            "confirmed": true
+          },
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:d94e38fb6bc76f72981e1940",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "tenant",
+            "canonical": "TENANT(Order.branch_id = principal.branch_id)",
+            "mechanism": "comparison",
+            "subject": "user.branch_id",
+            "object": "branch_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/branches.py",
+              "start_line": 79,
+              "end_line": 80,
+              "content_sha256": "c1cec1df1cc2e7e1134b09a646e3e80d31d16b6dd5579bd89c7234f10d1e6dea"
+            },
+            "via_symbol_id": "sym:0fb2f073a2350052ea12a240",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/branches.py",
+            "start_line": 76,
+            "end_line": 76,
+            "content_sha256": "60ce583c5403aaf5c0acc4f5b7928c8088f6e46f5f12a56e15d0b695b4df62d6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/branches.py",
+            "start_line": 12,
+            "end_line": 12,
+            "content_sha256": "1b9378a0125ef1225a8ad1bfaff3edbba99d90dcdb4cab5bb50fb73e34a0f4dc"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 54,
+            "end_line": 54,
+            "content_sha256": "09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 55,
+            "end_line": 56,
+            "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/branches.py",
+            "start_line": 79,
+            "end_line": 80,
+            "content_sha256": "c1cec1df1cc2e7e1134b09a646e3e80d31d16b6dd5579bd89c7234f10d1e6dea"
+          }
+        ],
+        "exclusion": "Separate tenant-scoped role policy: resource scope and literal role binding cited",
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:c8dedc4648eed54116fbf431",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:08352d8bd408ef6906428237",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 139,
+            "end_line": 139,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:08352d8bd408ef6906428237",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders/{order_id}/tracking",
+          "handler_symbol_id": "sym:34f377807b581c051114a161",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 133,
+            "end_line": 145,
+            "content_sha256": "a99db02bbb9a707fe7b91ba2e5b3f7358fd2a386b320d68a6fac52923187caf0"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:1e6ec6046bb9866f378b8da4",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "comparison",
+            "subject": "user.id",
+            "object": "order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/services/orders.py",
+              "start_line": 20,
+              "end_line": 21,
+              "content_sha256": "773b4ead011b0954b391f69dbda6396df7e732a0fea43875942136ba4bf31e2f"
+            },
+            "via_symbol_id": "sym:9a9bcceab1ebff85755ce6dd",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 136,
+            "end_line": 136,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 142,
+            "end_line": 142,
+            "content_sha256": "ddd78011f84a8d14511ecda70b96ca036793f1429fb45555eaf12d04ce0ff85b"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 20,
+            "end_line": 21,
+            "content_sha256": "773b4ead011b0954b391f69dbda6396df7e732a0fea43875942136ba4bf31e2f"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:d6c35fbf2efb00fb2cda2939",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:fa5149e26c2840a79103275e",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 21,
+            "end_line": 21,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:fa5149e26c2840a79103275e",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "POST",
+          "route": "/kitchen/orders/{order_id}/items/{item_id}/label",
+          "handler_symbol_id": "sym:d1ef79c9c7788a0807c9a6ac",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 27,
+            "end_line": 42,
+            "content_sha256": "9783c39d43c118b3eb1d2ccf262e8f64f9fab7521e6af8a0087b02a5ee16c0ac"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:cc47b7c41c1e556a05309575",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "role",
+            "canonical": "ROLE(roles)",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": "roles",
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 55,
+              "end_line": 56,
+              "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+            },
+            "via_symbol_id": "sym:b27e01a7eb2cbb682f35502a",
+            "confirmed": true
+          },
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:112f2ff450ce6b0d7f1eac07",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "tenant",
+            "canonical": "TENANT(Order.branch_id = principal.branch_id)",
+            "mechanism": "comparison",
+            "subject": "user.branch_id",
+            "object": "order.branch_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/kitchen.py",
+              "start_line": 22,
+              "end_line": 23,
+              "content_sha256": "0f0d601b2eb8a2e1c8fad264c945b96a8b8797620290279f738035741553da99"
+            },
+            "via_symbol_id": "sym:90dde491e10a64a6b1b43a48",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 32,
+            "end_line": 32,
+            "content_sha256": "60ce583c5403aaf5c0acc4f5b7928c8088f6e46f5f12a56e15d0b695b4df62d6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 12,
+            "end_line": 12,
+            "content_sha256": "1b9378a0125ef1225a8ad1bfaff3edbba99d90dcdb4cab5bb50fb73e34a0f4dc"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 54,
+            "end_line": 54,
+            "content_sha256": "09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 55,
+            "end_line": 56,
+            "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 22,
+            "end_line": 23,
+            "content_sha256": "0f0d601b2eb8a2e1c8fad264c945b96a8b8797620290279f738035741553da99"
+          }
+        ],
+        "exclusion": "Separate tenant-scoped role policy: resource scope and literal role binding cited",
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:e762e143df858264024d693a",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:34cb81700ab8318782618fba",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 21,
+            "end_line": 21,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:34cb81700ab8318782618fba",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "POST",
+          "route": "/kitchen/orders/{order_id}/receipt",
+          "handler_symbol_id": "sym:a40faf0b1fca6125458a4511",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 45,
+            "end_line": 60,
+            "content_sha256": "13f8f40af3be2691d0e7eedca451e8e649fe5cb2c3d09263633ed2be3e64b7e6"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:cc47b7c41c1e556a05309575",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "role",
+            "canonical": "ROLE(roles)",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": "roles",
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 55,
+              "end_line": 56,
+              "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+            },
+            "via_symbol_id": "sym:b27e01a7eb2cbb682f35502a",
+            "confirmed": true
+          },
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:112f2ff450ce6b0d7f1eac07",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "tenant",
+            "canonical": "TENANT(Order.branch_id = principal.branch_id)",
+            "mechanism": "comparison",
+            "subject": "user.branch_id",
+            "object": "order.branch_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/kitchen.py",
+              "start_line": 22,
+              "end_line": 23,
+              "content_sha256": "0f0d601b2eb8a2e1c8fad264c945b96a8b8797620290279f738035741553da99"
+            },
+            "via_symbol_id": "sym:90dde491e10a64a6b1b43a48",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 49,
+            "end_line": 49,
+            "content_sha256": "60ce583c5403aaf5c0acc4f5b7928c8088f6e46f5f12a56e15d0b695b4df62d6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 12,
+            "end_line": 12,
+            "content_sha256": "1b9378a0125ef1225a8ad1bfaff3edbba99d90dcdb4cab5bb50fb73e34a0f4dc"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 54,
+            "end_line": 54,
+            "content_sha256": "09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 55,
+            "end_line": 56,
+            "content_sha256": "fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/kitchen.py",
+            "start_line": 22,
+            "end_line": 23,
+            "content_sha256": "0f0d601b2eb8a2e1c8fad264c945b96a8b8797620290279f738035741553da99"
+          }
+        ],
+        "exclusion": "Separate tenant-scoped role policy: resource scope and literal role binding cited",
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:ed378f0cfa63b5c5de8b150f",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:75df5a5b3c68225137ca15a8",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "unknown",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 31,
+            "end_line": 31,
+            "content_sha256": "3b3b1766599127f3f7d25109d39fcff6dc5eb36df3c0715bd44c15e6a4da69af"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:75df5a5b3c68225137ca15a8",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders",
+          "handler_symbol_id": "sym:c9f2531bfb0baaa6c03534fe",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 27,
+            "end_line": 32,
+            "content_sha256": "8277c9bec6bb7bb3acc45ea09db79c50d5cc7151811c4cb9fcd19dfc95f13e85"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:b0e6ce05b0ae28e0548d1b01",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "query_filter",
+            "subject": "user.id",
+            "object": "Order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/routers/orders.py",
+              "start_line": 31,
+              "end_line": 31,
+              "content_sha256": "3b3b1766599127f3f7d25109d39fcff6dc5eb36df3c0715bd44c15e6a4da69af"
+            },
+            "via_symbol_id": "sym:c9f2531bfb0baaa6c03534fe",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 29,
+            "end_line": 29,
+            "content_sha256": "f85c510c7310e2cb3b37e5f7e5bee268603aed3d29727b2854d16c6b12c59de1"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 31,
+            "end_line": 31,
+            "content_sha256": "3b3b1766599127f3f7d25109d39fcff6dc5eb36df3c0715bd44c15e6a4da69af"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:f55c0f3a2d93e70d18a86db7",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:a983dffb5c2db975909e6bf2",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 11,
+            "end_line": 13,
+            "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:a983dffb5c2db975909e6bf2",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders/{order_id}/invoice",
+          "handler_symbol_id": "sym:8b0a95925cd763fbe7950824",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 94,
+            "end_line": 101,
+            "content_sha256": "1082adcb6f2c04ed23ca08bfc8e01776fcc33175bed0e07d316f42d89992a627"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          },
+          {
+            "id": "guard:f90c39530063b6c6329a5f26",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "owner",
+            "canonical": "OWNER(Order.customer_id = principal.id)",
+            "mechanism": "query_filter",
+            "subject": "user.id",
+            "object": "Order.customer_id",
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/services/orders.py",
+              "start_line": 11,
+              "end_line": 13,
+              "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+            },
+            "via_symbol_id": "sym:174f66ac71924c7ad017976f",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 97,
+            "end_line": 97,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/services/orders.py",
+            "start_line": 11,
+            "end_line": 13,
+            "content_sha256": "dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      },
+      {
+        "site": {
+          "id": "access:ffb0ea24ed0b07eb3940e2d4",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "entry_point_id": "entry:0e5f4cf0a42a39f9daffb29c",
+          "resource": "Order",
+          "operation": "read",
+          "key_origin": "path",
+          "data_layer": "sqlalchemy",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 88,
+            "end_line": 88,
+            "content_sha256": "5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68"
+          },
+          "guard_ids": []
+        },
+        "entry": {
+          "id": "entry:0e5f4cf0a42a39f9daffb29c",
+          "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+          "kind": "http_route",
+          "framework": "fastapi",
+          "method": "GET",
+          "route": "/orders/{order_id}/receipt",
+          "handler_symbol_id": "sym:5d41d3e7468945221bbfd13e",
+          "span": {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 82,
+            "end_line": 91,
+            "content_sha256": "5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e"
+          }
+        },
+        "guards": [
+          {
+            "id": "guard:95fc5c20c0b1768f45128706",
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "kind": "authenticated",
+            "canonical": "AUTHN",
+            "mechanism": "comparison",
+            "subject": null,
+            "object": null,
+            "role": null,
+            "span": {
+              "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+              "path": "api/tandir/security.py",
+              "start_line": 45,
+              "end_line": 46,
+              "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+            },
+            "via_symbol_id": "sym:55e7153847dbaedacf600cc7",
+            "confirmed": true
+          }
+        ],
+        "evidence": [
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/routers/orders.py",
+            "start_line": 85,
+            "end_line": 85,
+            "content_sha256": "10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb"
+          },
+          {
+            "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+            "path": "api/tandir/security.py",
+            "start_line": 45,
+            "end_line": 46,
+            "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+          }
+        ],
+        "exclusion": null,
+        "issues": []
+      }
+    ],
+    "limitations": [
+      "Peer deviations are leads requiring challenge, not verdicts",
+      "Resource identities are not merged by spelling",
+      "Unsupported paths remain in the voting denominator",
+      "Branch/admin exclusions are candidate exceptions, not confirmed policy"
+    ]
+  }
+}

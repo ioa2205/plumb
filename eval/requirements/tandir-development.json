@@ -1,0 +1,13 @@
+{
+  "scope": "current_tandir_development_requirements",
+  "author": "Owner-delegated development review",
+  "provenance": "Owner delegated decisions on 2026-10-07. These are explicit lab access and privacy requirements, not code-derived guard evidence or evaluator verdicts. They apply only to the named frozen development entries; no held-out inputs were read.",
+  "rules": [
+    {"path":"web/app/backoffice/actions.ts","symbol":"refundOrder","resource":"orders","owner_path":"web/app/backoffice/actions.ts","owner_symbol":"refundOrder","statement":"Every public order mutation must verify the caller's session inside its callable path.","required_guard":"authenticated"},
+    {"path":"web/app/orders/actions.ts","symbol":"cancelOrder","resource":"orders","owner_path":"web/lib/dal.ts","owner_symbol":"cancelOrderFor","statement":"Every public order mutation must verify the caller's session inside its callable path.","required_guard":"authenticated"},
+    {"path":"web/app/courier/[id]/page.tsx","symbol":"DeliveryPage","resource":"users","owner_path":"web/lib/dal.ts","owner_symbol":"customerRecord","statement":"Delivery and order summary props must omit the customer's phone; rendering only selected fields does not remove serialized fields.","forbidden_fields":["phone"]},
+    {"path":"web/app/orders/[id]/page.tsx","symbol":"OrderPage","resource":"orders","owner_path":"web/lib/dal.ts","owner_symbol":"getOrderDTO","statement":"Delivery and order summary props must omit the customer's phone; rendering only selected fields does not remove serialized fields.","forbidden_fields":["phone"]},
+    {"path":"web/app/api/admin/export/route.ts","symbol":"GET","resource":"users","owner_path":"web/app/api/admin/export/route.ts","owner_symbol":"GET","statement":"Administrative data endpoints require the admin role inside the callable handler path.","required_guard":"role","required_role":"admin"},
+    {"path":"web/app/api/admin/reports/route.ts","symbol":"GET","resource":"branches","owner_path":"web/app/api/admin/reports/route.ts","owner_symbol":"GET","statement":"Administrative data endpoints require the admin role inside the callable handler path.","required_guard":"role","required_role":"admin"}
+  ]
+}

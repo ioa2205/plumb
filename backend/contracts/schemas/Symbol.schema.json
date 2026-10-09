@@ -1,0 +1,109 @@
+{
+  "$defs": {
+    "Language": {
+      "enum": [
+        "python",
+        "typescript",
+        "tsx",
+        "javascript"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "SymbolKind": {
+      "enum": [
+        "module",
+        "class",
+        "function",
+        "method",
+        "variable",
+        "component",
+        "type"
+      ],
+      "title": "SymbolKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/Symbol.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/SymbolKind"
+    },
+    "language": {
+      "$ref": "#/$defs/Language"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "qualified_name": {
+      "title": "Qualified Name",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "span": {
+      "$ref": "#/$defs/SourceSpan"
+    }
+  },
+  "required": [
+    "id",
+    "snapshot_id",
+    "name",
+    "qualified_name",
+    "kind",
+    "language",
+    "span"
+  ],
+  "title": "Symbol",
+  "type": "object"
+}

@@ -1,0 +1,736 @@
+{
+  "provenance": "Actual saved history; separate small software comparison, no fresh model or runtime fix",
+  "actual_history": {
+    "runs": [
+      {
+        "id": "review-d6bafee015ae4ac19644364861c3c2aa",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "run_type": "replay",
+        "lifecycle": "paused",
+        "stage": "investigating",
+        "conditions": [],
+        "created_at": "2026-10-05T20:16:07.369738Z",
+        "started_at": "2026-10-05T20:16:14.441243Z",
+        "finished_at": null,
+        "model": {
+          "id": "qwen3.5-2b-q4_k_m",
+          "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "quantization": "Q4_K_M"
+        },
+        "toolchain": {
+          "llama_cpp_release": "v0.5.0",
+          "llama_cpp_build": "b11146",
+          "backend": "vulkan",
+          "opengrep_version": null,
+          "opengrep_rules_sha256": null,
+          "knowledge_pack_date": null
+        },
+        "coverage": {
+          "total": 97,
+          "completed": 1,
+          "pending": 1,
+          "excluded": 95,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:4d9d0f1bd6de8ca385cd39d7"
+        ]
+      },
+      {
+        "id": "review-b63a198ded5e49399b1c5813c29db62f",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "run_type": "replay",
+        "lifecycle": "paused",
+        "stage": "investigating",
+        "conditions": [],
+        "created_at": "2026-10-05T20:14:19.093024Z",
+        "started_at": "2026-10-05T20:14:27.443755Z",
+        "finished_at": null,
+        "model": {
+          "id": "qwen3.5-2b-q4_k_m",
+          "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "quantization": "Q4_K_M"
+        },
+        "toolchain": {
+          "llama_cpp_release": "v0.5.0",
+          "llama_cpp_build": "b11146",
+          "backend": "vulkan",
+          "opengrep_version": null,
+          "opengrep_rules_sha256": null,
+          "knowledge_pack_date": null
+        },
+        "coverage": {
+          "total": 97,
+          "completed": 1,
+          "pending": 1,
+          "excluded": 95,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:d55267bf7fca2f48fa761acd"
+        ]
+      },
+      {
+        "id": "review-0750d327be1a4fc78f2d6785fabea0ce",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "run_type": "live",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-05T20:02:05.382428Z",
+        "started_at": "2026-10-05T20:02:12.682623Z",
+        "finished_at": "2026-10-05T20:02:45.977864Z",
+        "model": {
+          "id": "qwen3.5-2b-q4_k_m",
+          "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "quantization": "Q4_K_M"
+        },
+        "toolchain": {
+          "llama_cpp_release": "v0.5.0",
+          "llama_cpp_build": "b11146",
+          "backend": "vulkan",
+          "opengrep_version": null,
+          "opengrep_rules_sha256": null,
+          "knowledge_pack_date": null
+        },
+        "coverage": {
+          "total": 97,
+          "completed": 2,
+          "pending": 0,
+          "excluded": 95,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:90e6867f7282e7fcd5fef464",
+          "finding:f6f3b5891d47a73c693d0d17"
+        ]
+      },
+      {
+        "id": "review-efe914fb441a4374bd3ec22debc371dc",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "run_type": "live",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-05T14:41:40.551581Z",
+        "started_at": "2026-10-05T14:41:43.727073Z",
+        "finished_at": "2026-10-05T14:44:12.696555Z",
+        "model": {
+          "id": "qwen3.5-2b-q4_k_m",
+          "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "quantization": "Q4_K_M"
+        },
+        "toolchain": {
+          "llama_cpp_release": "v0.5.0",
+          "llama_cpp_build": "b11146",
+          "backend": "vulkan",
+          "opengrep_version": null,
+          "opengrep_rules_sha256": null,
+          "knowledge_pack_date": null
+        },
+        "coverage": {
+          "total": 74,
+          "completed": 2,
+          "pending": 0,
+          "excluded": 72,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:4decfd296bbe80e5589ee34c",
+          "finding:bd085b438c05b4fff8467bcd"
+        ]
+      },
+      {
+        "id": "review-6430c4bbf29e442e8091278b5d88f103",
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "run_type": "live",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-05T14:39:16.215959Z",
+        "started_at": "2026-10-05T14:39:22.126982Z",
+        "finished_at": "2026-10-05T14:40:32.793697Z",
+        "model": {
+          "id": "qwen3.5-2b-q4_k_m",
+          "file_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8",
+          "quantization": "Q4_K_M"
+        },
+        "toolchain": {
+          "llama_cpp_release": "v0.5.0",
+          "llama_cpp_build": "b11146",
+          "backend": "vulkan",
+          "opengrep_version": null,
+          "opengrep_rules_sha256": null,
+          "knowledge_pack_date": null
+        },
+        "coverage": {
+          "total": 74,
+          "completed": 2,
+          "pending": 0,
+          "excluded": 72,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:56e0984dc63d5e2092cf81a9",
+          "finding:898c73f889fe89600a395f9a"
+        ]
+      }
+    ],
+    "total": 5,
+    "offset": 0,
+    "next_offset": null
+  },
+  "software_history": {
+    "runs": [
+      {
+        "id": "review-cccccccccccccccccccccccccccccccc",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T10:00:00Z",
+        "started_at": "2026-10-03T10:00:00Z",
+        "finished_at": "2026-10-03T10:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 4,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 1,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:new-resolved",
+          "finding:new-present",
+          "finding:new-new"
+        ]
+      },
+      {
+        "id": "review-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-03T09:00:00Z",
+        "finished_at": "2026-10-03T09:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 3,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 0,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:old-resolved",
+          "finding:old-present",
+          "finding:old-unknown"
+        ]
+      }
+    ],
+    "total": 2,
+    "offset": 0,
+    "next_offset": null
+  },
+  "software_comparisons": {
+    "new": {
+      "before": {
+        "id": "review-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-03T09:00:00Z",
+        "finished_at": "2026-10-03T09:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 3,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 0,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:old-resolved",
+          "finding:old-present",
+          "finding:old-unknown"
+        ]
+      },
+      "after": {
+        "id": "review-cccccccccccccccccccccccccccccccc",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T10:00:00Z",
+        "started_at": "2026-10-03T10:00:00Z",
+        "finished_at": "2026-10-03T10:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 4,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 1,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:new-resolved",
+          "finding:new-present",
+          "finding:new-new"
+        ]
+      },
+      "group": "new",
+      "rows": [
+        {
+          "id": "compare:8a7b54f0215ec37865904fdf1d1759315d202942d3478c3b1739555437773f6e",
+          "group": "new",
+          "before": null,
+          "after": {
+            "id": "finding:new-new",
+            "display_id": "F-03",
+            "title": "Any signed-in customer can read another customer's receipt",
+            "family": "injection",
+            "conclusion": "candidate",
+            "severity": "high",
+            "runtime_verification": "not_attempted",
+            "disposition": "open",
+            "location": {
+              "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+              "path": "api/routes/orders.py",
+              "start_line": 10,
+              "end_line": 13,
+              "content_sha256": "be26e7acf04d4227d9a7a9498ecb99e6bec0fb22362e69289adfb9fd50e5f638"
+            }
+          },
+          "reason": "Newly recorded in this comparison; it may have existed outside earlier coverage."
+        }
+      ],
+      "counts": {
+        "new": 1,
+        "still_present": 1,
+        "no_longer_observed": 1,
+        "not_reviewed": 1
+      },
+      "offset": 0,
+      "next_offset": null,
+      "policies": [],
+      "policies_total": 0,
+      "policy_offset": 0,
+      "policy_next_offset": null,
+      "limitations": [
+        "Saved reports only; no new model judgment, probe or analysis starts here.",
+        "Correspondence uses unique frozen request/data identities, or unchanged cited code. Ambiguous, renamed or missing units remain not reviewed. Matching project names alone does not establish that two folders are the same project.",
+        "No longer observed needs an explicitly answered, source-validated later rejection. It does not mean fixed, safe, or runtime verified.",
+        "New means newly recorded, not necessarily introduced by a code change. Absence, incomplete coverage and validator rejection cannot establish safety.",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret).",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret)."
+      ]
+    },
+    "still_present": {
+      "before": {
+        "id": "review-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-03T09:00:00Z",
+        "finished_at": "2026-10-03T09:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 3,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 0,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:old-resolved",
+          "finding:old-present",
+          "finding:old-unknown"
+        ]
+      },
+      "after": {
+        "id": "review-cccccccccccccccccccccccccccccccc",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T10:00:00Z",
+        "started_at": "2026-10-03T10:00:00Z",
+        "finished_at": "2026-10-03T10:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 4,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 1,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:new-resolved",
+          "finding:new-present",
+          "finding:new-new"
+        ]
+      },
+      "group": "still_present",
+      "rows": [
+        {
+          "id": "compare:28fe424fe233c342240440c4d7101d7d755d02e545062f9b481b5e1ee2b179a8",
+          "group": "still_present",
+          "before": {
+            "id": "finding:old-present",
+            "display_id": "F-02",
+            "title": "Any signed-in customer can read another customer's receipt",
+            "family": "authorization",
+            "conclusion": "supported",
+            "severity": "high",
+            "runtime_verification": "not_attempted",
+            "disposition": "open",
+            "location": {
+              "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+              "path": "api/routes/orders.py",
+              "start_line": 10,
+              "end_line": 13,
+              "content_sha256": "be26e7acf04d4227d9a7a9498ecb99e6bec0fb22362e69289adfb9fd50e5f638"
+            }
+          },
+          "after": {
+            "id": "finding:new-present",
+            "display_id": "F-02",
+            "title": "Any signed-in customer can read another customer's receipt",
+            "family": "authorization",
+            "conclusion": "supported",
+            "severity": "high",
+            "runtime_verification": "not_attempted",
+            "disposition": "open",
+            "location": {
+              "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+              "path": "api/routes/orders.py",
+              "start_line": 10,
+              "end_line": 13,
+              "content_sha256": "be26e7acf04d4227d9a7a9498ecb99e6bec0fb22362e69289adfb9fd50e5f638"
+            }
+          },
+          "reason": "Both reports record a concern on the same unique review unit."
+        }
+      ],
+      "counts": {
+        "new": 1,
+        "still_present": 1,
+        "no_longer_observed": 1,
+        "not_reviewed": 1
+      },
+      "offset": 0,
+      "next_offset": null,
+      "policies": [],
+      "policies_total": 0,
+      "policy_offset": 0,
+      "policy_next_offset": null,
+      "limitations": [
+        "Saved reports only; no new model judgment, probe or analysis starts here.",
+        "Correspondence uses unique frozen request/data identities, or unchanged cited code. Ambiguous, renamed or missing units remain not reviewed. Matching project names alone does not establish that two folders are the same project.",
+        "No longer observed needs an explicitly answered, source-validated later rejection. It does not mean fixed, safe, or runtime verified.",
+        "New means newly recorded, not necessarily introduced by a code change. Absence, incomplete coverage and validator rejection cannot establish safety.",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret).",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret)."
+      ]
+    },
+    "no_longer_observed": {
+      "before": {
+        "id": "review-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-03T09:00:00Z",
+        "finished_at": "2026-10-03T09:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 3,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 0,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:old-resolved",
+          "finding:old-present",
+          "finding:old-unknown"
+        ]
+      },
+      "after": {
+        "id": "review-cccccccccccccccccccccccccccccccc",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T10:00:00Z",
+        "started_at": "2026-10-03T10:00:00Z",
+        "finished_at": "2026-10-03T10:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 4,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 1,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:new-resolved",
+          "finding:new-present",
+          "finding:new-new"
+        ]
+      },
+      "group": "no_longer_observed",
+      "rows": [
+        {
+          "id": "compare:322a2f836227e0f6de2d8f4b108783b5d70065499b79fc0d7acb0adcb9159074",
+          "group": "no_longer_observed",
+          "before": {
+            "id": "finding:old-resolved",
+            "display_id": "F-01",
+            "title": "Any signed-in customer can read another customer's receipt",
+            "family": "authorization",
+            "conclusion": "candidate",
+            "severity": "high",
+            "runtime_verification": "not_attempted",
+            "disposition": "open",
+            "location": {
+              "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+              "path": "api/routes/orders.py",
+              "start_line": 16,
+              "end_line": 21,
+              "content_sha256": "d5714dc2d726d45dbe695ffee609da9e94bf1c40002d4081cab379e737873530"
+            }
+          },
+          "after": {
+            "id": "finding:new-resolved",
+            "display_id": "F-01",
+            "title": "Any signed-in customer can read another customer's receipt",
+            "family": "authorization",
+            "conclusion": "rejected",
+            "severity": "high",
+            "runtime_verification": "not_attempted",
+            "disposition": "open",
+            "location": {
+              "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+              "path": "api/routes/orders.py",
+              "start_line": 16,
+              "end_line": 21,
+              "content_sha256": "d5714dc2d726d45dbe695ffee609da9e94bf1c40002d4081cab379e737873530"
+            }
+          },
+          "reason": "The later matched check explicitly rejected the concern with validated guard evidence. This is a source observation, not proof of a runtime fix."
+        }
+      ],
+      "counts": {
+        "new": 1,
+        "still_present": 1,
+        "no_longer_observed": 1,
+        "not_reviewed": 1
+      },
+      "offset": 0,
+      "next_offset": null,
+      "policies": [],
+      "policies_total": 0,
+      "policy_offset": 0,
+      "policy_next_offset": null,
+      "limitations": [
+        "Saved reports only; no new model judgment, probe or analysis starts here.",
+        "Correspondence uses unique frozen request/data identities, or unchanged cited code. Ambiguous, renamed or missing units remain not reviewed. Matching project names alone does not establish that two folders are the same project.",
+        "No longer observed needs an explicitly answered, source-validated later rejection. It does not mean fixed, safe, or runtime verified.",
+        "New means newly recorded, not necessarily introduced by a code change. Absence, incomplete coverage and validator rejection cannot establish safety.",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret).",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret)."
+      ]
+    },
+    "not_reviewed": {
+      "before": {
+        "id": "review-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T09:00:00Z",
+        "started_at": "2026-10-03T09:00:00Z",
+        "finished_at": "2026-10-03T09:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 3,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 0,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:old-resolved",
+          "finding:old-present",
+          "finding:old-unknown"
+        ]
+      },
+      "after": {
+        "id": "review-cccccccccccccccccccccccccccccccc",
+        "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+        "run_type": "replay",
+        "lifecycle": "completed",
+        "stage": null,
+        "conditions": [],
+        "created_at": "2026-10-03T10:00:00Z",
+        "started_at": "2026-10-03T10:00:00Z",
+        "finished_at": "2026-10-03T10:00:30Z",
+        "model": null,
+        "toolchain": null,
+        "coverage": {
+          "total": 4,
+          "completed": 3,
+          "pending": 0,
+          "excluded": 1,
+          "unsupported": 0
+        },
+        "finding_ids": [
+          "finding:new-resolved",
+          "finding:new-present",
+          "finding:new-new"
+        ]
+      },
+      "group": "not_reviewed",
+      "rows": [
+        {
+          "id": "compare:7b64ab9d9f69793e8752abe2659e74f83f7a758f6b1b5d485354d5176945eb47",
+          "group": "not_reviewed",
+          "before": {
+            "id": "finding:old-unknown",
+            "display_id": "F-03",
+            "title": "Any signed-in customer can read another customer's receipt",
+            "family": "authorization",
+            "conclusion": "candidate",
+            "severity": "high",
+            "runtime_verification": "not_attempted",
+            "disposition": "open",
+            "location": {
+              "snapshot_id": "20a967a985aa8f672126b24560ad8fb9a643f37da48ba3f730ff3904c47e5b08",
+              "path": "api/routes/orders.py",
+              "start_line": 10,
+              "end_line": 13,
+              "content_sha256": "be26e7acf04d4227d9a7a9498ecb99e6bec0fb22362e69289adfb9fd50e5f638"
+            }
+          },
+          "after": null,
+          "reason": "No unique, explicitly answered later rejection matches this review unit. Missing, excluded, failed, ambiguous or changed packets remain unknown."
+        }
+      ],
+      "counts": {
+        "new": 1,
+        "still_present": 1,
+        "no_longer_observed": 1,
+        "not_reviewed": 1
+      },
+      "offset": 0,
+      "next_offset": null,
+      "policies": [],
+      "policies_total": 0,
+      "policy_offset": 0,
+      "policy_next_offset": null,
+      "limitations": [
+        "Saved reports only; no new model judgment, probe or analysis starts here.",
+        "Correspondence uses unique frozen request/data identities, or unchanged cited code. Ambiguous, renamed or missing units remain not reviewed. Matching project names alone does not establish that two folders are the same project.",
+        "No longer observed needs an explicitly answered, source-validated later rejection. It does not mean fixed, safe, or runtime verified.",
+        "New means newly recorded, not necessarily introduced by a code change. Absence, incomplete coverage and validator rejection cannot establish safety.",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret).",
+        "Static support does not establish runtime reproduction.",
+        "Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.",
+        "Valid citations establish grounding, not the correctness of a security judgment.",
+        "Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.",
+        "Explicit software replay; no real judgment or runtime fix.",
+        "Model or toolchain provenance was not recorded for this run.",
+        ".env: excluded (secret)."
+      ]
+    }
+  },
+  "original_report_hashes": {
+    "reviews\\review-0750d327be1a4fc78f2d6785fabea0ce\\report.html": "3a5acf38a5192c103d7e5ca2c21afcac575cadc9d22e028e529348046f8a0127",
+    "reviews\\review-0750d327be1a4fc78f2d6785fabea0ce\\report.json": "2b4e57791e1f7a8b323275f67357a1873fa0e21ece7e7eed1bff5f5be9a94bc9",
+    "reviews\\review-0750d327be1a4fc78f2d6785fabea0ce\\report.md": "c2efdcfdcbaada82e74ac4151dcffd0e83c35a933e9b8e8d800234c3ce5c457f",
+    "reviews\\review-0750d327be1a4fc78f2d6785fabea0ce\\report.sarif": "2f8caca395b5a6f266d5686f136e13363d16ef0e3f0f5c3cd971ccaf874a3154",
+    "reviews\\review-6430c4bbf29e442e8091278b5d88f103\\report.html": "cf79789ff9331197efc2d9e962eec575d99b7234c6d6819db613ead58f5af84b",
+    "reviews\\review-6430c4bbf29e442e8091278b5d88f103\\report.json": "94a6970792ec3cff773434db4fb841f29f135264fd23029012d3f532b3af3f3d",
+    "reviews\\review-6430c4bbf29e442e8091278b5d88f103\\report.md": "e2b7472bfe164047f923b2deed09c56f1fc0b77c554f7ab68baad724449bc575",
+    "reviews\\review-6430c4bbf29e442e8091278b5d88f103\\report.sarif": "8d9149c67a88224b8cea1d67ecb3fe3a40d520861f8856706ced77c643f286fb",
+    "reviews\\review-b63a198ded5e49399b1c5813c29db62f\\report.html": "479475e48468836088abb8efe746b6c39fecb6a902682ede034b6dfb37793692",
+    "reviews\\review-b63a198ded5e49399b1c5813c29db62f\\report.json": "676f8254fb0c3913ca95c3dfa5ac8866c09a736724bd375169c7eaf808e6900d",
+    "reviews\\review-b63a198ded5e49399b1c5813c29db62f\\report.md": "8646a880f435af326ed247b07555cdd3b4c069b992c55f9d48e4113884b9dd10",
+    "reviews\\review-b63a198ded5e49399b1c5813c29db62f\\report.sarif": "73059fea279390e1313f358525963bbda27e654119e6c8ba97b0c47251bec4e0",
+    "reviews\\review-d6bafee015ae4ac19644364861c3c2aa\\report.html": "0ad0a72291f05c75987a8efdb12b4f4dc535dec376a1b5adcc5d894c3a8a721e",
+    "reviews\\review-d6bafee015ae4ac19644364861c3c2aa\\report.json": "2dd851c44b80c71c85eb73802c679fc48956dfba256e1554df8d87207cc9ada2",
+    "reviews\\review-d6bafee015ae4ac19644364861c3c2aa\\report.md": "2be6bbbae5062d3e69ccdc305561cb7b2d601445f984eece8370f4bfc72dfe7d",
+    "reviews\\review-d6bafee015ae4ac19644364861c3c2aa\\report.sarif": "3075e3215bd093cda42f34a31f6de52feed68cf702ad911c81d01933ccedd436",
+    "reviews\\review-efe914fb441a4374bd3ec22debc371dc\\report.html": "ac916511002b2c328753b975ea131be9afe1117ee427f5880aa3ab5a6849c530",
+    "reviews\\review-efe914fb441a4374bd3ec22debc371dc\\report.json": "600f9c0a1d97cbd1ea05527af91090ed50664d6c2422e78d576a24c630e9283d",
+    "reviews\\review-efe914fb441a4374bd3ec22debc371dc\\report.md": "b70b1211544c6d26a311e28a681ee413484f84e9d2dcb4edb0d024bc3bbaa35b",
+    "reviews\\review-efe914fb441a4374bd3ec22debc371dc\\report.sarif": "6b20f75f4c2049f286f5b4eb78478bbf302ca8af40ad749aea4c9161a1cccd06"
+  }
+}

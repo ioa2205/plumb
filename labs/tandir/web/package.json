@@ -1,0 +1,29 @@
+{
+  "name": "tandir-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tandir storefront and back office: the deliberately vulnerable Plumb lab. Loopback only.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "node scripts/next.mjs dev -H 127.0.0.1 -p 8702",
+    "build": "node scripts/next.mjs build",
+    "start": "node scripts/next.mjs start -H 127.0.0.1 -p 8702",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3"
+  }
+}

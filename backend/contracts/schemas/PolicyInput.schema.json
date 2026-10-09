@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "GuardKind": {
+      "description": "Canonical guard kinds from the ``guard_summary`` question (PROJECT_PLAN \u00a73.1).",
+      "enum": [
+        "authenticated",
+        "owner",
+        "tenant",
+        "role",
+        "none",
+        "unknown",
+        "parameterized",
+        "allowlisted",
+        "contained",
+        "minimized"
+      ],
+      "title": "GuardKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/PolicyInput.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "author": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Author",
+      "type": "string"
+    },
+    "forbidden_fields": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Forbidden Fields",
+      "type": "array"
+    },
+    "required_guard": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GuardKind"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "required_role": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Role"
+    },
+    "site_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Site Ids",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "statement": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Statement",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "site_ids",
+    "statement",
+    "author"
+  ],
+  "title": "PolicyInput",
+  "type": "object"
+}

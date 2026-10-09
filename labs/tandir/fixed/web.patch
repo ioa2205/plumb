@@ -1,0 +1,143 @@
+diff --git a/web/app/api/admin/export/route.ts b/web/app/api/admin/export/route.ts
+index f41bfda..130f87c 100644
+--- a/web/app/api/admin/export/route.ts
++++ b/web/app/api/admin/export/route.ts
+@@ -1,4 +1,7 @@
++import type { NextRequest } from "next/server";
++
+ import { all } from "@/lib/db";
++import { SESSION_COOKIE, viewerForToken } from "@/lib/sessions";
+ 
+ // Spreadsheets run cells that start with = + - @ (or a tab or CR) as formulas; prefix a quote.
+ function cell(value: string): string {
+@@ -6,7 +9,10 @@ function cell(value: string): string {
+   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+ }
+ 
+-export function GET(): Response {
++export function GET(request: NextRequest): Response {
++  const viewer = viewerForToken(request.cookies.get(SESSION_COOKIE)?.value);
++  if (!viewer) return Response.json({ detail: "Sign in first" }, { status: 401 });
++  if (!viewer.is("admin")) return Response.json({ detail: "Not allowed" }, { status: 403 });
+   const customers = all<{ id: number; display_name: string; phone: string }>(
+     "SELECT id, display_name, phone FROM users WHERE role = 'customer' ORDER BY id",
+   );
+diff --git a/web/app/backoffice/actions.ts b/web/app/backoffice/actions.ts
+index 8f1a47f..8a9b957 100644
+--- a/web/app/backoffice/actions.ts
++++ b/web/app/backoffice/actions.ts
+@@ -2,10 +2,10 @@
+ 
+ import { revalidatePath } from "next/cache";
+ 
+-import { run } from "@/lib/db";
++import { refundOrderAsStaff } from "@/lib/dal";
+ 
+ export async function refundOrder(formData: FormData): Promise<void> {
+   const orderId = Number(formData.get("orderId"));
+-  run("UPDATE orders SET status = 'refunded' WHERE id = ? AND status != 'refunded'", orderId);
++  await refundOrderAsStaff(orderId);
+   revalidatePath("/backoffice");
+ }
+diff --git a/web/app/courier/[id]/DeliveryCard.tsx b/web/app/courier/[id]/DeliveryCard.tsx
+index cc4de92..55601c5 100644
+--- a/web/app/courier/[id]/DeliveryCard.tsx
++++ b/web/app/courier/[id]/DeliveryCard.tsx
+@@ -2,9 +2,9 @@
+ 
+ import { useState } from "react";
+ 
+-import type { CustomerRecord, DeliveryOrder } from "@/lib/dal";
++import type { DeliveryCustomerDTO, DeliveryOrder } from "@/lib/dal";
+ 
+-export function DeliveryCard({ order, customer }: { order: DeliveryOrder; customer: CustomerRecord }) {
++export function DeliveryCard({ order, customer }: { order: DeliveryOrder; customer: DeliveryCustomerDTO }) {
+   const [delivered, setDelivered] = useState(false);
+   return (
+     <section className="card">
+diff --git a/web/lib/dal.ts b/web/lib/dal.ts
+index 459ab59..e3168ed 100644
+--- a/web/lib/dal.ts
++++ b/web/lib/dal.ts
+@@ -142,14 +142,7 @@ export async function cancelOrderFor(orderId: number): Promise<void> {
+ 
+ export type DeliveryOrder = { id: number; status: string; deliveryAddress: string };
+ 
+-export type CustomerRecord = {
+-  id: number;
+-  username: string;
+-  displayName: string;
+-  phone: string;
+-  avatar: string | null;
+-  phoneHistory: { phone: string; changedAt: string }[];
+-};
++export type DeliveryCustomerDTO = { displayName: string };
+ 
+ export async function getMyDeliveries(): Promise<DeliveryOrder[]> {
+   const viewer = await verifySession();
+@@ -160,30 +153,16 @@ export async function getMyDeliveries(): Promise<DeliveryOrder[]> {
+   ).map((o) => ({ id: o.id, status: o.status, deliveryAddress: o.delivery_address }));
+ }
+ 
+-function customerRecord(customerId: number): CustomerRecord {
+-  const user = one<{ id: number; username: string; display_name: string; phone: string; avatar: string | null }>(
+-    "SELECT id, username, display_name, phone, avatar FROM users WHERE id = ?",
+-    customerId,
+-  );
++function deliveryCustomer(customerId: number): DeliveryCustomerDTO {
++  const user = one<{ display_name: string }>("SELECT display_name FROM users WHERE id = ?", customerId);
+   if (!user) notFound();
+-  const history = all<{ phone: string; changed_at: string }>(
+-    "SELECT phone, changed_at FROM phone_changes WHERE user_id = ? ORDER BY changed_at",
+-    customerId,
+-  );
+-  return {
+-    id: user.id,
+-    username: user.username,
+-    displayName: user.display_name,
+-    phone: user.phone,
+-    avatar: user.avatar,
+-    phoneHistory: history.map((h) => ({ phone: h.phone, changedAt: h.changed_at })),
+-  };
++  return { displayName: user.display_name };
+ }
+ 
+-/** A delivery assigned to the signed-in courier, with the customer's record. */
++/** A delivery assigned to the signed-in courier, with what the card shows of the customer. */
+ export async function getDelivery(
+   orderId: number,
+-): Promise<{ order: DeliveryOrder; customer: CustomerRecord }> {
++): Promise<{ order: DeliveryOrder; customer: DeliveryCustomerDTO }> {
+   const viewer = await verifySession();
+   if (!viewer.is("courier")) notFound();
+   const order = one<{ id: number; status: string; delivery_address: string; customer_id: number }>(
+@@ -194,7 +173,7 @@ export async function getDelivery(
+   if (!order) notFound();
+   return {
+     order: { id: order.id, status: order.status, deliveryAddress: order.delivery_address },
+-    customer: customerRecord(order.customer_id),
++    customer: deliveryCustomer(order.customer_id),
+   };
+ }
+ 
+@@ -216,6 +195,20 @@ const STAFF_ORDER_SELECT = `SELECT orders.id, users.display_name AS customer,
+ 
+ type StaffOrderRow = { id: number; customer: string; branch: string; status: string; total_cents: number };
+ 
++/** Admins refund any order; a branch manager refunds their own branch's. */
++export async function refundOrderAsStaff(orderId: number): Promise<void> {
++  const viewer = await verifySession();
++  if (!viewer.is(...STAFF)) notFound();
++  const changed = viewer.is("admin")
++    ? run("UPDATE orders SET status = 'refunded' WHERE id = ? AND status != 'refunded'", orderId)
++    : run(
++        "UPDATE orders SET status = 'refunded' WHERE id = ? AND branch_id = ? AND status != 'refunded'",
++        orderId,
++        viewer.branchId,
++      );
++  if (changed === 0) notFound();
++}
++
+ /** Admins see every order; a branch manager sees their own branch's. */
+ export async function getStaffOrders(): Promise<StaffOrderDTO[]> {
+   const viewer = await verifySession();

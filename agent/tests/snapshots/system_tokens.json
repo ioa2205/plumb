@@ -1,0 +1,38 @@
+{
+  "tokenizer": {
+    "llama_cpp_build": "b11146",
+    "model": "qwen3.5-2b-q4_k_m",
+    "model_sha256": "57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8"
+  },
+  "limit": 400,
+  "system_prompts": {
+    "guard_summary": {
+      "sha256": "75a868e95fdd76c67246bb037c69a8d04a08f0a28cdfbe8c46f85677dc53ca8e",
+      "tokens": 367
+    },
+    "guard_equivalent": {
+      "sha256": "7dab354bccdee90ed177442965f279a2824f99ce94b560c5949a63d32fd3df1d",
+      "tokens": 325
+    },
+    "input_origin": {
+      "sha256": "e23b3c9004c0b1f0990c101ec75497fd7463e8b1c8b74bc89a71ce1a1e118ab7",
+      "tokens": 327
+    },
+    "sink_safety": {
+      "sha256": "14e67a12e486e7860f9a36ce650cc2175d7d01750eaf1abd04842dd5c8dce747",
+      "tokens": 368
+    },
+    "intentional_exception": {
+      "sha256": "13687a562a6531f4f7e010410bc7b8be2b601e5ab45268d82c0bf5d78e898dd5",
+      "tokens": 336
+    },
+    "client_exposure": {
+      "sha256": "771c93ab8f58f0d5c21a648d5129fa43601a0fbe2a65a08a679fbc2147ac1f44",
+      "tokens": 309
+    },
+    "fix_sketch": {
+      "sha256": "bab43ce12b13cf4c98649e39afa043308fff418f297484fd21b250d1dd2c700c",
+      "tokens": 374
+    }
+  }
+}

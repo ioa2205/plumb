@@ -1,0 +1,591 @@
+{
+  "$defs": {
+    "AccessSite": {
+      "additionalProperties": false,
+      "description": "A place where a resource is loaded by a request-controlled identifier.",
+      "properties": {
+        "data_layer": {
+          "$ref": "#/$defs/DataLayer"
+        },
+        "entry_point_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Entry Point Id",
+          "type": "string"
+        },
+        "guard_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Guard Ids",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "key_origin": {
+          "$ref": "#/$defs/InputOrigin"
+        },
+        "operation": {
+          "$ref": "#/$defs/Operation"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "entry_point_id",
+        "resource",
+        "operation",
+        "key_origin",
+        "data_layer",
+        "span"
+      ],
+      "title": "AccessSite",
+      "type": "object"
+    },
+    "DataLayer": {
+      "enum": [
+        "sqlalchemy",
+        "raw_sql",
+        "prisma",
+        "drizzle",
+        "other"
+      ],
+      "title": "DataLayer",
+      "type": "string"
+    },
+    "EntryPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "framework": {
+          "$ref": "#/$defs/Framework"
+        },
+        "handler_symbol_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Handler Symbol Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EntryPointKind"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        },
+        "route": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Route"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "kind",
+        "framework",
+        "handler_symbol_id",
+        "span"
+      ],
+      "title": "EntryPoint",
+      "type": "object"
+    },
+    "EntryPointKind": {
+      "enum": [
+        "http_route",
+        "route_handler",
+        "server_action",
+        "page"
+      ],
+      "title": "EntryPointKind",
+      "type": "string"
+    },
+    "Framework": {
+      "enum": [
+        "fastapi",
+        "nextjs"
+      ],
+      "title": "Framework",
+      "type": "string"
+    },
+    "Guard": {
+      "additionalProperties": false,
+      "description": "A check on the path to an access site, normalized to a canonical form.\n\n``confirmed`` means the validator found executable code at ``span`` that\nperforms the check. A name or a comment never confirms a guard.",
+      "properties": {
+        "canonical": {
+          "title": "Canonical",
+          "type": "string"
+        },
+        "confirmed": {
+          "default": false,
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/GuardKind"
+        },
+        "mechanism": {
+          "$ref": "#/$defs/GuardMechanism"
+        },
+        "object": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "via_symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Via Symbol Id"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "kind",
+        "canonical",
+        "mechanism",
+        "span"
+      ],
+      "title": "Guard",
+      "type": "object"
+    },
+    "GuardKind": {
+      "description": "Canonical guard kinds from the ``guard_summary`` question (PROJECT_PLAN \u00a73.1).",
+      "enum": [
+        "authenticated",
+        "owner",
+        "tenant",
+        "role",
+        "none",
+        "unknown",
+        "parameterized",
+        "allowlisted",
+        "contained",
+        "minimized"
+      ],
+      "title": "GuardKind",
+      "type": "string"
+    },
+    "GuardMechanism": {
+      "enum": [
+        "dependency",
+        "decorator",
+        "query_filter",
+        "comparison",
+        "helper_call",
+        "data_access_layer",
+        "router",
+        "proxy_matcher"
+      ],
+      "title": "GuardMechanism",
+      "type": "string"
+    },
+    "InputOrigin": {
+      "description": "Where a value comes from, as answered by the ``input_origin`` question.",
+      "enum": [
+        "path",
+        "query",
+        "body",
+        "header",
+        "session",
+        "constant",
+        "unknown"
+      ],
+      "title": "InputOrigin",
+      "type": "string"
+    },
+    "Language": {
+      "enum": [
+        "python",
+        "typescript",
+        "tsx",
+        "javascript"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "LinkStatus": {
+      "description": "How firmly a static link between two places in the code is established.",
+      "enum": [
+        "resolved",
+        "inferred",
+        "unresolved"
+      ],
+      "title": "LinkStatus",
+      "type": "string"
+    },
+    "MapLink": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "handler",
+            "call",
+            "reference",
+            "dependency",
+            "guard_candidate",
+            "access",
+            "may_check",
+            "proxy",
+            "client_props"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "optimistic": {
+          "default": false,
+          "title": "Optimistic",
+          "type": "boolean"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "status": {
+          "$ref": "#/$defs/LinkStatus"
+        },
+        "target": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target",
+        "kind",
+        "status",
+        "reason",
+        "span"
+      ],
+      "title": "MapLink",
+      "type": "object"
+    },
+    "Operation": {
+      "enum": [
+        "read",
+        "list",
+        "create",
+        "update",
+        "delete"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "Symbol": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/SymbolKind"
+        },
+        "language": {
+          "$ref": "#/$defs/Language"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "qualified_name": {
+          "title": "Qualified Name",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "name",
+        "qualified_name",
+        "kind",
+        "language",
+        "span"
+      ],
+      "title": "Symbol",
+      "type": "object"
+    },
+    "SymbolKind": {
+      "enum": [
+        "module",
+        "class",
+        "function",
+        "method",
+        "variable",
+        "component",
+        "type"
+      ],
+      "title": "SymbolKind",
+      "type": "string"
+    },
+    "UnknownTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "reason",
+        "span"
+      ],
+      "title": "UnknownTarget",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ApplicationMap.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "access_sites": {
+      "items": {
+        "$ref": "#/$defs/AccessSite"
+      },
+      "title": "Access Sites",
+      "type": "array"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/EntryPoint"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "guards": {
+      "items": {
+        "$ref": "#/$defs/Guard"
+      },
+      "title": "Guards",
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/MapLink"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "symbols": {
+      "items": {
+        "$ref": "#/$defs/Symbol"
+      },
+      "title": "Symbols",
+      "type": "array"
+    },
+    "unknown_targets": {
+      "items": {
+        "$ref": "#/$defs/UnknownTarget"
+      },
+      "title": "Unknown Targets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "entries",
+    "symbols",
+    "guards",
+    "access_sites",
+    "unknown_targets",
+    "links"
+  ],
+  "title": "ApplicationMap",
+  "type": "object"
+}

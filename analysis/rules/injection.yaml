@@ -1,0 +1,55 @@
+# Plumb's own Opengrep rules, family B: SQL injection (CWE-89) and OS command
+# injection (CWE-78). Request inputs are the parameters of route handlers.
+rules:
+  - id: plumb.injection.sql-text-from-request
+    languages: [python]
+    mode: taint
+    severity: ERROR
+    message: A request value reaches the SQL text of `text(...)` instead of a bound parameter.
+    metadata:
+      family: injection
+      cwe: [89]
+    pattern-sources:
+      - patterns:
+          - pattern-inside: |
+              @$ROUTER.$METHOD(...)
+              def $HANDLER(..., $PARAM, ...):
+                ...
+          - focus-metavariable: $PARAM
+    pattern-sinks:
+      - patterns:
+          - pattern: text($SQL, ...)
+          - focus-metavariable: $SQL
+
+  - id: plumb.injection.shell-command-from-request
+    languages: [python]
+    mode: taint
+    severity: ERROR
+    message: A request value reaches a command run through the shell.
+    metadata:
+      family: injection
+      cwe: [78]
+    pattern-sources:
+      - patterns:
+          - pattern-inside: |
+              @$ROUTER.$METHOD(...)
+              def $HANDLER(..., $PARAM, ...):
+                ...
+          - focus-metavariable: $PARAM
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: subprocess.$FUNC($CMD, ..., shell=True, ...)
+              - pattern: os.system($CMD)
+          - focus-metavariable: $CMD
+
+  - id: plumb.injection.shell-command-not-literal
+    languages: [python]
+    severity: WARNING
+    message: A command built at runtime is run through the shell.
+    metadata:
+      family: injection
+      cwe: [78]
+    patterns:
+      - pattern: subprocess.$FUNC($CMD, ..., shell=True, ...)
+      - pattern-not: subprocess.$FUNC("...", ..., shell=True, ...)

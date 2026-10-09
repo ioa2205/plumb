@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;sha256-oxrzVguTXcPFT41/d0th2Q7tVUQdDVXmGiMtDI6orhc=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;"><title>Plumb review · tandir</title><style>/* Plumb design.md §4: color literals are confined to theme tokens. */
+:root {
+  --desk: #ECEDE9; --sheet: #F9F9F7; --raised: #FFFFFF; --well: #E3E4DF;
+  --cite: #EDEEE9; --ink: #1B1D20; --graphite: #4F545B; --pencil: #5F646B;
+  --carmine: #B0282C; --carmine-wash: #F7E4E2; --blue: #1F6185;
+  --blue-line: #3A86AE; --blue-wash: #DCEEF6; --ochre: #85570A;
+  --ochre-wash: #F5EBD3; --umber: #6E5530; --control-rule: #7A7F87;
+  --sans: "Atkinson Hyperlegible Next", system-ui, "Segoe UI", sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(#theme-day:checked)) {
+    --desk: #111214; --sheet: #18191C; --raised: #202226; --well: #24262A;
+    --cite: #202226; --ink: #E8E8E4; --graphite: #B4B7BD; --pencil: #959AA2;
+    --carmine: #F2756D; --carmine-wash: #3A2022; --blue: #82BEDF;
+    --blue-line: #4F9CC6; --blue-wash: #16303E; --ochre: #D8A548;
+    --ochre-wash: #33291A; --umber: #CDB58A; --control-rule: #6C7178;
+    color-scheme: dark;
+  }
+}
+:root:has(#theme-night:checked) {
+  --desk: #111214; --sheet: #18191C; --raised: #202226; --well: #24262A;
+  --cite: #202226; --ink: #E8E8E4; --graphite: #B4B7BD; --pencil: #959AA2;
+  --carmine: #F2756D; --carmine-wash: #3A2022; --blue: #82BEDF;
+  --blue-line: #4F9CC6; --blue-wash: #16303E; --ochre: #D8A548;
+  --ochre-wash: #33291A; --umber: #CDB58A; --control-rule: #6C7178;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--desk); color: var(--ink); font: 16px/1.55 var(--sans); }
+main { max-width: 1168px; padding: 32px 24px 64px; margin: auto; }
+h1, h2, h3, p, ul, ol, dl { margin: 0; }
+h1 { font-size: clamp(28px, 4vw, 36px); line-height: 1.15; letter-spacing: -.014em; }
+h2 { font-size: 24px; line-height: 1.25; }
+h3 { font-size: 16px; line-height: 1.3; }
+a { color: var(--blue); text-underline-offset: 3px; }
+a, code, dd, pre, p, li { overflow-wrap: anywhere; }
+code, pre, .mono { font-family: var(--mono); font-size: .82em; }
+pre { white-space: pre-wrap; background: var(--cite); padding: 16px; border-radius: 8px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.skip { position: absolute; left: 16px; top: -100px; padding: 12px; background: var(--sheet); }
+.skip:focus { top: 12px; }
+.topbar, .topline { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.topbar { margin-bottom: 32px; }
+.wordmark { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.wordmark svg { width: 16px; height: 28px; fill: currentColor; }
+.muted { color: var(--graphite); }
+.meta { color: var(--pencil); font-size: 13px; }
+.theme { display: flex; gap: 12px; flex-wrap: wrap; border: 0; padding: 0; font-size: 13px; }
+.theme legend { color: var(--pencil); padding: 0; }
+.theme label { display: inline-flex; align-items: center; min-height: 44px; gap: 4px; cursor: pointer; }
+.theme input { accent-color: var(--ink); }
+.sheet { background: var(--sheet); border-radius: 14px; padding: 32px; margin-top: 24px; }
+.intro { margin-top: 0; }
+.intro > * + * { margin-top: 16px; }
+.lede { max-width: 64ch; font-size: 17.5px; }
+.overview { font-size: 18px; font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: var(--graphite); }
+.legend span { display: inline-flex; gap: 6px; }
+.finding-nav { list-style: none; padding: 0; display: grid; gap: 12px; }
+.finding-nav a { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 64px; padding: 16px; background: var(--well); border-radius: 8px; text-decoration: none; color: var(--ink); }
+.finding-nav .route { display: block; margin-top: 4px; }
+.finding-nav .risk { background: var(--carmine-wash); }
+.section-head { display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; align-items: baseline; margin-bottom: 20px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 6px; background: var(--well); font-size: 13px; font-weight: 600; }
+.risk { color: var(--carmine); background: var(--carmine-wash); }
+.attention { color: var(--ochre); background: var(--ochre-wash); }
+.proposed { color: var(--blue); background: var(--blue-wash); }
+.coverage-bar { display: flex; gap: 4px; height: 12px; margin: 16px 0; overflow: hidden; border-radius: 4px; background: var(--well); }
+.segment-completed { background: var(--ink); }
+.segment-pending { background: var(--blue-line); }
+.segment-excluded { background: var(--pencil); }
+.segment-unsupported { background: var(--ochre); }
+.coverage-counts { display: flex; flex-wrap: wrap; gap: 8px 24px; list-style: none; padding: 0; font-size: 14px; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.condition { padding: 16px; border-radius: 8px; margin-top: 16px; }
+.case > header > * + * { margin-top: 12px; }
+.case .route { margin-top: 8px; color: var(--graphite); }
+.case-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 32px; margin-top: 32px; }
+.case-grid > *, .probe-flow > * { min-width: 0; }
+.part + .part { margin-top: 32px; }
+.part h3 { margin-bottom: 12px; }
+.states { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0 0; }
+.state { padding: 16px; background: var(--well); border-radius: 8px; }
+.state dt { color: var(--graphite); font-size: 13px; margin-bottom: 8px; }
+.state dd { margin: 0; }
+.state p { font-size: 14px; margin-top: 8px; }
+.state.risk, .state.attention { background: var(--sheet); }
+.state.risk dt, .state.attention dt { color: var(--graphite); }
+.checks { list-style: none; padding: 0; display: grid; gap: 16px; }
+.check { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; }
+.check p { font-size: 13px; margin-top: 4px; }
+.flow-list { padding-left: 24px; }
+.flow-list li + li { margin-top: 12px; }
+.probe { margin-top: 16px; padding: 16px; background: var(--well); border-radius: 8px; }
+.probe h4 { margin: 0 0 8px; font-size: 15px; }
+.probe-flow { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0; gap: 8px; margin-top: 16px; }
+.probe-step { padding: 12px; background: var(--sheet); border-radius: 8px; }
+.probe-step.risk { background: var(--carmine-wash); }
+.probe-step.attention { background: var(--ochre-wash); }
+.probe-step > * + * { margin-top: 8px; }
+.step-role { font-size: 13px; font-weight: 600; }
+.step-person { font-size: 16px; font-weight: 600; }
+.step-result { font-size: 18px; font-weight: 600; }
+.step-detail { font-size: 13px; }
+details { margin-top: 12px; }
+summary { cursor: pointer; min-height: 44px; padding: 12px 0; font-size: 14px; }
+.exhibit { background: var(--cite); padding: 4px 16px 16px; border-radius: 8px; }
+.exhibit summary { display: list-item; }
+.tag { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 3px 6px; background: var(--well); border-radius: 4px; }
+.exhibit .location { display: block; padding-top: 8px; }
+.exhibit p { margin-top: 12px; font-size: 14px; }
+.records { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 8px 16px; font-size: 13px; margin-top: 12px; }
+.records dt { color: var(--graphite); }
+.records dd { margin: 0; }
+.limits { padding-left: 24px; }
+.limits li + li { margin-top: 12px; }
+.back { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; margin-top: 24px; }
+.footer { margin-top: 24px; }
+@media (max-width: 779px) {
+  main { padding: 24px 16px 44px; }
+  .sheet { padding: 24px 20px; }
+  .case-grid { grid-template-columns: 1fr; gap: 32px; }
+  .finding-nav a { grid-template-columns: 56px minmax(0, 1fr); gap: 8px; padding: 12px; }
+  .finding-nav .badge { grid-column: 2; justify-self: start; }
+  .states { grid-template-columns: 1fr; }
+  .probe-flow { grid-template-columns: 1fr; }
+  .probe-step { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+  .probe-step > * + * { margin-top: 0; }
+  .probe-step .step-detail { grid-column: 1 / -1; }
+  .records { grid-template-columns: 1fr; gap: 4px; }
+  .records dd { margin-bottom: 8px; }
+}
+@media print {
+  :root { color-scheme: light; }
+  .theme, .skip, .back { display: none; }
+  main { max-width: none; padding: 0; }
+  .sheet { break-inside: avoid; }
+  details::details-content { content-visibility: visible; }
+}
+
+#coverage-completed { flex-grow: 2; flex-basis: 0; }
+#coverage-pending { flex-grow: 0; flex-basis: 0; }
+#coverage-excluded { flex-grow: 85; flex-basis: 0; }
+#coverage-unsupported { flex-grow: 0; flex-basis: 0; }</style></head><body><a class="skip" href="#findings">Skip to findings</a><main><div class="topbar"><div class="wordmark"><svg viewBox="0 0 16 28" aria-hidden="true"><path d="M7 0h2v15l5 5-6 8-6-8 5-5z"/></svg>plumb</div><fieldset class="theme"><legend>Appearance</legend><label><input type="radio" name="theme" id="theme-system" checked>System</label><label><input type="radio" name="theme" id="theme-day">Day</label><label><input type="radio" name="theme" id="theme-night">Night</label></fieldset></div><header class="sheet intro"><p class="meta">Saved report · 08 Oct 2026, 15:50 UTC · Source run: live</p><h1>tandir security review</h1><p class="lede">Start with the findings below. Source conclusions and runtime checks answer different questions; each case shows both.</p><p class="overview">1 supported · 1 rejected</p><p class="meta">Run completed · Snapshot <code>3af5575a0bd6</code></p><div class="legend"><span>● Supported: evidence for a finding</span><span>⊘ Rejected: protection cited</span><span>◐ Inconclusive: still unknown</span></div></header><section class="sheet" id="findings"><div class="section-head"><h2>Findings</h2><a href="#scope">See reviewed scope and limits ↓</a></div><ol class="finding-nav"><li><a class="" href="#F-01"><span class="mono">F-01</span><span>Order access: owner check<span class="route mono">api/tandir/routers/orders.py:82</span></span><span class="badge"><span aria-hidden="true">●</span>Supported</span></a></li><li><a class="" href="#F-02"><span class="mono">F-02</span><span>Order access: owner check<span class="route mono">api/tandir/routers/orders.py:94</span></span><span class="badge"><span aria-hidden="true">⊘</span>Rejected</span></a></li></ol></section><section class="sheet" id="scope"><div class="section-head"><h2>Reviewed scope</h2><p class="mono">2 / 87 completed</p></div><p>Counts describe the recorded review queue. They do not measure the percentage of vulnerabilities found.</p><div class="coverage-bar" role="img" aria-label="Coverage: 2 completed, 0 pending, 85 excluded, 0 unsupported, 87 total"><span id="coverage-completed" class="segment-completed"></span><span id="coverage-excluded" class="segment-excluded"></span></div><ul class="coverage-counts"><li><span class="dot segment-completed" aria-hidden="true"></span><strong>2</strong> completed</li><li><span class="dot segment-pending" aria-hidden="true"></span><strong>0</strong> pending</li><li><span class="dot segment-excluded" aria-hidden="true"></span><strong>85</strong> excluded</li><li><span class="dot segment-unsupported" aria-hidden="true"></span><strong>0</strong> unsupported</li></ul><details><summary>All limitations and exclusions (26)</summary><ul class="limits"><li>Static support does not establish runtime reproduction.</li><li>Only included snapshot files were reviewed; excluded and unsupported scope remains outside the review.</li><li>Valid citations establish grounding, not the correctness of a security judgment.</li><li>Exports omit source text. Redaction covers known credential shapes and supplied secret values, not arbitrary secrets.</li><li>Only selected families and recognized source forms are investigated. Unsupported flows remain explicit gaps.</li><li>Python resolution uses the static import fallback. Dynamic dispatch and unsupported guards remain gaps.</li><li>No target code was executed. Runtime verification is unavailable; source-based severity does not establish runtime impact.</li><li>Coverage counts discovered access sites, not every possible vulnerability or source file.</li><li>Peer analysis covers the selected resources; excluded resources cannot establish their policies.</li><li>Queue peer checks reuse validated exact-source/profile summaries only; uncached guards stay unknown until investigation.</li><li>Opengrep supplied 15 cited pattern leads; 1 overlap the selected supported questions. Other matches are not investigated by this queue. Pattern matches are not findings.</li><li>Supplementary observations are not challenged findings and do not affect coverage.</li><li>Credential shapes may be placeholders; values are omitted and are not validated remotely.</li><li>Configuration flags do not establish deployment exposure or exploitability.</li><li>Advisory matches describe exact lockfile version exposure, not runtime exploitability.</li><li>The dated advisory pack is a small curated subset, not a complete vulnerability database.</li><li>Only npm package-lock/npm-shrinkwrap v2/v3 and uv.lock v1 registry packages are supported. pnpm, Yarn, requirements ranges, Git/path/workspace packages and other ecosystems are unknown.</li><li>Lockfile citations cover the parsed file; no package scripts, imports or installs are run.</li><li>0 known secret files were excluded from the snapshot and were not opened.</li><li>Included unsupported lockfiles were not advisory-matched; dependency scope remains incomplete.</li><li>fixed/api.patch: excluded (unsupported).</li><li>fixed/web.patch: excluded (unsupported).</li><li>F-01: Bounded static analysis; runtime verification not attempted</li><li>F-01: Runtime reachability is not established by static mounting</li><li>F-02: Bounded static analysis; runtime verification not attempted</li><li>F-02: Runtime reachability is not established by static mounting</li></ul></details></section><section class="sheet" id="signals"><h2>Supplementary security signals</h2><p>6 observations · partial. Separate from findings and coverage. Exposure is not exploitability.</p><p class="meta">Advisory date 2026-10-07; source GitHub Advisory Database; pack SHA256 dbd50ca6e8506a8505bbd84689e206aca2ca96cbb285ea2688adad884ba8c74e</p><ul><li><strong>secret: observed</strong> · Credential-shaped text detected: [REDACTED].<p class="mono">api/tandir/schemas.py:8-8; secret-credential-assignment; supplementary-signals-1</p><details><summary>Observation and limitations</summary><pre>{
+  &quot;id&quot;: &quot;signal:cd573b20db266674a157ebaa12386c57&quot;,
+  &quot;category&quot;: &quot;secret&quot;,
+  &quot;status&quot;: &quot;observed&quot;,
+  &quot;source&quot;: {
+    &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+    &quot;path&quot;: &quot;api/tandir/schemas.py&quot;,
+    &quot;start_line&quot;: 8,
+    &quot;end_line&quot;: 8,
+    &quot;content_sha256&quot;: &quot;9d49eb734c7e15739d5db10673e947011f982185425823d29c0c5180b478aa9e&quot;
+  },
+  &quot;rule_id&quot;: &quot;secret-credential-assignment&quot;,
+  &quot;rule_version&quot;: &quot;supplementary-signals-1&quot;,
+  &quot;summary&quot;: &quot;Credential-shaped text detected: [REDACTED].&quot;,
+  &quot;fingerprint&quot;: &quot;0518d244e809b208cd001a8db3eaae30508558bb5515859d18c32f4d3db03ad7&quot;,
+  &quot;ecosystem&quot;: null,
+  &quot;package&quot;: null,
+  &quot;version&quot;: null,
+  &quot;advisory_id&quot;: null,
+  &quot;limitations&quot;: [
+    &quot;Observation only; no challenge or runtime verification was performed.&quot;
+  ]
+}</pre></details></li><li><strong>secret: observed</strong> · Credential-shaped text detected: [REDACTED].<p class="mono">api/tandir/security.py:16-16; secret-credential-assignment; supplementary-signals-1</p><details><summary>Observation and limitations</summary><pre>{
+  &quot;id&quot;: &quot;signal:7446538f9466f1ea8681dd0edfad3c21&quot;,
+  &quot;category&quot;: &quot;secret&quot;,
+  &quot;status&quot;: &quot;observed&quot;,
+  &quot;source&quot;: {
+    &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+    &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+    &quot;start_line&quot;: 16,
+    &quot;end_line&quot;: 16,
+    &quot;content_sha256&quot;: &quot;ad4a1e83183a7213f5ac2423b9d269785b6fda25df622b04585b6c80793aa458&quot;
+  },
+  &quot;rule_id&quot;: &quot;secret-credential-assignment&quot;,
+  &quot;rule_version&quot;: &quot;supplementary-signals-1&quot;,
+  &quot;summary&quot;: &quot;Credential-shaped text detected: [REDACTED].&quot;,
+  &quot;fingerprint&quot;: &quot;0518d244e809b208cd001a8db3eaae30508558bb5515859d18c32f4d3db03ad7&quot;,
+  &quot;ecosystem&quot;: null,
+  &quot;package&quot;: null,
+  &quot;version&quot;: null,
+  &quot;advisory_id&quot;: null,
+  &quot;limitations&quot;: [
+    &quot;Observation only; no challenge or runtime verification was performed.&quot;
+  ]
+}</pre></details></li><li><strong>secret: observed</strong> · Credential-shaped text detected: [REDACTED].<p class="mono">api/tandir/security.py:22-22; secret-credential-assignment; supplementary-signals-1</p><details><summary>Observation and limitations</summary><pre>{
+  &quot;id&quot;: &quot;signal:fe9c0ec8922732c92f63a84b1004cadb&quot;,
+  &quot;category&quot;: &quot;secret&quot;,
+  &quot;status&quot;: &quot;observed&quot;,
+  &quot;source&quot;: {
+    &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+    &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+    &quot;start_line&quot;: 22,
+    &quot;end_line&quot;: 22,
+    &quot;content_sha256&quot;: &quot;02e84957f9301238d1c9875fda50d68bd5de32a2999d32a94fd4420745732c31&quot;
+  },
+  &quot;rule_id&quot;: &quot;secret-credential-assignment&quot;,
+  &quot;rule_version&quot;: &quot;supplementary-signals-1&quot;,
+  &quot;summary&quot;: &quot;Credential-shaped text detected: [REDACTED].&quot;,
+  &quot;fingerprint&quot;: &quot;0518d244e809b208cd001a8db3eaae30508558bb5515859d18c32f4d3db03ad7&quot;,
+  &quot;ecosystem&quot;: null,
+  &quot;package&quot;: null,
+  &quot;version&quot;: null,
+  &quot;advisory_id&quot;: null,
+  &quot;limitations&quot;: [
+    &quot;Observation only; no challenge or runtime verification was performed.&quot;
+  ]
+}</pre></details></li><li><strong>dependency: unknown</strong> · Registry identity or exact resolved version is unknown; advisories were not matched.<p class="mono">api/uv.lock:1-360; dependency-version-unknown; supplementary-signals-1</p><details><summary>Observation and limitations</summary><pre>{
+  &quot;id&quot;: &quot;signal:3944987a4a02b62003693f21a7c31748&quot;,
+  &quot;category&quot;: &quot;dependency&quot;,
+  &quot;status&quot;: &quot;unknown&quot;,
+  &quot;source&quot;: {
+    &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+    &quot;path&quot;: &quot;api/uv.lock&quot;,
+    &quot;start_line&quot;: 1,
+    &quot;end_line&quot;: 360,
+    &quot;content_sha256&quot;: &quot;156763c38a4f44a9015bd05d03b17844d2c382e36d12353dd2b9473028645815&quot;
+  },
+  &quot;rule_id&quot;: &quot;dependency-version-unknown&quot;,
+  &quot;rule_version&quot;: &quot;supplementary-signals-1&quot;,
+  &quot;summary&quot;: &quot;Registry identity or exact resolved version is unknown; advisories were not matched.&quot;,
+  &quot;fingerprint&quot;: null,
+  &quot;ecosystem&quot;: &quot;PyPI&quot;,
+  &quot;package&quot;: &quot;tandir-api&quot;,
+  &quot;version&quot;: null,
+  &quot;advisory_id&quot;: null,
+  &quot;limitations&quot;: [
+    &quot;Observation only; no challenge or runtime verification was performed.&quot;
+  ]
+}</pre></details></li><li><strong>secret: observed</strong> · Credential-shaped text detected: [REDACTED].<p class="mono">web/lib/sessions.ts:41-41; secret-credential-assignment; supplementary-signals-1</p><details><summary>Observation and limitations</summary><pre>{
+  &quot;id&quot;: &quot;signal:5f99a6ea016bbc4b869204fe15c44aaa&quot;,
+  &quot;category&quot;: &quot;secret&quot;,
+  &quot;status&quot;: &quot;observed&quot;,
+  &quot;source&quot;: {
+    &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+    &quot;path&quot;: &quot;web/lib/sessions.ts&quot;,
+    &quot;start_line&quot;: 41,
+    &quot;end_line&quot;: 41,
+    &quot;content_sha256&quot;: &quot;fe1fd23bcd71b3e842a7c06f7ed1fbd837af2282662bd1605e5a098761bb71a4&quot;
+  },
+  &quot;rule_id&quot;: &quot;secret-credential-assignment&quot;,
+  &quot;rule_version&quot;: &quot;supplementary-signals-1&quot;,
+  &quot;summary&quot;: &quot;Credential-shaped text detected: [REDACTED].&quot;,
+  &quot;fingerprint&quot;: &quot;720d5a36129d2e08f15fa2830685fcb2db5b6375bdd1ffd71df7197157eec19c&quot;,
+  &quot;ecosystem&quot;: null,
+  &quot;package&quot;: null,
+  &quot;version&quot;: null,
+  &quot;advisory_id&quot;: null,
+  &quot;limitations&quot;: [
+    &quot;Observation only; no challenge or runtime verification was performed.&quot;
+  ]
+}</pre></details></li><li><strong>secret: observed</strong> · Credential-shaped text detected: [REDACTED].<p class="mono">web/lib/sessions.ts:56-56; secret-credential-assignment; supplementary-signals-1</p><details><summary>Observation and limitations</summary><pre>{
+  &quot;id&quot;: &quot;signal:683cea0c405f3a3805728669eb239329&quot;,
+  &quot;category&quot;: &quot;secret&quot;,
+  &quot;status&quot;: &quot;observed&quot;,
+  &quot;source&quot;: {
+    &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+    &quot;path&quot;: &quot;web/lib/sessions.ts&quot;,
+    &quot;start_line&quot;: 56,
+    &quot;end_line&quot;: 56,
+    &quot;content_sha256&quot;: &quot;1601081f8c02f5248e3351654f79631c61861ada6d74a58d14f2288136d7e7b1&quot;
+  },
+  &quot;rule_id&quot;: &quot;secret-credential-assignment&quot;,
+  &quot;rule_version&quot;: &quot;supplementary-signals-1&quot;,
+  &quot;summary&quot;: &quot;Credential-shaped text detected: [REDACTED].&quot;,
+  &quot;fingerprint&quot;: &quot;9f42776f1c78866d9735709309e7c3232ef2fa59897a997d097f19756c50935b&quot;,
+  &quot;ecosystem&quot;: null,
+  &quot;package&quot;: null,
+  &quot;version&quot;: null,
+  &quot;advisory_id&quot;: null,
+  &quot;limitations&quot;: [
+    &quot;Observation only; no challenge or runtime verification was performed.&quot;
+  ]
+}</pre></details></li></ul></section><section class="sheet"><h2>Capability accounting</h2><p>Investigated requires passing evaluation slices for this engine, model and framework. Current engine acceptance is unrun. Historical scoped successes and broader misses below are retained; software fixtures, installed assets and parsing do not prove model accuracy.</p><ul><li><strong>python (language)</strong>: Parsed observed (20/20); Indexed partial (18/20); Investigated unverified; Runtime-testable unavailable.<p>Included source observations only. Extraction/resolution gaps remain; no current model evaluation qualifies the framework or language as Investigated.</p></li><li><strong>typescript (language)</strong>: Parsed observed (12/12); Indexed observed (12/12); Investigated unverified; Runtime-testable unavailable.<p>Included source observations only. Extraction/resolution gaps remain; no current model evaluation qualifies the framework or language as Investigated.</p></li><li><strong>tsx (language)</strong>: Parsed observed (11/11); Indexed observed (11/11); Investigated unverified; Runtime-testable unavailable.<p>Included source observations only. Extraction/resolution gaps remain; no current model evaluation qualifies the framework or language as Investigated.</p></li><li><strong>javascript (language)</strong>: Parsed unverified (0/0); Indexed unverified (0/0); Investigated unverified; Runtime-testable unavailable.<p>Included source observations only. Extraction/resolution gaps remain; no current model evaluation qualifies the framework or language as Investigated.</p></li><li><strong>fastapi (framework)</strong>: Parsed observed (26/26); Indexed observed (26/26); Investigated unverified; Runtime-testable unavailable.<p>Included source observations only. Extraction/resolution gaps remain; no current model evaluation qualifies the framework or language as Investigated.</p></li><li><strong>nextjs (framework)</strong>: Parsed observed (13/13); Indexed observed (13/13); Investigated unverified; Runtime-testable unavailable.<p>Included source observations only. Extraction/resolution gaps remain; no current model evaluation qualifies the framework or language as Investigated.</p></li><li><strong>authorization (family)</strong>: Parsed not_applicable; Indexed not_applicable; Investigated unverified; Runtime-testable unavailable.<p>Bounded software workflow exists. Its current real-model development gate is open; historical receipt/invoice success does not qualify the full family.</p></li><li><strong>injection (family)</strong>: Parsed not_applicable; Indexed not_applicable; Investigated unverified; Runtime-testable unavailable.<p>Bounded software workflow exists. Its current real-model development gate is open; historical receipt/invoice success does not qualify the full family.</p></li><li><strong>path_traversal (family)</strong>: Parsed not_applicable; Indexed not_applicable; Investigated unverified; Runtime-testable unavailable.<p>Bounded software workflow exists. Its current real-model development gate is open; historical receipt/invoice success does not qualify the full family.</p></li><li><strong>nextjs_exposure (family)</strong>: Parsed not_applicable; Indexed not_applicable; Investigated unverified; Runtime-testable unavailable.<p>Bounded software workflow exists. Its current real-model development gate is open; historical receipt/invoice success does not qualify the full family.</p></li></ul><p>General runtime-testable support is unavailable: no isolated backend has passed acceptance (ADR-0017). The separate hash-pinned bundled Tandir receipt/invoice exception has recorded runtime proof; it permits no arbitrary source or proposed diff execution.</p><details><summary>Historical evidence identities</summary><ul><li><code>docs/results/2026-10-05-142716-m3.6-challenge.json</code><p>Historical FastAPI authorization slice: receipt Supported and invoice Rejected. Predates the current engine; no general family qualification.</p><code>SHA256 f33660549900ddbc713ddff4b3dccb9ea76090259854baacd7ba012d9b0e7e9a</code></li><li><code>docs/results/2026-10-05-170400-m3.10-families.json</code><p>Historical remaining-family run records mostly Inconclusive judgments and an unmet breadth gate. Software repairs need fresh acceptance.</p><code>SHA256 6186a63db7041d0fc62033f02c9847d979fd56ad46c873594aa4d3b11143cce8</code></li><li><code>docs/results/2026-10-05-m4.2-receipt.json</code><p>Historical actual pinned bundled receipt attack and owner control. This exception is not arbitrary-code isolation.</p><code>SHA256 5c9be0fcdddf9b7ddd8e3a6bb75cb0cfa0fc9df728e74f262bd0984c6188c0ee</code></li><li><code>docs/results/2026-10-05-m4.2-invoice.json</code><p>Historical actual pinned bundled invoice denial with owner control. This exception is not general runtime-testable support.</p><code>SHA256 092ee3b2dc249ed520257b1684819dcaff314ae98949b3b72074525671915f3e</code></li><li><code>docs/decisions/ADR-0017-unavailable-isolated-runners.md</code><p>Current environment decision: no available isolated backend; general replay and isolation acceptance remain blocked.</p><code>SHA256 82755e14d83e73d9d1cd97beefca5922bd89f4096cc9920c0f76ca4fca5c4f7a</code></li></ul></details></section><article class="sheet case" id="F-01"><header><p class="meta mono">F-01 · authorization · CWE-639, CWE-862</p><h2>Order access: owner check</h2><p class="lede">Peer deviation persists after three independent acquittal searches</p></header><p class="meta">Severity: medium · Evidence: partial · Disposition: open</p><dl class="states"><div class="state "><dt>Source conclusion</dt><dd><span class="badge"><span aria-hidden="true">●</span>Supported</span><p>Source evidence supports this finding. Review the cited path.</p></dd></div><div class="state "><dt>Runtime verification</dt><dd><strong>Not tested</strong><p>No runtime check was attempted for this finding.</p></dd></div></dl><div class="case-grid"><div><section class="part"><h3>What Plumb looked for</h3><ul class="checks"><li class="check"><span aria-hidden="true">○</span><div>A query filter scoped to the principal <p class="muted">Not found; searched api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>An equivalent guard in the handler, router, dependency or DAL <p class="muted">Not found; searched api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>An admin-only entry point <p class="muted">Not found; searched api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>A resource public by executable policy <p class="muted">Not found; searched api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>An unreachable route <p class="muted">Not found; searched api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (unsupported: Runtime reachability is not established by static mounting)</p></div></li></ul></section><section class="part"><h3>Proof</h3><p class="condition attention">Not tested. No runtime check was attempted for this finding.</p></section><section class="part"><h3>Fix proposal and regression specification</h3><p>Saved proposal only. No target edit or regression execution.</p><pre>{
+  &quot;id&quot;: &quot;proposal:061749560dd5819a316ed9b1&quot;,
+  &quot;finding_id&quot;: &quot;finding:8a434935f7a4a50882a36a5a&quot;,
+  &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+  &quot;status&quot;: &quot;refused&quot;,
+  &quot;reason&quot;: &quot;Proposed code has invalid syntax; preserve indentation and punctuation.&quot;,
+  &quot;change&quot;: null,
+  &quot;probe_status&quot;: &quot;unavailable&quot;,
+  &quot;probe_reason&quot;: &quot;No validated change/probe mapping was produced; verification unavailable.&quot;,
+  &quot;probe_spec&quot;: null,
+  &quot;adapter_manifest_sha256&quot;: null
+}</pre></section><section class="part"><h3>Still unknown and limited</h3><ul class="limits"><li>Bounded static analysis; runtime verification not attempted</li><li>Runtime reachability is not established by static mounting</li></ul></section></div><section><h3>Evidence locations</h3><p class="meta">Open an exhibit for its explanation and exact hashes. Source text is omitted from exports.</p><details class="exhibit" id="F-01-E01"><summary><span class="tag">F-01/E01</span> evidence<span class="location mono">api/tandir/routers/orders.py:82-91</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E02"><summary><span class="tag">F-01/E02</span> evidence<span class="location mono">api/tandir/security.py:42-50</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E03"><summary><span class="tag">F-01/E03</span> evidence<span class="location mono">api/tandir/schemas.py:60-76</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">aa7fd42fd67e92db6669a24495ab92bda3c22d0ccc29c0540d4a1094cf400a59</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E04"><summary><span class="tag">F-01/E04</span> evidence<span class="location mono">api/tandir/security.py:35-39</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E05"><summary><span class="tag">F-01/E05</span> guard<span class="location mono">api/tandir/security.py:45-46</span></summary><p>Executable guard</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E06"><summary><span class="tag">F-01/E06</span> evidence<span class="location mono">api/tandir/routers/orders.py:88-88</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E07"><summary><span class="tag">F-01/E07</span> evidence<span class="location mono">api/tandir/services/orders.py:29-29</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E08"><summary><span class="tag">F-01/E08</span> evidence<span class="location mono">api/tandir/services/orders.py:30-31</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E09"><summary><span class="tag">F-01/E09</span> evidence<span class="location mono">api/tandir/services/orders.py:26-26</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E10"><summary><span class="tag">F-01/E10</span> evidence<span class="location mono">api/tandir/routers/courier.py:28-28</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">aa1972acf81efaa418b22b7e4bc9549ce4a83fdf9594c5971c1fd15a891d458c</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E11"><summary><span class="tag">F-01/E11</span> evidence<span class="location mono">api/tandir/routers/courier.py:26-26</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">582a5ada38761b5ea9906ce17ee076545da2afa94e277a19e344eaf988af2b00</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E12"><summary><span class="tag">F-01/E12</span> evidence<span class="location mono">api/tandir/routers/courier.py:12-12</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">3b715d8a677848f8797f58282b0bd6f9daac499a44199a0c93129f70fc925e1a</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E13"><summary><span class="tag">F-01/E13</span> evidence<span class="location mono">api/tandir/security.py:54-54</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E14"><summary><span class="tag">F-01/E14</span> evidence<span class="location mono">api/tandir/security.py:55-56</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E15"><summary><span class="tag">F-01/E15</span> evidence<span class="location mono">api/tandir/routers/orders.py:74-76</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E16"><summary><span class="tag">F-01/E16</span> evidence<span class="location mono">api/tandir/routers/orders.py:71-71</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E17"><summary><span class="tag">F-01/E17</span> evidence<span class="location mono">api/tandir/routers/orders.py:110-110</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E18"><summary><span class="tag">F-01/E18</span> evidence<span class="location mono">api/tandir/routers/orders.py:111-112</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E19"><summary><span class="tag">F-01/E19</span> evidence<span class="location mono">api/tandir/routers/orders.py:107-107</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E20"><summary><span class="tag">F-01/E20</span> evidence<span class="location mono">api/tandir/services/orders.py:11-13</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E21"><summary><span class="tag">F-01/E21</span> evidence<span class="location mono">api/tandir/routers/orders.py:172-172</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E22"><summary><span class="tag">F-01/E22</span> evidence<span class="location mono">api/tandir/routers/courier.py:38-38</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E23"><summary><span class="tag">F-01/E23</span> evidence<span class="location mono">api/tandir/routers/courier.py:39-40</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">6de004926f27b988baa029967ce01287807b832a748a36abbe7c26bf2835b665</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E24"><summary><span class="tag">F-01/E24</span> evidence<span class="location mono">api/tandir/routers/courier.py:35-35</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">a4799d7b2bf0654089ba4bff1f2ade3d94df502c173bafda44c7c992e3fe41e6</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E25"><summary><span class="tag">F-01/E25</span> evidence<span class="location mono">api/tandir/routers/orders.py:139-139</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E26"><summary><span class="tag">F-01/E26</span> evidence<span class="location mono">api/tandir/services/orders.py:20-21</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">773b4ead011b0954b391f69dbda6396df7e732a0fea43875942136ba4bf31e2f</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E27"><summary><span class="tag">F-01/E27</span> evidence<span class="location mono">api/tandir/routers/orders.py:136-136</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E28"><summary><span class="tag">F-01/E28</span> evidence<span class="location mono">api/tandir/routers/orders.py:142-142</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">ddd78011f84a8d14511ecda70b96ca036793f1429fb45555eaf12d04ce0ff85b</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E29"><summary><span class="tag">F-01/E29</span> evidence<span class="location mono">api/tandir/routers/orders.py:31-31</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">3b3b1766599127f3f7d25109d39fcff6dc5eb36df3c0715bd44c15e6a4da69af</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E30"><summary><span class="tag">F-01/E30</span> evidence<span class="location mono">api/tandir/routers/orders.py:29-29</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">f85c510c7310e2cb3b37e5f7e5bee268603aed3d29727b2854d16c6b12c59de1</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-01-E31"><summary><span class="tag">F-01/E31</span> evidence<span class="location mono">api/tandir/routers/orders.py:97-97</span></summary><p>Source used to assess potential impact</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details><summary>Finding record and assessment</summary><p>Severity: <strong>medium</strong>. Source-impact v1: Potential unauthorized read of principal/tenant-scoped records through a declared HTTP route. The data class is inferred from executable peer restrictions, not resource names; personal/payment contents and broader compromise are not established. Evidence: E01, E06, E07, E08, E09, E05, E10, E11, E12, E13, E14, E15, E16, E17, E18, E19, E20, E21, E22, E23, E24, E25, E26, E27, E28, E29, E30, E31. Deployment reachability, attacker prerequisites and runtime impact remain unverified.</p><p>Evidence strength: partial. Disposition: open.</p><pre>{
+  &quot;id&quot;: &quot;finding:8a434935f7a4a50882a36a5a&quot;,
+  &quot;display_id&quot;: &quot;F-01&quot;,
+  &quot;run_id&quot;: &quot;review-ee4171c3eebb409292621ba112eabc63&quot;,
+  &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+  &quot;family&quot;: &quot;authorization&quot;,
+  &quot;cwe&quot;: [
+    639,
+    862
+  ],
+  &quot;title&quot;: &quot;Order access: owner check&quot;,
+  &quot;lede&quot;: &quot;Peer deviation persists after three independent acquittal searches&quot;,
+  &quot;conclusion&quot;: &quot;supported&quot;,
+  &quot;runtime_verification&quot;: &quot;not_attempted&quot;,
+  &quot;severity&quot;: &quot;medium&quot;,
+  &quot;severity_rationale&quot;: &quot;Source-impact v1: Potential unauthorized read of principal/tenant-scoped records through a declared HTTP route. The data class is inferred from executable peer restrictions, not resource names; personal/payment contents and broader compromise are not established. Evidence: E01, E06, E07, E08, E09, E05, E10, E11, E12, E13, E14, E15, E16, E17, E18, E19, E20, E21, E22, E23, E24, E25, E26, E27, E28, E29, E30, E31. Deployment reachability, attacker prerequisites and runtime impact remain unverified.&quot;,
+  &quot;strength&quot;: &quot;partial&quot;,
+  &quot;gaps&quot;: [
+    &quot;Bounded static analysis; runtime verification not attempted&quot;
+  ],
+  &quot;disposition&quot;: &quot;open&quot;,
+  &quot;disposition_reason&quot;: null,
+  &quot;exhibits&quot;: [
+    {
+      &quot;tag&quot;: &quot;E01&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 82,
+        &quot;end_line&quot;: 91,
+        &quot;content_sha256&quot;: &quot;5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E02&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 42,
+        &quot;end_line&quot;: 50,
+        &quot;content_sha256&quot;: &quot;480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E03&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/schemas.py&quot;,
+        &quot;start_line&quot;: 60,
+        &quot;end_line&quot;: 76,
+        &quot;content_sha256&quot;: &quot;aa7fd42fd67e92db6669a24495ab92bda3c22d0ccc29c0540d4a1094cf400a59&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E04&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 35,
+        &quot;end_line&quot;: 39,
+        &quot;content_sha256&quot;: &quot;3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E05&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 45,
+        &quot;end_line&quot;: 46,
+        &quot;content_sha256&quot;: &quot;24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee&quot;
+      },
+      &quot;role&quot;: &quot;guard&quot;,
+      &quot;gloss&quot;: &quot;Executable guard&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E06&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 88,
+        &quot;end_line&quot;: 88,
+        &quot;content_sha256&quot;: &quot;5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E07&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 29,
+        &quot;end_line&quot;: 29,
+        &quot;content_sha256&quot;: &quot;5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E08&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 30,
+        &quot;end_line&quot;: 31,
+        &quot;content_sha256&quot;: &quot;baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E09&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 26,
+        &quot;end_line&quot;: 26,
+        &quot;content_sha256&quot;: &quot;10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E10&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+        &quot;start_line&quot;: 28,
+        &quot;end_line&quot;: 28,
+        &quot;content_sha256&quot;: &quot;aa1972acf81efaa418b22b7e4bc9549ce4a83fdf9594c5971c1fd15a891d458c&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E11&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+        &quot;start_line&quot;: 26,
+        &quot;end_line&quot;: 26,
+        &quot;content_sha256&quot;: &quot;582a5ada38761b5ea9906ce17ee076545da2afa94e277a19e344eaf988af2b00&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E12&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+        &quot;start_line&quot;: 12,
+        &quot;end_line&quot;: 12,
+        &quot;content_sha256&quot;: &quot;3b715d8a677848f8797f58282b0bd6f9daac499a44199a0c93129f70fc925e1a&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E13&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 54,
+        &quot;end_line&quot;: 54,
+        &quot;content_sha256&quot;: &quot;09ce18b9d5b54b82eef3ae8d473fa9a5f9311825c6da065048000cd9ef3dced6&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E14&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 55,
+        &quot;end_line&quot;: 56,
+        &quot;content_sha256&quot;: &quot;fbb571e89442fdf4896f4c4a74b1b541950a2a01aa8d61bced58662ae566ec60&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E15&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 74,
+        &quot;end_line&quot;: 76,
+        &quot;content_sha256&quot;: &quot;dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E16&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 71,
+        &quot;end_line&quot;: 71,
+        &quot;content_sha256&quot;: &quot;10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E17&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 110,
+        &quot;end_line&quot;: 110,
+        &quot;content_sha256&quot;: &quot;5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E18&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 111,
+        &quot;end_line&quot;: 112,
+        &quot;content_sha256&quot;: &quot;baccb70d4adc2938e15d08c1bfb7744611187ad2fe7db77fc1d335223e272d03&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E19&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 107,
+        &quot;end_line&quot;: 107,
+        &quot;content_sha256&quot;: &quot;10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E20&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 11,
+        &quot;end_line&quot;: 13,
+        &quot;content_sha256&quot;: &quot;dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E21&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 172,
+        &quot;end_line&quot;: 172,
+        &quot;content_sha256&quot;: &quot;10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E22&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+        &quot;start_line&quot;: 38,
+        &quot;end_line&quot;: 38,
+        &quot;content_sha256&quot;: &quot;5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E23&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+        &quot;start_line&quot;: 39,
+        &quot;end_line&quot;: 40,
+        &quot;content_sha256&quot;: &quot;6de004926f27b988baa029967ce01287807b832a748a36abbe7c26bf2835b665&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E24&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+        &quot;start_line&quot;: 35,
+        &quot;end_line&quot;: 35,
+        &quot;content_sha256&quot;: &quot;a4799d7b2bf0654089ba4bff1f2ade3d94df502c173bafda44c7c992e3fe41e6&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E25&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 139,
+        &quot;end_line&quot;: 139,
+        &quot;content_sha256&quot;: &quot;5cea5be4556edc3522e358fe52f3e10e978b38bcf2bbec8e285681ed24b27f68&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E26&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 20,
+        &quot;end_line&quot;: 21,
+        &quot;content_sha256&quot;: &quot;773b4ead011b0954b391f69dbda6396df7e732a0fea43875942136ba4bf31e2f&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E27&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 136,
+        &quot;end_line&quot;: 136,
+        &quot;content_sha256&quot;: &quot;10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E28&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 142,
+        &quot;end_line&quot;: 142,
+        &quot;content_sha256&quot;: &quot;ddd78011f84a8d14511ecda70b96ca036793f1429fb45555eaf12d04ce0ff85b&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E29&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 31,
+        &quot;end_line&quot;: 31,
+        &quot;content_sha256&quot;: &quot;3b3b1766599127f3f7d25109d39fcff6dc5eb36df3c0715bd44c15e6a4da69af&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E30&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 29,
+        &quot;end_line&quot;: 29,
+        &quot;content_sha256&quot;: &quot;f85c510c7310e2cb3b37e5f7e5bee268603aed3d29727b2854d16c6b12c59de1&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E31&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 97,
+        &quot;end_line&quot;: 97,
+        &quot;content_sha256&quot;: &quot;10063b59ed78cbcc7d212412fd079a8e673543a6235e5b0ce3bd43a944b088fb&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Source used to assess potential impact&quot;
+    }
+  ],
+  &quot;checks&quot;: [
+    {
+      &quot;item&quot;: &quot;A query filter scoped to the principal&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;An equivalent guard in the handler, router, dependency or DAL&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;An admin-only entry point&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;A resource public by executable policy&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;An unreachable route&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:82-91; api/tandir/security.py:42-50; api/tandir/schemas.py:60-76; api/tandir/security.py:35-39 (unsupported: Runtime reachability is not established by static mounting)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    }
+  ],
+  &quot;flow&quot;: [],
+  &quot;peer_group_id&quot;: &quot;peers:632413dc67490d5dd0cde3fd&quot;,
+  &quot;unknowns&quot;: [
+    &quot;Runtime reachability is not established by static mounting&quot;
+  ],
+  &quot;question_ids&quot;: [
+    &quot;question:access:ffb0ea24ed0b07eb3940e2d4&quot;
+  ],
+  &quot;probe_run_ids&quot;: [],
+  &quot;suggested_change_id&quot;: null,
+  &quot;policy_basis&quot;: []
+}</pre></details></section></div><a class="back" href="#findings">Back to findings ↑</a></article><article class="sheet case" id="F-02"><header><p class="meta mono">F-02 · authorization · CWE-639, CWE-862</p><h2>Order access: owner check</h2><p class="lede">Three judgments cite executable protection on the access path</p></header><p class="meta">Severity: unknown · Evidence: partial · Disposition: open</p><dl class="states"><div class="state "><dt>Source conclusion</dt><dd><span class="badge"><span aria-hidden="true">⊘</span>Rejected</span><p>A cited protection disproves this finding on the inspected path.</p></dd></div><div class="state "><dt>Runtime verification</dt><dd><strong>Not tested</strong><p>No runtime check was attempted for this finding.</p></dd></div></dl><div class="case-grid"><div><section class="part"><h3>What Plumb looked for</h3><ul class="checks"><li class="check"><span aria-hidden="true">●</span><div>A query filter scoped to the principal <a class="tag" href="#F-02-E07">F-02/E07</a><p class="muted">Found; searched api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (found: Executable protection found on this access path)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>An equivalent guard in the handler, router, dependency or DAL <p class="muted">Not found; searched api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>An admin-only entry point <p class="muted">Not found; searched api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>A resource public by executable policy <p class="muted">Not found; searched api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)</p></div></li><li class="check"><span aria-hidden="true">○</span><div>An unreachable route <p class="muted">Not found; searched api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (unsupported: Runtime reachability is not established by static mounting)</p></div></li></ul></section><section class="part"><h3>Proof</h3><p class="condition attention">Not tested. No runtime check was attempted for this finding.</p></section><section class="part"><h3>Still unknown and limited</h3><ul class="limits"><li>Bounded static analysis; runtime verification not attempted</li><li>Runtime reachability is not established by static mounting</li></ul></section></div><section><h3>Evidence locations</h3><p class="meta">Open an exhibit for its explanation and exact hashes. Source text is omitted from exports.</p><details class="exhibit" id="F-02-E01"><summary><span class="tag">F-02/E01</span> evidence<span class="location mono">api/tandir/routers/orders.py:94-101</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">1082adcb6f2c04ed23ca08bfc8e01776fcc33175bed0e07d316f42d89992a627</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-02-E02"><summary><span class="tag">F-02/E02</span> evidence<span class="location mono">api/tandir/services/orders.py:10-16</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">3d1e9f676d301b4d76a7b85f980f6e1ff9c79a882b8bdbc321efec586e65ce1e</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-02-E03"><summary><span class="tag">F-02/E03</span> evidence<span class="location mono">api/tandir/security.py:42-50</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-02-E04"><summary><span class="tag">F-02/E04</span> evidence<span class="location mono">api/tandir/schemas.py:82-85</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">e38c4baa040a86b98526f9611ff041f68782ca9c0f268016037d440ae48eaf8e</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-02-E05"><summary><span class="tag">F-02/E05</span> evidence<span class="location mono">api/tandir/security.py:35-39</span></summary><p>Code inspected during the acquittal search</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-02-E06"><summary><span class="tag">F-02/E06</span> guard<span class="location mono">api/tandir/security.py:45-46</span></summary><p>Executable guard</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details class="exhibit" id="F-02-E07"><summary><span class="tag">F-02/E07</span> guard<span class="location mono">api/tandir/services/orders.py:11-13</span></summary><p>Executable guard</p><dl class="records"><dt>Content SHA256</dt><dd class="mono">dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d</dd><dt>Snapshot</dt><dd class="mono">3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39</dd></dl></details><details><summary>Finding record and assessment</summary><p>Severity: <strong>unknown</strong>. Not rated: the investigation is rejected.</p><p>Evidence strength: partial. Disposition: open.</p><pre>{
+  &quot;id&quot;: &quot;finding:c8e84a74edcc9b9f78438d67&quot;,
+  &quot;display_id&quot;: &quot;F-02&quot;,
+  &quot;run_id&quot;: &quot;review-ee4171c3eebb409292621ba112eabc63&quot;,
+  &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+  &quot;family&quot;: &quot;authorization&quot;,
+  &quot;cwe&quot;: [
+    639,
+    862
+  ],
+  &quot;title&quot;: &quot;Order access: owner check&quot;,
+  &quot;lede&quot;: &quot;Three judgments cite executable protection on the access path&quot;,
+  &quot;conclusion&quot;: &quot;rejected&quot;,
+  &quot;runtime_verification&quot;: &quot;not_attempted&quot;,
+  &quot;severity&quot;: &quot;unknown&quot;,
+  &quot;severity_rationale&quot;: &quot;Not rated: the investigation is rejected.&quot;,
+  &quot;strength&quot;: &quot;partial&quot;,
+  &quot;gaps&quot;: [
+    &quot;Bounded static analysis; runtime verification not attempted&quot;
+  ],
+  &quot;disposition&quot;: &quot;open&quot;,
+  &quot;disposition_reason&quot;: null,
+  &quot;exhibits&quot;: [
+    {
+      &quot;tag&quot;: &quot;E01&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+        &quot;start_line&quot;: 94,
+        &quot;end_line&quot;: 101,
+        &quot;content_sha256&quot;: &quot;1082adcb6f2c04ed23ca08bfc8e01776fcc33175bed0e07d316f42d89992a627&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E02&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 10,
+        &quot;end_line&quot;: 16,
+        &quot;content_sha256&quot;: &quot;3d1e9f676d301b4d76a7b85f980f6e1ff9c79a882b8bdbc321efec586e65ce1e&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E03&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 42,
+        &quot;end_line&quot;: 50,
+        &quot;content_sha256&quot;: &quot;480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E04&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/schemas.py&quot;,
+        &quot;start_line&quot;: 82,
+        &quot;end_line&quot;: 85,
+        &quot;content_sha256&quot;: &quot;e38c4baa040a86b98526f9611ff041f68782ca9c0f268016037d440ae48eaf8e&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E05&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 35,
+        &quot;end_line&quot;: 39,
+        &quot;content_sha256&quot;: &quot;3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997&quot;
+      },
+      &quot;role&quot;: &quot;evidence&quot;,
+      &quot;gloss&quot;: &quot;Code inspected during the acquittal search&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E06&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+        &quot;start_line&quot;: 45,
+        &quot;end_line&quot;: 46,
+        &quot;content_sha256&quot;: &quot;24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee&quot;
+      },
+      &quot;role&quot;: &quot;guard&quot;,
+      &quot;gloss&quot;: &quot;Executable guard&quot;
+    },
+    {
+      &quot;tag&quot;: &quot;E07&quot;,
+      &quot;span&quot;: {
+        &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+        &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+        &quot;start_line&quot;: 11,
+        &quot;end_line&quot;: 13,
+        &quot;content_sha256&quot;: &quot;dc7d724560f1740a6d32f78d23ef5174c83efbfefa48ee20d7bd8e29eb48ef2d&quot;
+      },
+      &quot;role&quot;: &quot;guard&quot;,
+      &quot;gloss&quot;: &quot;Executable guard&quot;
+    }
+  ],
+  &quot;checks&quot;: [
+    {
+      &quot;item&quot;: &quot;A query filter scoped to the principal&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (found: Executable protection found on this access path)&quot;,
+      &quot;found&quot;: true,
+      &quot;exhibit_tag&quot;: &quot;E07&quot;
+    },
+    {
+      &quot;item&quot;: &quot;An equivalent guard in the handler, router, dependency or DAL&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;An admin-only entry point&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;A resource public by executable policy&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (not_found: Not found in the cited code searched; this is bounded negative evidence)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    },
+    {
+      &quot;item&quot;: &quot;An unreachable route&quot;,
+      &quot;searched&quot;: &quot;api/tandir/routers/orders.py:94-101; api/tandir/services/orders.py:10-16; api/tandir/security.py:42-50; api/tandir/schemas.py:82-85; api/tandir/security.py:35-39 (unsupported: Runtime reachability is not established by static mounting)&quot;,
+      &quot;found&quot;: false,
+      &quot;exhibit_tag&quot;: null
+    }
+  ],
+  &quot;flow&quot;: [],
+  &quot;peer_group_id&quot;: &quot;peers:632413dc67490d5dd0cde3fd&quot;,
+  &quot;unknowns&quot;: [
+    &quot;Runtime reachability is not established by static mounting&quot;
+  ],
+  &quot;question_ids&quot;: [
+    &quot;question:access:f55c0f3a2d93e70d18a86db7&quot;
+  ],
+  &quot;probe_run_ids&quot;: [],
+  &quot;suggested_change_id&quot;: null,
+  &quot;policy_basis&quot;: []
+}</pre></details></section></div><a class="back" href="#findings">Back to findings ↑</a></article><section class="sheet"><h2>Reproducibility</h2><p class="muted">Exact run, model, toolchain and snapshot metadata from this saved report.</p><details><summary>Run and snapshot records</summary><pre>{
+  &quot;id&quot;: &quot;review-ee4171c3eebb409292621ba112eabc63&quot;,
+  &quot;snapshot_id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+  &quot;run_type&quot;: &quot;live&quot;,
+  &quot;lifecycle&quot;: &quot;completed&quot;,
+  &quot;stage&quot;: null,
+  &quot;conditions&quot;: [],
+  &quot;created_at&quot;: &quot;2026-10-08T15:50:40.922283Z&quot;,
+  &quot;started_at&quot;: &quot;2026-10-08T15:50:46.658283Z&quot;,
+  &quot;finished_at&quot;: &quot;2026-10-08T16:05:16.566292Z&quot;,
+  &quot;model&quot;: {
+    &quot;id&quot;: &quot;qwen3.5-2b-q4_k_m&quot;,
+    &quot;file_sha256&quot;: &quot;57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8&quot;,
+    &quot;quantization&quot;: &quot;Q4_K_M&quot;
+  },
+  &quot;toolchain&quot;: {
+    &quot;llama_cpp_release&quot;: &quot;v0.5.0&quot;,
+    &quot;llama_cpp_build&quot;: &quot;b11146&quot;,
+    &quot;backend&quot;: &quot;vulkan&quot;,
+    &quot;opengrep_version&quot;: &quot;v1.30.0&quot;,
+    &quot;opengrep_rules_sha256&quot;: &quot;259cea250bd99049ed072dbcd648f0e41e204c090c80cae2a22f3bbac22da4c0&quot;,
+    &quot;knowledge_pack_date&quot;: null
+  },
+  &quot;coverage&quot;: {
+    &quot;total&quot;: 87,
+    &quot;completed&quot;: 2,
+    &quot;pending&quot;: 0,
+    &quot;excluded&quot;: 85,
+    &quot;unsupported&quot;: 0
+  },
+  &quot;finding_ids&quot;: [
+    &quot;finding:8a434935f7a4a50882a36a5a&quot;,
+    &quot;finding:c8e84a74edcc9b9f78438d67&quot;
+  ]
+}</pre><pre>{
+  &quot;id&quot;: &quot;3af5575a0bd6732b6302493a13be20bc7aaa56c8abe4c79e8da5571351944b39&quot;,
+  &quot;root_name&quot;: &quot;tandir&quot;,
+  &quot;created_at&quot;: &quot;2026-10-06T19:33:58.977093Z&quot;,
+  &quot;git_commit&quot;: null,
+  &quot;dirty&quot;: null,
+  &quot;files&quot;: [
+    {
+      &quot;path&quot;: &quot;README.md&quot;,
+      &quot;sha256&quot;: &quot;d02842d439541eacf6a5a812bf9b74ea7ba9eba946e1c8296e0cf5085ed1f433&quot;,
+      &quot;size&quot;: 2436,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;api/pyproject.toml&quot;,
+      &quot;sha256&quot;: &quot;be488477c5628d96d1aaced979cc46f4a79794bd2940bb98208827802e59766c&quot;,
+      &quot;size&quot;: 1085,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/__init__.py&quot;,
+      &quot;sha256&quot;: &quot;80e3576041e83991647572ab232f4e7c2a7e11d0a99c4218c328c1549365eb67&quot;,
+      &quot;size&quot;: 145,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/__main__.py&quot;,
+      &quot;sha256&quot;: &quot;0b7b9b26efeebbb30d62e307e60813362fa5425781d06d5e4a56ffd4130da51c&quot;,
+      &quot;size&quot;: 945,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/config.py&quot;,
+      &quot;sha256&quot;: &quot;61cc78efcc4b7397515b115627d50cc42a507bcd83d4383bda84930f57fe3531&quot;,
+      &quot;size&quot;: 840,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/db.py&quot;,
+      &quot;sha256&quot;: &quot;2c6fd9fb384d6af0353ab701d70e15fc9e857c3acb5176a056ebe1f1103560d2&quot;,
+      &quot;size&quot;: 944,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/main.py&quot;,
+      &quot;sha256&quot;: &quot;dd1bd3c4e4a443f378194ea6eb1bd6447d9cd52f8513f1512ed640c096e7ac75&quot;,
+      &quot;size&quot;: 833,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/models.py&quot;,
+      &quot;sha256&quot;: &quot;16ff8655510d6b1a502e2fc8928d1d54ae56000823d5d001f8d7cabbd977fda0&quot;,
+      &quot;size&quot;: 2722,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/__init__.py&quot;,
+      &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;,
+      &quot;size&quot;: 0,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/admin.py&quot;,
+      &quot;sha256&quot;: &quot;09fc3c7147a069dc7fb377581bedd6e3a63e2fa11192ab97e440fa16481f0088&quot;,
+      &quot;size&quot;: 1922,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/auth.py&quot;,
+      &quot;sha256&quot;: &quot;52a1ae747e594984068da9a067263f67444e7fd8ebb80a41d388ff12cfeb8793&quot;,
+      &quot;size&quot;: 1284,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/branches.py&quot;,
+      &quot;sha256&quot;: &quot;17fd82fce91a4385538f6510275616bf8df54c021c0b6131f83b40c1d66403f7&quot;,
+      &quot;size&quot;: 2520,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/courier.py&quot;,
+      &quot;sha256&quot;: &quot;1babc48eaac60a7e49993c278af98edaaaec3e6c3106564a4b2215e824d473bb&quot;,
+      &quot;size&quot;: 1215,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/files.py&quot;,
+      &quot;sha256&quot;: &quot;ac7108b97e2cd4cfb7ea537bd50b33133da6025904c62763b5d9fac03965eb56&quot;,
+      &quot;size&quot;: 476,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/kitchen.py&quot;,
+      &quot;sha256&quot;: &quot;fb3ad3c38809ef960742e7405a796ce33c812d4b49dd7b543955fd62a0964fdd&quot;,
+      &quot;size&quot;: 1905,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/routers/orders.py&quot;,
+      &quot;sha256&quot;: &quot;630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a&quot;,
+      &quot;size&quot;: 5627,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/schemas.py&quot;,
+      &quot;sha256&quot;: &quot;ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e&quot;,
+      &quot;size&quot;: 2718,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/security.py&quot;,
+      &quot;sha256&quot;: &quot;829a746b47bc94aa930ea468cedf6aeb8c95b6fbf70cefa1ebef3647c146b431&quot;,
+      &quot;size&quot;: 1899,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/seed.py&quot;,
+      &quot;sha256&quot;: &quot;0886d6338c73cd3d0ed92e8e03b114480dbee4a3fceca5dbf4d53f7ab3121de2&quot;,
+      &quot;size&quot;: 5177,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/services/__init__.py&quot;,
+      &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;,
+      &quot;size&quot;: 0,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/tandir/services/orders.py&quot;,
+      &quot;sha256&quot;: &quot;fb5b6cc621f82affbf1d78bbd345572706cdbf0a4532a3f689246e4615afe008&quot;,
+      &quot;size&quot;: 984,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;api/uv.lock&quot;,
+      &quot;sha256&quot;: &quot;0e0649a2073e8f43cafd0523be27ac69164f487148732883b4ef4fd46aae4d7a&quot;,
+      &quot;size&quot;: 31684,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;fixed/README.md&quot;,
+      &quot;sha256&quot;: &quot;cb0fe49f1647a17292093f1a1c80a33b5f223db11f5966988a5538013de91262&quot;,
+      &quot;size&quot;: 2401,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;fixed/snapshot.py&quot;,
+      &quot;sha256&quot;: &quot;62766ca1e294b346f6d80bb275229fdb49504d7926787d800981e87d10ba07c3&quot;,
+      &quot;size&quot;: 4598,
+      &quot;language&quot;: &quot;python&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/api/admin/export/route.ts&quot;,
+      &quot;sha256&quot;: &quot;15124d8864c36d204b64ffd491dfb51fb01fe2f4c9fb29231bf0b1af8ec95daa&quot;,
+      &quot;size&quot;: 820,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/api/admin/reports/route.ts&quot;,
+      &quot;sha256&quot;: &quot;ba7b25f36a1231ad1cc6416117c676ba3c06fe19e3fb783dea004101c484c14f&quot;,
+      &quot;size&quot;: 825,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/backoffice/actions.ts&quot;,
+      &quot;sha256&quot;: &quot;5bc669f22d5d332af17f8c44fad1e0a64790d36d25c27484bd1cc5a97a1093e5&quot;,
+      &quot;size&quot;: 346,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/backoffice/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;923b9e8ec56b8cd9b3c2f0bbe0344d4aead5e8b571a2356f8da05e5e2569d52b&quot;,
+      &quot;size&quot;: 1317,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/courier/[id]/DeliveryCard.tsx&quot;,
+      &quot;sha256&quot;: &quot;66f56be1d99398aadc4c41d3e2cfa26844a392ad85551bfb028e21a7ae75fadb&quot;,
+      &quot;size&quot;: 784,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/courier/[id]/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;3d00c375f1a8e7a3083096610206149456d2e6fd3739f5eade090f66e2c8cf35&quot;,
+      &quot;size&quot;: 346,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/courier/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;5e69db6919d15c00eaa5d5fcc8f74118ed80240a0ea05340e240d2115d67b2fb&quot;,
+      &quot;size&quot;: 529,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/globals.css&quot;,
+      &quot;sha256&quot;: &quot;febe48ce9e8ff956206f571545d9539efc038cc495c247db97870e82710d5d98&quot;,
+      &quot;size&quot;: 1718,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;web/app/layout.tsx&quot;,
+      &quot;sha256&quot;: &quot;f8bab89bc68d4485ac0c87afce36cd6c360a44a342879bb26542b54931f0ad5b&quot;,
+      &quot;size&quot;: 1353,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/login/LoginForm.tsx&quot;,
+      &quot;sha256&quot;: &quot;60ffb679a12460bfcd3cbfd3c0a7d85b25110e2868794dec453b52b5ba710f12&quot;,
+      &quot;size&quot;: 753,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/login/actions.ts&quot;,
+      &quot;sha256&quot;: &quot;f86c101d4f1d00f55956056e237ac6ff266f2547d5f7ad034279f7cd983e85d8&quot;,
+      &quot;size&quot;: 1025,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/login/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;732eba1223812ec352215574ea9a60c32ee0a1db8a46e8d546b5b44d40c19e6f&quot;,
+      &quot;size&quot;: 246,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/orders/[id]/OrderSummary.tsx&quot;,
+      &quot;sha256&quot;: &quot;4e186e20d0d10d755dda36ef2c860145d59bda6675f1492013dae65c7c532959&quot;,
+      &quot;size&quot;: 955,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/orders/[id]/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;f5ef1888f781acdcd9061e16df79134bbb50404ddb42a461d2551e581301e9d4&quot;,
+      &quot;size&quot;: 302,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/orders/actions.ts&quot;,
+      &quot;sha256&quot;: &quot;815c6072a65d07649f1e19b520c6d315cbdf82ab11aafd878cd4d5fd488897b3&quot;,
+      &quot;size&quot;: 303,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/orders/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;10ec7a80c423cb2435b2f8bdbb19baa7f1f218e62563a0cbe8e537184958fbe2&quot;,
+      &quot;size&quot;: 717,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/app/page.tsx&quot;,
+      &quot;sha256&quot;: &quot;ef8833c0b09691fc1f7b4ee2f5895f9b3c644bdff5a3cd23ad89783c20252123&quot;,
+      &quot;size&quot;: 781,
+      &quot;language&quot;: &quot;tsx&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/lib/dal.ts&quot;,
+      &quot;sha256&quot;: &quot;037ddff58e2db31e95533aaae3d2b54caa1d0e2f4b25566322fe682917126ff2&quot;,
+      &quot;size&quot;: 7317,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/lib/db.ts&quot;,
+      &quot;sha256&quot;: &quot;ce80c7b6179b33eab185301907d8d0f5d0bb0b9da35f76bba76457743c3ba172&quot;,
+      &quot;size&quot;: 1463,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/lib/format.ts&quot;,
+      &quot;sha256&quot;: &quot;dafe96c7bf2be3b6e4d7d8a2873e3bd70f6f93fa815cffec125e53cd64f34e07&quot;,
+      &quot;size&quot;: 135,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/lib/sessions.ts&quot;,
+      &quot;sha256&quot;: &quot;29820b06497dcad9a64d78a40f0b50b3eefecd9fc76549a18b9828e9fae526c6&quot;,
+      &quot;size&quot;: 2505,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/next.config.ts&quot;,
+      &quot;sha256&quot;: &quot;199e76a8a081cec80cb459a24593eec8ba2ca20fd7889ca0670b5ca30567a28e&quot;,
+      &quot;size&quot;: 245,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/package.json&quot;,
+      &quot;sha256&quot;: &quot;00a6212c3773cbe1be27a45617d5e07de54b5187c5242f9d312b17637e8dc35c&quot;,
+      &quot;size&quot;: 753,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;web/pnpm-lock.yaml&quot;,
+      &quot;sha256&quot;: &quot;a505d2aedc15bbb76af694cc451d4ce57e85d120949024cffde6030343c8e6b0&quot;,
+      &quot;size&quot;: 38991,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;web/proxy.ts&quot;,
+      &quot;sha256&quot;: &quot;0082aa744cd8a4c3ab03cbb141b28ffb0c01b0b2bce93ddbd85fb4473c12f480&quot;,
+      &quot;size&quot;: 596,
+      &quot;language&quot;: &quot;typescript&quot;
+    },
+    {
+      &quot;path&quot;: &quot;web/tsconfig.json&quot;,
+      &quot;sha256&quot;: &quot;973278fe8373cd36f7be1e615299d1a0ca7839b4268c662862b39c909b05a7b9&quot;,
+      &quot;size&quot;: 773,
+      &quot;language&quot;: null
+    },
+    {
+      &quot;path&quot;: &quot;web/vitest.config.ts&quot;,
+      &quot;sha256&quot;: &quot;69ed4a67e79b4790057e50a7ce9e1110185f4fb97190fa7467dea129c44d20c1&quot;,
+      &quot;size&quot;: 618,
+      &quot;language&quot;: &quot;typescript&quot;
+    }
+  ],
+  &quot;excluded&quot;: [
+    {
+      &quot;path&quot;: &quot;fixed/api.patch&quot;,
+      &quot;reason&quot;: &quot;unsupported&quot;
+    },
+    {
+      &quot;path&quot;: &quot;fixed/web.patch&quot;,
+      &quot;reason&quot;: &quot;unsupported&quot;
+    }
+  ]
+}</pre></details></section><p class="footer meta">Saved evidence only. Opening this file runs no review, model or target application. Colors always have text labels.</p></main></body></html>

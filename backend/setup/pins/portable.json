@@ -1,0 +1,16 @@
+{
+  "python": {
+    "version": "3.12.5",
+    "url": "https://www.python.org/ftp/python/3.12.5/python-3.12.5-embed-amd64.zip",
+    "sha256": "54d4a758fbc87bd425a32b2f390077e6e8c2c0155d9907739240322ee84e44ab",
+    "size": 11058677,
+    "hash_source": "https://www.python.org/ftp/python/3.12.5/python-3.12.5-embed-amd64.zip.sigstore"
+  },
+  "node": {
+    "version": "24.11.0",
+    "url": "https://nodejs.org/dist/v24.11.0/node-v24.11.0-win-x64.zip",
+    "sha256": "1054540bce22b54ec7e50ebc078ec5d090700a77657607a58f6a64df21f49fdd",
+    "size": 36356854,
+    "hash_source": "https://nodejs.org/dist/v24.11.0/SHASUMS256.txt"
+  }
+}

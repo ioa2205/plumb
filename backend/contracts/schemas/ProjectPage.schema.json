@@ -1,0 +1,997 @@
+{
+  "$defs": {
+    "AccessSite": {
+      "additionalProperties": false,
+      "description": "A place where a resource is loaded by a request-controlled identifier.",
+      "properties": {
+        "data_layer": {
+          "$ref": "#/$defs/DataLayer"
+        },
+        "entry_point_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Entry Point Id",
+          "type": "string"
+        },
+        "guard_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Guard Ids",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "key_origin": {
+          "$ref": "#/$defs/InputOrigin"
+        },
+        "operation": {
+          "$ref": "#/$defs/Operation"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "snapshot_id",
+        "entry_point_id",
+        "resource",
+        "operation",
+        "key_origin",
+        "data_layer",
+        "span"
+      ],
+      "title": "AccessSite",
+      "type": "object"
+    },
+    "BoundPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/PolicyAssertion"
+        },
+        "forbidden_fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Forbidden Fields",
+          "type": "array"
+        },
+        "provenance": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "required_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z_][A-Za-z0-9_-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Role"
+        },
+        "sites": {
+          "items": {
+            "$ref": "#/$defs/AccessSite"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Sites",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assertion",
+        "snapshot_id",
+        "source_run_id",
+        "sites",
+        "provenance"
+      ],
+      "title": "BoundPolicy",
+      "type": "object"
+    },
+    "CapabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "current_engine_acceptance": {
+          "const": false,
+          "default": false,
+          "title": "Current Engine Acceptance",
+          "type": "boolean"
+        },
+        "record": {
+          "title": "Record",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record",
+        "sha256",
+        "scope"
+      ],
+      "title": "CapabilityEvidence",
+      "type": "object"
+    },
+    "CapabilityRow": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "language",
+            "framework",
+            "family"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "indexed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Indexed",
+          "type": "string"
+        },
+        "indexed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Indexed Units"
+        },
+        "investigated": {
+          "const": false,
+          "default": false,
+          "title": "Investigated",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parsed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Parsed",
+          "type": "string"
+        },
+        "parsed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parsed Units"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "runtime_testable": {
+          "const": false,
+          "default": false,
+          "title": "Runtime Testable",
+          "type": "boolean"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units"
+        },
+        "workflow_implemented": {
+          "title": "Workflow Implemented",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "category",
+        "name",
+        "parsed",
+        "indexed",
+        "workflow_implemented",
+        "reason"
+      ],
+      "title": "CapabilityRow",
+      "type": "object"
+    },
+    "CapabilityTable": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/CapabilityEvidence"
+          },
+          "maxItems": 10,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "quality_note": {
+          "title": "Quality Note",
+          "type": "string"
+        },
+        "registry_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Sha256",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/CapabilityRow"
+          },
+          "maxItems": 10,
+          "title": "Rows",
+          "type": "array"
+        },
+        "runtime_note": {
+          "title": "Runtime Note",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot Id"
+        }
+      },
+      "required": [
+        "registry_sha256",
+        "rows",
+        "evidence",
+        "runtime_note",
+        "quality_note"
+      ],
+      "title": "CapabilityTable",
+      "type": "object"
+    },
+    "DataLayer": {
+      "enum": [
+        "sqlalchemy",
+        "raw_sql",
+        "prisma",
+        "drizzle",
+        "other"
+      ],
+      "title": "DataLayer",
+      "type": "string"
+    },
+    "ExcludedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/ExclusionReason"
+        }
+      },
+      "required": [
+        "path",
+        "reason"
+      ],
+      "title": "ExcludedFile",
+      "type": "object"
+    },
+    "ExclusionReason": {
+      "enum": [
+        "too_large",
+        "binary",
+        "link",
+        "unsupported",
+        "secret",
+        "user_excluded",
+        "unreadable",
+        "sealed",
+        "default_ignored"
+      ],
+      "title": "ExclusionReason",
+      "type": "string"
+    },
+    "GuardKind": {
+      "description": "Canonical guard kinds from the ``guard_summary`` question (PROJECT_PLAN \u00a73.1).",
+      "enum": [
+        "authenticated",
+        "owner",
+        "tenant",
+        "role",
+        "none",
+        "unknown",
+        "parameterized",
+        "allowlisted",
+        "contained",
+        "minimized"
+      ],
+      "title": "GuardKind",
+      "type": "string"
+    },
+    "InputOrigin": {
+      "description": "Where a value comes from, as answered by the ``input_origin`` question.",
+      "enum": [
+        "path",
+        "query",
+        "body",
+        "header",
+        "session",
+        "constant",
+        "unknown"
+      ],
+      "title": "InputOrigin",
+      "type": "string"
+    },
+    "LinkStatus": {
+      "description": "How firmly a static link between two places in the code is established.",
+      "enum": [
+        "resolved",
+        "inferred",
+        "unresolved"
+      ],
+      "title": "LinkStatus",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "read",
+        "list",
+        "create",
+        "update",
+        "delete"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "PolicyAssertion": {
+      "additionalProperties": false,
+      "description": "An access rule, inferred from code or declared by a person.\n\nKept separate from code-derived facts, with author and provenance. A policy\nnever expands what the agent is allowed to do.",
+      "properties": {
+        "author": {
+          "title": "Author",
+          "type": "string"
+        },
+        "canonical": {
+          "title": "Canonical",
+          "type": "string"
+        },
+        "confirmed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed At"
+        },
+        "confirmed_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed By"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/GuardKind"
+        },
+        "resource": {
+          "title": "Resource",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/PolicyStatus"
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "resource",
+        "kind",
+        "canonical",
+        "status",
+        "author",
+        "created_at"
+      ],
+      "title": "PolicyAssertion",
+      "type": "object"
+    },
+    "PolicyStatus": {
+      "enum": [
+        "inferred",
+        "confirmed",
+        "declared"
+      ],
+      "title": "PolicyStatus",
+      "type": "string"
+    },
+    "ProjectCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SourceSpan"
+        }
+      },
+      "required": [
+        "id",
+        "span"
+      ],
+      "title": "ProjectCitation",
+      "type": "object"
+    },
+    "ProjectEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "optimistic": {
+          "title": "Optimistic",
+          "type": "boolean"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/LinkStatus"
+        },
+        "target": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target",
+        "status",
+        "kind",
+        "reason",
+        "optimistic"
+      ],
+      "title": "ProjectEdge",
+      "type": "object"
+    },
+    "ProjectFlow": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "items": {
+            "$ref": "#/$defs/ProjectNode"
+          },
+          "maxItems": 6,
+          "title": "Data",
+          "type": "array"
+        },
+        "data_total": {
+          "minimum": 0,
+          "title": "Data Total",
+          "type": "integer"
+        },
+        "entry": {
+          "$ref": "#/$defs/ProjectNode"
+        },
+        "guards": {
+          "items": {
+            "$ref": "#/$defs/ProjectNode"
+          },
+          "maxItems": 5,
+          "title": "Guards",
+          "type": "array"
+        },
+        "guards_total": {
+          "minimum": 0,
+          "title": "Guards Total",
+          "type": "integer"
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/ProjectEdge"
+          },
+          "maxItems": 100,
+          "title": "Links",
+          "type": "array"
+        },
+        "optimistic_links": {
+          "minimum": 0,
+          "title": "Optimistic Links",
+          "type": "integer"
+        },
+        "unresolved_links": {
+          "minimum": 0,
+          "title": "Unresolved Links",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "entry",
+        "guards",
+        "data",
+        "links",
+        "guards_total",
+        "data_total",
+        "unresolved_links",
+        "optimistic_links"
+      ],
+      "title": "ProjectFlow",
+      "type": "object"
+    },
+    "ProjectNode": {
+      "additionalProperties": false,
+      "properties": {
+        "citation": {
+          "$ref": "#/$defs/ProjectCitation"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "optimistic": {
+          "default": false,
+          "title": "Optimistic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "detail",
+        "citation"
+      ],
+      "title": "ProjectNode",
+      "type": "object"
+    },
+    "ProjectRule": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/PolicyAssertion"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/ProjectCitation"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Citations",
+          "type": "array"
+        },
+        "guard_forms": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Guard Forms",
+          "type": "array"
+        },
+        "proposal_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposal Sha256",
+          "type": "string"
+        },
+        "sites_applying": {
+          "minimum": 3,
+          "title": "Sites Applying",
+          "type": "integer"
+        },
+        "sites_total": {
+          "minimum": 3,
+          "title": "Sites Total",
+          "type": "integer"
+        },
+        "source_run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assertion",
+        "source_run_id",
+        "sites_applying",
+        "sites_total",
+        "guard_forms",
+        "proposal_sha256",
+        "citations"
+      ],
+      "title": "ProjectRule",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ProjectPage.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bound_policies": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/BoundPolicy"
+      },
+      "maxItems": 100,
+      "title": "Bound Policies",
+      "type": "array"
+    },
+    "capabilities": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CapabilityTable"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "excluded_files": {
+      "minimum": 0,
+      "title": "Excluded Files",
+      "type": "integer"
+    },
+    "exclusion_reasons": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Exclusion Reasons",
+      "type": "object"
+    },
+    "exclusions": {
+      "items": {
+        "$ref": "#/$defs/ExcludedFile"
+      },
+      "maxItems": 20,
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "flows": {
+      "items": {
+        "$ref": "#/$defs/ProjectFlow"
+      },
+      "maxItems": 12,
+      "title": "Flows",
+      "type": "array"
+    },
+    "flows_total": {
+      "minimum": 0,
+      "title": "Flows Total",
+      "type": "integer"
+    },
+    "frameworks": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Frameworks",
+      "type": "object"
+    },
+    "included_files": {
+      "minimum": 0,
+      "title": "Included Files",
+      "type": "integer"
+    },
+    "languages": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Languages",
+      "type": "object"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "next_offset": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Next Offset"
+    },
+    "offset": {
+      "minimum": 0,
+      "title": "Offset",
+      "type": "integer"
+    },
+    "optimistic_links": {
+      "minimum": 0,
+      "title": "Optimistic Links",
+      "type": "integer"
+    },
+    "policy_conflicts": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Policy Conflicts",
+      "type": "array"
+    },
+    "policy_next_offset": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Policy Next Offset"
+    },
+    "policy_offset": {
+      "minimum": 0,
+      "title": "Policy Offset",
+      "type": "integer"
+    },
+    "resources": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Resources",
+      "type": "object"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/ProjectRule"
+      },
+      "maxItems": 20,
+      "title": "Rules",
+      "type": "array"
+    },
+    "rules_total": {
+      "minimum": 0,
+      "title": "Rules Total",
+      "type": "integer"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "scope_next_offset": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Scope Next Offset"
+    },
+    "scope_offset": {
+      "minimum": 0,
+      "title": "Scope Offset",
+      "type": "integer"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "unresolved_links": {
+      "minimum": 0,
+      "title": "Unresolved Links",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run_id",
+    "snapshot_id",
+    "name",
+    "captured_at",
+    "languages",
+    "frameworks",
+    "resources",
+    "included_files",
+    "excluded_files",
+    "exclusion_reasons",
+    "unresolved_links",
+    "optimistic_links",
+    "flows",
+    "flows_total",
+    "offset",
+    "next_offset",
+    "exclusions",
+    "scope_offset",
+    "scope_next_offset",
+    "rules",
+    "rules_total",
+    "policy_offset",
+    "policy_next_offset",
+    "limitations"
+  ],
+  "title": "ProjectPage",
+  "type": "object"
+}

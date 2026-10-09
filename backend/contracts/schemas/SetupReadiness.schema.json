@@ -1,0 +1,395 @@
+{
+  "$defs": {
+    "CapabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "current_engine_acceptance": {
+          "const": false,
+          "default": false,
+          "title": "Current Engine Acceptance",
+          "type": "boolean"
+        },
+        "record": {
+          "title": "Record",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record",
+        "sha256",
+        "scope"
+      ],
+      "title": "CapabilityEvidence",
+      "type": "object"
+    },
+    "CapabilityRow": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "language",
+            "framework",
+            "family"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "indexed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Indexed",
+          "type": "string"
+        },
+        "indexed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Indexed Units"
+        },
+        "investigated": {
+          "const": false,
+          "default": false,
+          "title": "Investigated",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parsed": {
+          "enum": [
+            "observed",
+            "partial",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Parsed",
+          "type": "string"
+        },
+        "parsed_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parsed Units"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "runtime_testable": {
+          "const": false,
+          "default": false,
+          "title": "Runtime Testable",
+          "type": "boolean"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units"
+        },
+        "workflow_implemented": {
+          "title": "Workflow Implemented",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "category",
+        "name",
+        "parsed",
+        "indexed",
+        "workflow_implemented",
+        "reason"
+      ],
+      "title": "CapabilityRow",
+      "type": "object"
+    },
+    "CapabilityTable": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/CapabilityEvidence"
+          },
+          "maxItems": 10,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "quality_note": {
+          "title": "Quality Note",
+          "type": "string"
+        },
+        "registry_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Sha256",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/CapabilityRow"
+          },
+          "maxItems": 10,
+          "title": "Rows",
+          "type": "array"
+        },
+        "runtime_note": {
+          "title": "Runtime Note",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot Id"
+        }
+      },
+      "required": [
+        "registry_sha256",
+        "rows",
+        "evidence",
+        "runtime_note",
+        "quality_note"
+      ],
+      "title": "CapabilityTable",
+      "type": "object"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConditionKind"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "ConditionKind": {
+      "enum": [
+        "setup_required",
+        "model_too_large",
+        "runner_unavailable",
+        "stale_source",
+        "unsupported_framework",
+        "unreadable_file",
+        "partial_coverage"
+      ],
+      "title": "ConditionKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/SetupReadiness.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "available_ram_bytes": {
+      "minimum": 0,
+      "title": "Available Ram Bytes",
+      "type": "integer"
+    },
+    "available_vram_bytes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Available Vram Bytes"
+    },
+    "capabilities": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CapabilityTable"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "checked_at": {
+      "format": "date-time",
+      "title": "Checked At",
+      "type": "string"
+    },
+    "conditions": {
+      "items": {
+        "$ref": "#/$defs/Condition"
+      },
+      "title": "Conditions",
+      "type": "array"
+    },
+    "downloads_started": {
+      "const": false,
+      "default": false,
+      "title": "Downloads Started",
+      "type": "boolean"
+    },
+    "inspect_ready": {
+      "title": "Inspect Ready",
+      "type": "boolean"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "measured_host": {
+      "title": "Measured Host",
+      "type": "boolean"
+    },
+    "memory_fit": {
+      "title": "Memory Fit",
+      "type": "boolean"
+    },
+    "missing_download_bytes": {
+      "minimum": 0,
+      "title": "Missing Download Bytes",
+      "type": "integer"
+    },
+    "model_id": {
+      "title": "Model Id",
+      "type": "string"
+    },
+    "model_loaded": {
+      "const": false,
+      "default": false,
+      "title": "Model Loaded",
+      "type": "boolean"
+    },
+    "model_size_bytes": {
+      "minimum": 1,
+      "title": "Model Size Bytes",
+      "type": "integer"
+    },
+    "model_verified": {
+      "title": "Model Verified",
+      "type": "boolean"
+    },
+    "profile_id": {
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "ready": {
+      "title": "Ready",
+      "type": "boolean"
+    },
+    "required_ram_bytes": {
+      "minimum": 1,
+      "title": "Required Ram Bytes",
+      "type": "integer"
+    },
+    "required_vram_bytes": {
+      "minimum": 1,
+      "title": "Required Vram Bytes",
+      "type": "integer"
+    },
+    "requires_large_download_approval": {
+      "title": "Requires Large Download Approval",
+      "type": "boolean"
+    },
+    "runtime_verified": {
+      "title": "Runtime Verified",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "checked_at",
+    "ready",
+    "inspect_ready",
+    "profile_id",
+    "model_id",
+    "model_size_bytes",
+    "model_verified",
+    "runtime_verified",
+    "measured_host",
+    "memory_fit",
+    "available_ram_bytes",
+    "required_ram_bytes",
+    "available_vram_bytes",
+    "required_vram_bytes",
+    "missing_download_bytes",
+    "requires_large_download_approval",
+    "conditions",
+    "limitations"
+  ],
+  "title": "SetupReadiness",
+  "type": "object"
+}

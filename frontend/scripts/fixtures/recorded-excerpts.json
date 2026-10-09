@@ -1,0 +1,165 @@
+[
+  {
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "finding_id": "finding:bd085b438c05b4fff8467bcd",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "exhibit": {
+      "tag": "E01",
+      "span": {
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "path": "api/tandir/routers/orders.py",
+        "start_line": 82,
+        "end_line": 91,
+        "content_sha256": "5ff9ba2570c716f217a5aaba1a82eb67c4c4c854a199c1859836c3775481607e"
+      },
+      "role": "evidence",
+      "gloss": "Code inspected during the acquittal search"
+    },
+    "start_line": 82,
+    "end_line": 91,
+    "lines": [
+      "@router.get(\"/{order_id}/receipt\")",
+      "def get_receipt(",
+      "    order_id: int,",
+      "    user: User = Depends(current_user),",
+      "    db: Session = Depends(get_db),",
+      ") -> ReceiptOut:",
+      "    order = db.get(Order, order_id)",
+      "    if order is None:",
+      "        raise HTTPException(status_code=404, detail=\"Order not found\")",
+      "    return ReceiptOut.from_order(order)"
+    ],
+    "next_offset": null,
+    "text_is_redacted": true,
+    "comments_are_not_evidence": true
+  },
+  {
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "finding_id": "finding:bd085b438c05b4fff8467bcd",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "exhibit": {
+      "tag": "E02",
+      "span": {
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "path": "api/tandir/security.py",
+        "start_line": 42,
+        "end_line": 50,
+        "content_sha256": "480e8365f167b6f1fce108f42607dc76ff5d2630b7087914d7fae66840ba4266"
+      },
+      "role": "evidence",
+      "gloss": "Code inspected during the acquittal search"
+    },
+    "start_line": 42,
+    "end_line": 50,
+    "lines": [
+      "def current_user(request: Request, db: Session = Depends(get_db)) -> User:",
+      "    token = _token(request)",
+      "    login = db.get(LoginSession, token) if token else None",
+      "    if login is None:",
+      "        raise HTTPException(status_code=401, detail=\"Sign in first\")",
+      "    user = db.get(User, login.user_id)",
+      "    if user is None:",
+      "        raise HTTPException(status_code=401, detail=\"Sign in first\")",
+      "    return user"
+    ],
+    "next_offset": null,
+    "text_is_redacted": true,
+    "comments_are_not_evidence": true
+  },
+  {
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "finding_id": "finding:bd085b438c05b4fff8467bcd",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "exhibit": {
+      "tag": "E03",
+      "span": {
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "path": "api/tandir/schemas.py",
+        "start_line": 60,
+        "end_line": 76,
+        "content_sha256": "aa7fd42fd67e92db6669a24495ab92bda3c22d0ccc29c0540d4a1094cf400a59"
+      },
+      "role": "evidence",
+      "gloss": "Code inspected during the acquittal search"
+    },
+    "start_line": 60,
+    "end_line": 76,
+    "lines": [
+      "    @classmethod",
+      "    def from_order(cls, order: Order) -> \"ReceiptOut\":",
+      "        return cls(",
+      "            order_id=order.id,",
+      "            customer_name=order.customer.display_name,",
+      "            delivery_address=order.delivery_address,",
+      "            items=[",
+      "                OrderItemOut(",
+      "                    name=i.name,",
+      "                    quantity=i.quantity,",
+      "                    unit_price_cents=i.unit_price_cents,",
+      "                    inscription=i.inscription,",
+      "                )",
+      "                for i in order.items",
+      "            ],",
+      "            total_cents=order.total_cents,",
+      "        )"
+    ],
+    "next_offset": null,
+    "text_is_redacted": true,
+    "comments_are_not_evidence": true
+  },
+  {
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "finding_id": "finding:bd085b438c05b4fff8467bcd",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "exhibit": {
+      "tag": "E04",
+      "span": {
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "path": "api/tandir/security.py",
+        "start_line": 35,
+        "end_line": 39,
+        "content_sha256": "3a30b12d1f537b31fe30641caddfa0f1ce68c865ddbe2f58291588880a838997"
+      },
+      "role": "evidence",
+      "gloss": "Code inspected during the acquittal search"
+    },
+    "start_line": 35,
+    "end_line": 39,
+    "lines": [
+      "def _token(request: Request) -> str | None:",
+      "    header = request.headers.get(\"authorization\", \"\")",
+      "    if header.lower().startswith(\"bearer \"):",
+      "        return header[7:].strip()",
+      "    return request.cookies.get(SESSION_COOKIE)"
+    ],
+    "next_offset": null,
+    "text_is_redacted": true,
+    "comments_are_not_evidence": true
+  },
+  {
+    "run_id": "review-efe914fb441a4374bd3ec22debc371dc",
+    "finding_id": "finding:bd085b438c05b4fff8467bcd",
+    "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+    "exhibit": {
+      "tag": "E05",
+      "span": {
+        "snapshot_id": "4241d2882e3fe02f1afde19ef3bb099c0c1b1ced3dd279b78908f0be3677d889",
+        "path": "api/tandir/security.py",
+        "start_line": 45,
+        "end_line": 46,
+        "content_sha256": "24567e8c3ce26089f49940402c80aa40b4fb7472bd78c2638f83243fcfb5c8ee"
+      },
+      "role": "guard",
+      "gloss": "Executable guard"
+    },
+    "start_line": 45,
+    "end_line": 46,
+    "lines": [
+      "    if login is None:",
+      "        raise HTTPException(status_code=401, detail=\"Sign in first\")"
+    ],
+    "next_offset": null,
+    "text_is_redacted": true,
+    "comments_are_not_evidence": true
+  }
+]

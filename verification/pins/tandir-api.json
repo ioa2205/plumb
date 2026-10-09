@@ -1,0 +1,37 @@
+{
+  "files": {
+    "pyproject.toml": "be488477c5628d96d1aaced979cc46f4a79794bd2940bb98208827802e59766c",
+    "tandir/__init__.py": "80e3576041e83991647572ab232f4e7c2a7e11d0a99c4218c328c1549365eb67",
+    "tandir/__main__.py": "0b7b9b26efeebbb30d62e307e60813362fa5425781d06d5e4a56ffd4130da51c",
+    "tandir/config.py": "61cc78efcc4b7397515b115627d50cc42a507bcd83d4383bda84930f57fe3531",
+    "tandir/db.py": "2c6fd9fb384d6af0353ab701d70e15fc9e857c3acb5176a056ebe1f1103560d2",
+    "tandir/main.py": "dd1bd3c4e4a443f378194ea6eb1bd6447d9cd52f8513f1512ed640c096e7ac75",
+    "tandir/models.py": "16ff8655510d6b1a502e2fc8928d1d54ae56000823d5d001f8d7cabbd977fda0",
+    "tandir/routers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tandir/routers/admin.py": "09fc3c7147a069dc7fb377581bedd6e3a63e2fa11192ab97e440fa16481f0088",
+    "tandir/routers/auth.py": "52a1ae747e594984068da9a067263f67444e7fd8ebb80a41d388ff12cfeb8793",
+    "tandir/routers/branches.py": "17fd82fce91a4385538f6510275616bf8df54c021c0b6131f83b40c1d66403f7",
+    "tandir/routers/courier.py": "1babc48eaac60a7e49993c278af98edaaaec3e6c3106564a4b2215e824d473bb",
+    "tandir/routers/files.py": "ac7108b97e2cd4cfb7ea537bd50b33133da6025904c62763b5d9fac03965eb56",
+    "tandir/routers/kitchen.py": "fb3ad3c38809ef960742e7405a796ce33c812d4b49dd7b543955fd62a0964fdd",
+    "tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
+    "tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",
+    "tandir/security.py": "829a746b47bc94aa930ea468cedf6aeb8c95b6fbf70cefa1ebef3647c146b431",
+    "tandir/seed.py": "0886d6338c73cd3d0ed92e8e03b114480dbee4a3fceca5dbf4d53f7ab3121de2",
+    "tandir/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tandir/services/orders.py": "fb5b6cc621f82affbf1d78bbd345572706cdbf0a4532a3f689246e4615afe008",
+    "uv.lock": "0e0649a2073e8f43cafd0523be27ac69164f487148732883b4ef4fd46aae4d7a"
+  },
+  "python_sha256": "18e806e2bfb8ffedf61274d6517694e2a52e130b22e870d38671a9c37391dd52",
+  "release": "plumb-tandir-api-v2-receipt-replay",
+  "runtime": "existing locked Tandir Python 3.12 environment; no installation during probing",
+  "worker_sha256": "385f0113afc06a9b026c3edcce7d5f09c7506412cc90896323eff879747cf084",
+  "variants": {
+    "receipt_fixed": {
+      "files": {
+        "tandir/routers/orders.py": "7f823da6b75b5338c5c86d6e7014446f6482295fc7c0422178af3cc4a06f109c"
+      },
+      "patch_sha256": "82fc89bbe660755730db0befacd16228112eab026f37f1b35fb36f8b9f31954a"
+    }
+  }
+}
