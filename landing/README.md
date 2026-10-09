@@ -109,6 +109,24 @@ in-memory rate limit. The rate limit resets when the function instance is
 recycled; it slows floods and is not a guarantee. Without scripts the form still
 posts and lands on `/contact/sent` or `/contact/not-sent`.
 
+## Words that must never be published
+
+`scripts/private.mjs` holds the general privacy patterns (absolute Windows
+paths, user folders, the local data folder). Words that would identify the
+owner live in `landing/.private-words`, one regular expression per line, which
+Git ignores: publishing this code must not publish the words it guards
+against. Extraction and the privacy check use both when the file is present and
+the general patterns alone when it is not.
+
+## The download
+
+When `site.json` has a `download` link, the install page leads with it and the
+overview says Plumb can be downloaded. The size, file count and SHA-256 shown
+come from the saved package checks (`docs/results/2026-10-09-m7.9b-package-*`),
+which extraction refuses unless the archive checks passed, the source was
+clean, the recorded report opened, and the investigator files match the
+package used in the recorded run.
+
 ## Installing, for people and for AI agents
 
 The install steps are written once, in `src/lib/guide.mjs`. `/install` shows
