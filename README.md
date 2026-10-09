@@ -9,6 +9,9 @@ never uploaded and never run.
 It is a **working prototype for Windows**. It has been shown working on one
 practice app and one laptop, and its limits are listed below.
 
+**Website:** https://plumb-security.vercel.app (in English and Uzbek), with the
+recorded test step by step and a guide for installing with an AI agent.
+
 ## What it does
 
 - Reads a web app written in Python with FastAPI or TypeScript with Next.js, and

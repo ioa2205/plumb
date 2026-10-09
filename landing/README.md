@@ -193,3 +193,15 @@ report under `/saved-report/` keeps its own embedded policy and is marked
 
 Deploy from this folder so nothing outside it is uploaded. Deployment needs the
 owner's approval.
+
+The site is the Vercel project `plumb-security`, live at
+https://plumb-security.vercel.app (the `url` in `site.json`). `.vercelignore`
+keeps the private word list, the CLI's link and environment files, local
+captures and build output out of the upload; its paths are anchored so
+`public/shots` is still sent. `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are
+encrypted production variables in that project. To publish a change:
+
+```text
+node scripts/build.mjs --release && node --test scripts/*.test.mjs
+vercel deploy --prod
+```

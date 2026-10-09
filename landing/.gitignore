@@ -2,8 +2,9 @@
 /dist/
 /shots/
 
-# Vercel project link (account and project identifiers)
+# Vercel project link and the CLI's local environment file (account identifiers, a token)
 .vercel/
+.env*
 
 # Words the privacy checks guard against; local only
 /.private-words

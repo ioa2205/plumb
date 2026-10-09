@@ -1,0 +1,9 @@
+# Uploaded to Vercel: only what the build and the message function need. Paths are anchored
+# to this folder: public/shots holds the report pictures and must be uploaded.
+# The owner's private word list, local captures, build output and CLI files stay here.
+/.private-words
+/dist
+/shots
+/node_modules
+/.vercel
+/.env*
