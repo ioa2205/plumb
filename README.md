@@ -152,9 +152,18 @@ running reviewed code, ask before downloads over 500 MB), are in
 | `labs/tandir/` | Tandir, the practice app with planted flaws and protected lookalikes |
 | `landing/` | The project website, built from the saved records |
 
-Run the tests with `uv run pytest`. Design notes and the full evaluation records
-are kept private for now, so a few code comments refer to documents that are
-not in this repository.
+Run the tests with `uv run pytest`, after the setup step (it installs the
+TypeScript helper that the analysis tests use). In a fresh clone 44 tests fail,
+each because it needs something this repository does not contain:
+
+- saved evaluation records, which are kept private for now;
+- the practice app's prepared, hash-pinned runner environment;
+- `labs/tandir/web/next-env.d.ts`, which Next.js writes when the practice app's
+  web part is built.
+
+Everything else passed when this was checked on 9 October 2026. Making those
+tests skip cleanly in a fresh clone is planned. Design notes are private too,
+so a few code comments refer to documents that are not in this repository.
 
 ## Licence
 
