@@ -99,7 +99,7 @@ uv run plumb calibrate
 
 ### 9. Run the recorded review
 
-Only if the person asks for a review: it loads the AI model. It asks about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: mx350-vulkan-8k on the measured laptop model, cpu-8k on any other. On the measured laptop model the recorded run took 15 min 22 s; how long it takes on another computer is not known.
+Only if the person asks for a review: it loads the AI model. It asks about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: mx350-vulkan-8k on the measured laptop model, cpu-8k on any other. With cpu-8k, the first review on a computer begins with the check from the step before, unless that check has already passed there. On the measured laptop model the recorded run took 15 min 22 s; how long it takes on another computer is not known.
 
 ```powershell
 uv run plumb review labs/tandir --resource Order --route '/orders/{order_id}/receipt' --route '/orders/{order_id}/invoice' --family authorization --limit 2
@@ -126,11 +126,11 @@ uv run plumb web
 ## If Plumb refuses
 
 - **Files are missing or unverified.** Read the setup preview and install only the pinned files it lists.
-- **No review profile for this computer.** With the download, this is any computer other than the measured laptop model. Install from source instead: there the cpu-8k profile covers other 64-bit Windows computers. Mapping with inspect and saved reports work without a profile.
+- **No review profile for this computer.** A review with the AI model needs 64-bit Windows on an Intel or AMD processor. On any other system, install with the --inspect-only option instead: mapping with inspect and saved reports work without a profile.
 - **Not enough RAM or graphics memory.** Close other programs, run doctor again, then retry or resume. The threshold stays where it is.
 - **The program that runs the model failed its first-use check.** Reviews with that profile stay off on this computer until the check passes. Run calibrate to try again. Mapping and saved reports still work.
 - **Not enough free disk space.** Free space for the downloads the preview lists, then run setup again. Nothing was installed.
-- **No supported checks match.** From source, Plumb names the kinds of check your project does have and the exact option to use, for example --family nextjs_exposure for a project with only Next.js code. If it names none, read the overview to see what it recognised. An empty selection is not a safety verdict.
+- **No supported checks match.** Plumb names the kinds of check your project does have and the exact option to use, for example --family nextjs_exposure for a project with only Next.js code. If it names none, read the overview to see what it recognised. An empty selection is not a safety verdict.
 - **A saved report is refused.** The file was changed, or was written by an older version. Keep it as it is and open it with the version that wrote it.
 - **This system is not supported yet.** Plumb runs on 64-bit Windows 10 or 11 only for now. From source, every command on macOS or Linux prints this one sentence and stops.
 

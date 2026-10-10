@@ -359,7 +359,9 @@ def build(output: Path, cache: Path) -> Path:
         "Read the pinned download sizes/licenses, then use: plumb.cmd setup --install\n"
         "If the preview needs over 500 MB, installation requires the explicit extra flag\n"
         "--approve-large-downloads. Existing verified assets are reused.\n"
-        "Inference stays local; only the measured hardware profile is qualified.\n\n"
+        "Inference stays local. There are two profiles: the measured laptop profile, and\n"
+        "cpu-8k for other 64-bit Intel or AMD Windows computers, whose first review begins\n"
+        "with a check of the model runner. Only the first has measurements behind it.\n\n"
         "TERMINAL ALTERNATIVES\n"
         'plumb.cmd inspect "D:\\path\\to\\project"\n'
         'plumb.cmd review "D:\\path\\to\\project" --limit 1\n'
@@ -371,7 +373,8 @@ def build(output: Path, cache: Path) -> Path:
         "this portable package does not include. Source reviews do not require that runner.\n\n"
         "STORAGE AND PROTOTYPE LIMITS\n"
         "Data and reports stay outside this installation. Do not add files here.\n"
-        "Packaged local inference/resume has been checked on the development laptop.\n"
+        "Packaged local inference/resume was checked on the development laptop with an\n"
+        "earlier build; this build was checked without loading a model.\n"
         "Clean-profile and authenticated browser acceptance remain open; hardware support\n"
         "and known model-quality gaps are shown by setup. This is not a certified release.\n"
         "Python 3.12.5 and Node 24.11.0 preserve development versions; runtime upgrades\n"

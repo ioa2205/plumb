@@ -37,14 +37,13 @@ recorded test step by step and a guide for installing with an AI agent.
   measured on real projects.
 - Whether it runs on your computer. Every recorded review ran on one laptop: an
   Intel Core i5-1135G7 with NVIDIA GeForce MX350 graphics and 8 GB of memory.
-  When run from source, other 64-bit Windows computers with an Intel or AMD
-  processor and about 2.4 GB of free memory can start a review through a second
-  profile, `cpu-8k`, which runs the
-  same model on the processor alone. That profile has completed one real run, on
-  the same laptop on 10 October 2026, with the same result as the recorded test
-  below. Nothing has been tried on a second computer. The downloadable package
-  was built before this profile existed and starts reviews only on the measured
-  laptop.
+  Other 64-bit Windows computers with an Intel or AMD processor and about 2.4 GB
+  of free memory can start a review through a second profile, `cpu-8k`, which
+  runs the same model on the processor alone. That profile has completed one real
+  run, from source, on the same laptop on 10 October 2026, with the same result
+  as the recorded test below. Nothing has been tried on a second computer. The
+  downloadable package holds the same code, but no review with the AI model has
+  been run from it since it was rebuilt.
 - How well it finds other kinds of flaw. In development runs it missed an
   unsafe database query and an exposed phone number.
 
@@ -70,8 +69,8 @@ nothing else has to be installed first. Get it from
 1. Extract the ZIP anywhere. Folder names with spaces are fine.
 2. Double-click **Start Plumb.cmd** for the browser view, or open PowerShell in
    the extracted folder and use `.\plumb.cmd`.
-3. Preview, then install, the pinned AI model and the program that runs it
-   (about 1.43 GB in all; the model comes from Hugging Face):
+3. Preview, then install, the pinned AI model, the program that runs it and a
+   pattern scanner (about 1.5 GB in all; the model comes from Hugging Face):
 
 ```powershell
 .\plumb.cmd setup
@@ -80,18 +79,18 @@ nothing else has to be installed first. Get it from
 .\plumb.cmd doctor
 ```
 
-On a computer without the measured profile, use
+To map a project without the AI model, use
 `.\plumb.cmd setup --install --inspect-only` instead: it sets up source mapping
 and downloads no model.
 
-The package has been checked only on the laptop it was built on, under that
-laptop's Windows account. A fresh Windows account has not been tested.
+The package was built on 10 October 2026 from the code in this repository. The
+commands under "Run from source" work in it too: write `.\plumb.cmd` in place of
+`uv run plumb`.
 
-The package is older than the source and lacks one safety fix. If its commands
-are typed from inside the folder being reviewed, a program hidden in that folder
-under the name of a Windows tool can be started. The source no longer allows
-this. Until a new package is built, type its commands from the extracted Plumb
-folder, as above, and give the project as a path.
+It has been checked only on the laptop it was built on, under that laptop's
+Windows account. The model was already installed there, so those checks
+downloaded nothing and loaded no AI model. A fresh Windows account and a second
+computer have not been tested.
 
 ## Run from source
 

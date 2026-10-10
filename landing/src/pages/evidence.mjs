@@ -15,7 +15,7 @@ const recorded = (/** @type {string} */ word) => (lang() === 'uz' ? html` <span 
 /** @param {import('../components/layout.mjs').PageContext} context */
 export function render(context) {
   const { record } = context;
-  const { run, runtime, software, development, package: pack, cpu_profile: cpu } = record;
+  const { run, runtime, software, development, download, cpu_profile: cpu } = record;
   const [receipt, invoice] = run.findings;
   const { baseline, family_run: familyRun } = development;
   const { python } = software;
@@ -39,11 +39,15 @@ export function render(context) {
   holds(familyRun.inconclusive === 11 && familyRun.expected_rejections === 1, 'eleven Inconclusive and one expected rejection');
   holds(run.proposal.status === 'refused', 'the fix proposal was refused');
   holds(run.initial_refusal.model_loaded === false, 'refused once before the recorded run');
-  holds(pack.clean_user_profile === false && run.browser_rendering_claimed === false, 'clean account and browser rendering are untested');
+  holds(download.clean_user_profile === false && run.browser_rendering_claimed === false, 'clean account and browser rendering are untested');
   holds(runtime.receipt.outcome === 'reproduced' && runtime.invoice.outcome === 'not_reproduced' && runtime.replay.after.outcome === 'fixed', 'runtime outcomes');
   const check = cpu.first_use_check;
   const [cpuReceipt, cpuInvoice] = cpu.review.findings;
-  holds(record.download.has_cpu_profile === false, 'the second profile is in the source code, not in the download');
+  holds(download.has_cpu_profile && download.investigator_same_as_source && download.source_files_checked > 0, 'the download holds the same code as the source, second profile and working-folder fix included');
+  holds(download.model_loaded === false && download.developer_tools_on_path === false && download.folder_name_had_spaces, 'the download was checked without a model, with no developer tools, from a folder with spaces in its name');
+  holds(download.downloaded_or_installed === false && download.model_already_installed, 'the checks of the download fetched nothing: the model was already on the laptop');
+  holds(download.same_investigator_as_cpu_profile_run && cpu.from_source, 'the download’s investigator completed the processor-only review, which was run from source');
+  holds(download.doctor_refused_for_memory && download.older_report_refused, 'two commands of the download refused: doctor for memory, report for an older run');
   holds(cpu.same_computer_as_recorded_run, 'the second profile ran on the same laptop as everything else');
   holds(check.outcome === 'passed' && check.answers_matching_expected_kind === 0, 'the first-use check passed although no answer named the expected kind of check');
   holds(cpu.review.lifecycle === 'completed' && cpu.review.exit === 0 && cpu.review.memory_abort === null, 'the processor-only review ended normally');
@@ -91,8 +95,8 @@ export function render(context) {
         )}</dd></div>
       <div>${glyph('half', partly)}<dt>${t('Reviews on other computers', 'Boshqa kompyuterlarda tekshiruv')}</dt>
         <dd>${t(
-          html`A second profile, ${factWhole(cpu.id)}, runs the same AI model on the processor alone, so a 64-bit Windows computer other than the measured laptop model can start a review. It is in the source code, not in the download. It has completed <a href="#passed">one real run</a>, on the laptop Plumb is developed on, and has not been tried on a second computer.`,
-          html`Ikkinchi profil, ${factWhole(cpu.id)}, o‘sha SI modelini faqat protsessorda ishlatadi, shu tufayli o‘lchangan noutbuk modelidan boshqa 64 bitli Windows kompyuter ham tekshiruvni boshlay oladi. U manba kodida bor, tayyor to‘plamda yo‘q. Plumb ishlab chiqilayotgan noutbukda <a href="#passed">bir marta haqiqiy sinovdan</a> o‘tgan, ikkinchi kompyuterda esa sinab ko‘rilmagan.`,
+          html`A second profile, ${factWhole(cpu.id)}, runs the same AI model on the processor alone, so a 64-bit Windows computer other than the measured laptop model can start a review. It is in the download and in the source code alike. It has completed <a href="#passed">one real run</a>, from source, on the laptop Plumb is developed on, and has not been tried on a second computer.`,
+          html`Ikkinchi profil, ${factWhole(cpu.id)}, o‘sha SI modelini faqat protsessorda ishlatadi, shu tufayli o‘lchangan noutbuk modelidan boshqa 64 bitli Windows kompyuter ham tekshiruvni boshlay oladi. U tayyor to‘plamda ham, manba kodida ham bor. Plumb ishlab chiqilayotgan noutbukda, manba kodidan ishga tushirilgan holda, <a href="#passed">bir marta haqiqiy sinovdan</a> o‘tgan, ikkinchi kompyuterda esa sinab ko‘rilmagan.`,
         )}</dd></div>
       <div>${glyph('half', partly)}<dt>${t('Other kinds of flaw', 'Boshqa turdagi xatolar')}</dt>
         <dd>${t(
@@ -216,14 +220,14 @@ export function render(context) {
           )}</td>
         </tr>
         <tr>
-          <th scope="row">${t('The Windows package', 'Windows to‘plami')}</th>
+          <th scope="row">${t('The Windows package', 'Windows to‘plami')}<br><span class="small">${day(download.checked_at)}</span></th>
           <td data-label="${result}">${t(
-            html`One ZIP, ${fact(mb(pack.archive_bytes))}, ${fact(int(pack.inventoried_files))} files, fingerprint ${fact(`${shortHash(pack.archive_sha256)}…`)}. Extracted into a folder with spaces and run through its public commands with no developer tools available. Private files confirmed absent.`,
-            html`Bitta ZIP fayl: ${fact(mb(pack.archive_bytes))}, ${fact(int(pack.inventoried_files))} ta fayl, barmoq izi ${fact(`${shortHash(pack.archive_sha256)}…`)}. Nomida bo‘sh joy bor papkaga chiqarilgan va dasturchi vositalari bo‘lmagan holda, ochiq buyruqlari orqali ishga tushirilgan. Ichida shaxsiy fayllar yo‘qligi tasdiqlangan.`,
+            html`The ZIP offered for download: ${fact(mb(download.archive_bytes))}, ${fact(int(download.inventoried_files))} files, fingerprint ${fact(`${shortHash(download.archive_sha256)}…`)}. Run from a folder with spaces in its name, through its public commands, with no developer tools available: it mapped the practice app, opened the recorded report and served its browser view. Every file in the ZIP matched that folder, and private files are confirmed absent. Its ${fact(download.investigator_files)} investigator files are the ones that completed the review on the processor alone. Two commands refused, as they are built to: <span class="fact whole">doctor</span>, because too little memory was free at that moment, and <span class="fact whole">report</span>, when asked for another report that an older version of Plumb had saved.`,
+            html`Yuklab olish uchun taklif qilingan ZIP fayl: ${fact(mb(download.archive_bytes))}, ${fact(int(download.inventoried_files))} ta fayl, barmoq izi ${fact(`${shortHash(download.archive_sha256)}…`)}. Nomida bo‘sh joy bor papkadan, dasturchi vositalari bo‘lmagan holda, ochiq buyruqlari orqali ishga tushirilgan: sinov ilovasining xaritasini tuzdi, yozib olingan hisobotni ochdi va brauzerdagi interfeysini ishga tushirdi. ZIP ichidagi har bir fayl o‘sha papkadagisi bilan mos kelgan, ichida shaxsiy fayllar yo‘qligi tasdiqlangan. Tekshiruvchining ${fact(download.investigator_files)} ta fayli faqat protsessorda o‘tkazilgan tekshiruvni bajargan fayllarning o‘zi. Ikki buyruq ishni rad etdi, ular aynan shunday ishlashi kerak: <span class="fact whole">doctor</span> o‘sha paytda bo‘sh xotira yetmagani uchun, <span class="fact whole">report</span> esa Plumbning eskiroq versiyasida saqlangan boshqa bir hisobotni ochmadi.`,
           )}</td>
           <td data-label="${reach}">${t(
-            'The same laptop and Windows account it was built on. A clean account is untested.',
-            'U yig‘ilgan noutbuk va Windows hisobining o‘zi. Yangi hisobda sinab ko‘rilmagan.',
+            'The laptop and the Windows account it was built on, where the AI model was already installed: nothing was downloaded or installed. A clean account and a second computer are untested. No AI model was loaded, so this package has not run a review.',
+            'U yig‘ilgan noutbuk va Windows hisobining o‘zi. SI modeli u yerda oldindan o‘rnatilgan edi, shuning uchun hech narsa yuklab olinmagan va o‘rnatilmagan. Yangi hisobda va ikkinchi kompyuterda sinab ko‘rilmagan. Sinovlarda SI modeli ishga tushirilmagan, demak bu to‘plam hali birorta ham tekshiruv o‘tkazmagan.',
           )}</td>
         </tr>
         <tr>
@@ -287,6 +291,7 @@ export function render(context) {
         html`<li><strong>Any accuracy figure.</strong> No precision, recall or false-alarm rate exists for Plumb. A sealed test set was prepared and has not been opened.</li>
       <li><strong>Comparison with other tools or models.</strong> None has been run on equal terms. That includes the larger models Plumb can install from its list: none has been downloaded or run here, so nothing is known about how they compare.</li>
       <li><strong>A second computer.</strong> Everything here was recorded on one laptop, under one Windows account. That includes the one run of the second profile, which was added so that other computers can start a review.</li>
+      <li><strong>A review with the downloaded package.</strong> The package offered for download passed its checks without loading the AI model. The recorded test used an earlier package, and the one run of the second profile was done from source.</li>
       <li><strong>macOS and Linux.</strong> Plumb runs on 64-bit Windows 10 or 11 only for now.</li>
       <li><strong>Running reviewed code safely.</strong> No isolated environment was available on this laptop, so none has passed its checks and Plumb does not run the projects it reviews.</li>
       <li><strong>How the browser view and the report look.</strong> They pass their software checks. Their appearance on desktop and phone, and their accessibility, have not been formally checked.</li>
@@ -295,6 +300,7 @@ export function render(context) {
         html`<li><strong>Har qanday aniqlik ko‘rsatkichi.</strong> Plumb uchun aniqlik, to‘liqlik yoki yolg‘on signallar ulushi hisoblanmagan. Yopiq test to‘plami tayyorlangan, lekin hali ochilmagan.</li>
       <li><strong>Boshqa vositalar yoki modellar bilan taqqoslash.</strong> Teng sharoitda birorta ham taqqoslash o‘tkazilmagan. Plumb o‘z ro‘yxatidan o‘rnata oladigan kattaroq modellar ham shunga kiradi: ularning birortasi bu yerda yuklab olinmagan va ishga tushirilmagan, shuning uchun ular bir-biridan qanday farq qilishi haqida hech narsa ma’lum emas.</li>
       <li><strong>Ikkinchi kompyuter.</strong> Bu yerdagi hamma narsa bitta noutbukda, bitta Windows hisobida yozib olingan. Boshqa kompyuterlar ham tekshiruvni boshlay olishi uchun qo‘shilgan ikkinchi profilning yagona sinovi ham shu noutbukda o‘tgan.</li>
+      <li><strong>Yuklab olinadigan to‘plam bilan tekshiruv.</strong> Yuklab olish uchun taklif qilingan to‘plam o‘z sinovlaridan SI modeli ishga tushirilmagan holda o‘tgan. Yozib olingan sinov avvalgi to‘plamda o‘tkazilgan, ikkinchi profilning yagona sinovi esa manba kodidan ishga tushirilgan.</li>
       <li><strong>macOS va Linux.</strong> Plumb hozircha faqat 64 bitli Windows 10 yoki 11 da ishlaydi.</li>
       <li><strong>Tekshirilayotgan kodni xavfsiz ishga tushirish.</strong> Bu noutbukda ajratilgan muhit yo‘q edi, shuning uchun bunday muhit sinovdan o‘tmagan va Plumb tekshirayotgan loyihalarni ishga tushirmaydi.</li>
       <li><strong>Interfeys va hisobotning brauzerdagi ko‘rinishi.</strong> Ular dasturiy tekshiruvlardan o‘tadi. Kompyuter va telefondagi ko‘rinishi hamda imkoniyati cheklangan foydalanuvchilar uchun qulayligi rasman tekshirilmagan.</li>
@@ -337,13 +343,13 @@ export function render(context) {
     body: html`<ul class="limits">
       ${t(
         html`<li><strong>Reviewed code is read as text.</strong> It is never imported, installed or executed.</li>
-      <li><strong>Programs in the reviewed folder are not started.</strong> Windows looks in the current folder first when a program is started by name, so a file hidden in a project under the name of a Windows tool could have been started. Installed from source, Plumb now leaves the current folder out of that search. The download was built before this fix.</li>
+      <li><strong>Programs in the reviewed folder are not started.</strong> Windows looks in the current folder first when a program is started by name, so a file hidden in a project under the name of a Windows tool could have been started. Plumb now leaves the current folder out of that search, in the download as well as from source.</li>
       <li><strong>No cloud model.</strong> There are no API keys and no remote model calls. The model runs on the same computer.</li>
       <li><strong>Memory is checked before every launch.</strong> A watcher stops Plumb’s own model if free memory falls too low. It never closes other programs.</li>
       <li><strong>Comments and names are not evidence.</strong> A comment saying the code is safe does not count. Only executable code can clear a suspect.</li>
       <li><strong>Secrets are masked.</strong> Text with the known shapes of passwords and keys is replaced in reports, and the reports leave out source text.</li>`,
         html`<li><strong>Tekshirilayotgan kod matn sifatida o‘qiladi.</strong> U hech qachon import qilinmaydi, o‘rnatilmaydi va ishga tushirilmaydi.</li>
-      <li><strong>Tekshirilayotgan papkadagi dasturlar ishga tushirilmaydi.</strong> Windows dasturni nomi bo‘yicha ishga tushirayotganda avval joriy papkaga qaraydi, shuning uchun loyihaga Windows vositasi nomi bilan yashirib qo‘yilgan fayl ishga tushib ketishi mumkin edi. Manba kodidan o‘rnatilgan Plumb endi joriy papkani bu qidiruvdan chiqarib tashlaydi. Tayyor to‘plam bu tuzatishdan oldin yig‘ilgan.</li>
+      <li><strong>Tekshirilayotgan papkadagi dasturlar ishga tushirilmaydi.</strong> Windows dasturni nomi bo‘yicha ishga tushirayotganda avval joriy papkaga qaraydi, shuning uchun loyihaga Windows vositasi nomi bilan yashirib qo‘yilgan fayl ishga tushib ketishi mumkin edi. Plumb endi joriy papkani bu qidiruvdan chiqarib tashlaydi, tayyor to‘plamda ham, manba kodidan o‘rnatilganda ham.</li>
       <li><strong>Bulutdagi model yo‘q.</strong> API kalitlari ham, masofaviy modelga murojaat ham yo‘q. Model shu kompyuterning o‘zida ishlaydi.</li>
       <li><strong>Har safar ishga tushishdan oldin xotira tekshiriladi.</strong> Bo‘sh xotira haddan tashqari kamayib ketsa, nazoratchi Plumbning o‘z modelini to‘xtatadi. Boshqa dasturlarni u hech qachon yopmaydi.</li>
       <li><strong>Izohlar va nomlar dalil hisoblanmaydi.</strong> «Bu kod xavfsiz» degan izoh inobatga olinmaydi. Shubhani faqat ishlaydigan kod yo‘qqa chiqara oladi.</li>

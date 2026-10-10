@@ -4,7 +4,7 @@ import { band, page } from '../components/layout.mjs';
 import { leak } from '../components/leak.mjs';
 import { exhibit, fact, factWhole, reportShot, verdict } from '../components/parts.mjs';
 import { reviewConsole } from '../components/terminal.mjs';
-import { day, gb, int, longDay, mb, minutes, shortRun } from '../lib/format.mjs';
+import { gb, int, longDay, mb, minutes, shortRun } from '../lib/format.mjs';
 import { downloadSizes } from '../lib/guide.mjs';
 import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
@@ -15,7 +15,7 @@ export const path = '/';
 /** @param {import('../components/layout.mjs').PageContext} context */
 export function render(context) {
   const { record, site } = context;
-  const { run, excerpts, model, development, runtime, cpu_profile: cpu } = record;
+  const { run, excerpts, model, development, runtime, download, cpu_profile: cpu } = record;
   const downloads = downloadSizes(record);
   const [receipt, invoice] = run.findings;
   const { peer, overview, coverage } = run;
@@ -36,7 +36,9 @@ export function render(context) {
   holds(compared.length === peer.compared && peer.deviation.missing === 'owner', 'the compared places and the missing check');
   holds(compared.filter((/** @type {any} */ row) => row.applied.includes('owner')).length === peer.deviation.peers_applying, '10 of 11 check the owner');
   holds(receipt.judgments.length === 3 && invoice.judgments.length === 3, 'three judgments each');
-  holds(record.download.has_cpu_profile === false, 'the download dates from before the second profile');
+  holds(download.has_cpu_profile && download.investigator_same_as_source && download.source_files_checked > 0, 'the download holds the same code as the source, second profile included');
+  holds(download.model_loaded === false && download.clean_user_profile === false, 'the download has run no review, and has only been tried on the laptop it was built on');
+  holds(cpu.from_source, 'the one run of the second profile was done from source');
   holds(cpu.same_computer_as_recorded_run, 'every review so far ran on one laptop');
   holds(cpu.first_use_check.outcome === 'passed' && cpu.review.lifecycle === 'completed' && cpu.review.exit === 0, 'the second profile has completed one real run');
   holds(
@@ -113,10 +115,10 @@ export function render(context) {
         <ul class="limits">
           ${t(
             html`<li>How often it is right. It has been shown working on one practice app, not measured on real projects.</li>
-          <li>Whether it runs on your computer. Every review so far ran on one laptop. Installed from source, Plumb can now start a review on other 64-bit Windows computers, but nobody has tried that on a second computer yet.</li>
+          <li>Whether it runs on your computer. Every review so far ran on one laptop. Plumb can now start a review on other 64-bit Windows computers, but nobody has tried that on a second computer yet.</li>
           <li>How well it finds other kinds of flaw. In tests it missed an unsafe database query and an exposed phone number.</li>`,
             html`<li>Qanchalik tez-tez to‘g‘ri topishi. U bitta sinov ilovasida ishlab ko‘rsatilgan, haqiqiy loyihalarda o‘lchanmagan.</li>
-          <li>Sizning kompyuteringizda ishlay olishi. Hozirgacha barcha tekshiruvlar bitta noutbukda o‘tkazilgan. Manba kodidan o‘rnatilgan Plumb endi boshqa 64 bitli Windows kompyuterlarda ham tekshiruvni boshlay oladi, lekin buni ikkinchi kompyuterda hali hech kim sinab ko‘rmagan.</li>
+          <li>Sizning kompyuteringizda ishlay olishi. Hozirgacha barcha tekshiruvlar bitta noutbukda o‘tkazilgan. Plumb endi boshqa 64 bitli Windows kompyuterlarda ham tekshiruvni boshlay oladi, lekin buni ikkinchi kompyuterda hali hech kim sinab ko‘rmagan.</li>
           <li>Boshqa turdagi xatolarni qanchalik yaxshi topishi. Sinovlarda u ma’lumotlar bazasiga xavfli so‘rovni ham, oshkor bo‘lgan telefon raqamini ham aniqlay olmagan.</li>`,
           )}
         </ul>
@@ -301,8 +303,8 @@ export function render(context) {
 
   const availability = site.download
     ? t(
-        html`<p><strong>Yes, in two ways.</strong> <a href="${site.download}">Download the Windows package</a> (${fact(mb(record.download.archive_bytes))}), or install from the source code on <a href="${site.repository}">GitHub</a>. The two are not equal today: the download is older, and the first two rows below say what each can do. The <a href="/install">install page</a> has every step.</p>`,
-        html`<p><strong>Ha, ikki yo‘l bilan.</strong> <a href="${site.download}">Windows to‘plamini yuklab oling</a> (${fact(mb(record.download.archive_bytes))}) yoki Plumbni <a href="${site.repository}">GitHub</a>’dagi manba kodidan o‘rnating. Bugun bu ikki yo‘l teng emas: tayyor to‘plam eskiroq, har biri nimalarni qila olishi quyidagi dastlabki ikki qatorda aytilgan. Barcha qadamlar <a href="/install">o‘rnatish sahifasida</a>.</p>`,
+        html`<p><strong>Yes, in two ways.</strong> <a href="${site.download}">Download the Windows package</a> (${fact(mb(download.archive_bytes))}), or install from the source code on <a href="${site.repository}">GitHub</a>. Both hold the same code and follow the same steps. The <a href="/install">install page</a> has every step.</p>`,
+        html`<p><strong>Ha, ikki yo‘l bilan.</strong> <a href="${site.download}">Windows to‘plamini yuklab oling</a> (${fact(mb(download.archive_bytes))}) yoki Plumbni <a href="${site.repository}">GitHub</a>’dagi manba kodidan o‘rnating. Ikkalasida ham kod bir xil, qadamlari ham bir xil. Barcha qadamlar <a href="/install">o‘rnatish sahifasida</a>.</p>`,
       )
     : site.repository
     ? t(
@@ -327,14 +329,19 @@ export function render(context) {
         ${site.download
           ? html`<div><dt>${t('The download', 'Tayyor to‘plam')}</dt>
           <dd>${t(
-            html`It dates from ${day(record.download.checked_at)}, before the second profile described in the next row existed. It maps a project and opens saved reports. It starts a full review with the AI model only on the one laptop model it was measured on.`,
-            html`U ${day(record.download.checked_at)} kungi to‘plam: keyingi qatorda aytilgan ikkinchi profil o‘shanda hali yo‘q edi. U loyiha xaritasini tuzadi va saqlangan hisobotlarni ochadi. SI modeli bilan to‘liq tekshiruvni esa faqat o‘zi o‘lchangan bitta noutbuk modelida boshlaydi.`,
-          )}</dd></div>`
-          : ''}
+            html`A ZIP built on ${longDay(download.built_on)} from the same code as the source, with Python, Node and the browser view inside. This package has not yet run a review with the AI model: its checks loaded no model. It has only been tried on the laptop it was built on.`,
+            html`${longDay(download.built_on)} kuni manba kodining o‘zidan yig‘ilgan ZIP fayl, ichida Python, Node va brauzerdagi interfeys bor. Bu to‘plam SI modeli bilan hali birorta ham tekshiruv o‘tkazmagan: uni sinashda model ishga tushirilmagan. U faqat o‘zi yig‘ilgan noutbukda sinab ko‘rilgan.`,
+          )}</dd></div>
         <div><dt>${t('The source code', 'Manba kodi')}</dt>
           <dd>${t(
-            html`A full review can start on any 64-bit Windows 10 or 11 computer with an Intel or AMD processor and about ${fact(gb(cpu.required_ram_bytes))} of memory free. A second profile (a tested set of settings), ${factWhole(cpu.id)}, runs the same AI model on the processor alone, so no particular graphics card is needed. It has completed one real run: on ${longDay(cpu.recorded_on)}, on the laptop Plumb is developed on, it gave the same two answers as the recorded test in ${fact(cpu.review.model_requests)} requests to the model. It has not been tried on any other computer, and how fast it is there is not known.`,
-            html`To‘liq tekshiruv Intel yoki AMD protsessorli, 64 bitli Windows 10 yoki 11 o‘rnatilgan istalgan kompyuterda boshlanishi mumkin, buning uchun taxminan ${fact(gb(cpu.required_ram_bytes))} operativ xotira bo‘sh bo‘lishi kerak. Ikkinchi profil (birga sinab ko‘rilgan sozlamalar to‘plami), ${factWhole(cpu.id)}, o‘sha SI modelini faqat protsessorda ishlatadi, shuning uchun ma’lum bir videokarta talab qilinmaydi. U bir marta haqiqiy sinovdan o‘tgan: ${longDay(cpu.recorded_on)} kuni Plumb ishlab chiqilayotgan noutbukda modelga ${fact(cpu.review.model_requests)} ta so‘rov yuborib, yozib olingan sinovdagi ikki javobning o‘zini berdi. Boshqa hech bir kompyuterda sinab ko‘rilmagan, u yerda qanchalik tez ishlashi ham noma’lum.`,
+            'The same program, for people who want to read the code or change it. It needs Git, uv, Node.js and pnpm.',
+            'O‘sha dasturning o‘zi, kodni o‘qib chiqmoqchi yoki o‘zgartirmoqchi bo‘lganlar uchun. Unga Git, uv, Node.js va pnpm kerak.',
+          )}</dd></div>`
+          : ''}
+        <div><dt>${t('Which computers', 'Qaysi kompyuterlarda')}</dt>
+          <dd>${t(
+            html`A full review can start on any 64-bit Windows 10 or 11 computer with an Intel or AMD processor and about ${fact(gb(cpu.required_ram_bytes))} of memory free. A second profile (a tested set of settings), ${factWhole(cpu.id)}, runs the same AI model on the processor alone, so no particular graphics card is needed. It has completed one real run, from source: on ${longDay(cpu.recorded_on)}, on the laptop Plumb is developed on, it gave the same two answers as the recorded test in ${fact(cpu.review.model_requests)} requests to the model. It has not been tried on any other computer, and how fast it is there is not known.`,
+            html`To‘liq tekshiruv Intel yoki AMD protsessorli, 64 bitli Windows 10 yoki 11 o‘rnatilgan istalgan kompyuterda boshlanishi mumkin, buning uchun taxminan ${fact(gb(cpu.required_ram_bytes))} operativ xotira bo‘sh bo‘lishi kerak. Ikkinchi profil (birga sinab ko‘rilgan sozlamalar to‘plami), ${factWhole(cpu.id)}, o‘sha SI modelini faqat protsessorda ishlatadi, shuning uchun ma’lum bir videokarta talab qilinmaydi. U bir marta, manba kodidan ishga tushirilgan holda, haqiqiy sinovdan o‘tgan: ${longDay(cpu.recorded_on)} kuni Plumb ishlab chiqilayotgan noutbukda modelga ${fact(cpu.review.model_requests)} ta so‘rov yuborib, yozib olingan sinovdagi ikki javobning o‘zini berdi. Boshqa hech bir kompyuterda sinab ko‘rilmagan, u yerda qanchalik tez ishlashi ham noma’lum.`,
           )}</dd></div>
         <div><dt>${t('Where it has run', 'Qayerda ishlagan')}</dt>
           <dd>${t(
@@ -348,8 +355,8 @@ export function render(context) {
           )}</dd></div>
         <div><dt>${t('Downloads', 'Yuklab olinadigan fayllar')}</dt>
           <dd>${t(
-            html`Once, during setup: the AI model and the program that runs it. From source, setup also fetches a pattern scanner (${fact(mb(record.scanner_download.size))}), which helps Plumb decide which questions to ask first. In all, at most ${fact(gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured)))}. Setup shows the size, source and licence of each file before it starts.`,
-            html`Faqat bir marta, o‘rnatish paytida: SI modeli va uni ishga tushiradigan dastur. Manba kodidan o‘rnatilganda bularga andoza skaneri (${fact(mb(record.scanner_download.size))}) ham qo‘shiladi: u Plumbga qaysi savolni birinchi berishni tanlashda yordam beradi. Hammasi birga ko‘pi bilan ${fact(gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured)))}. O‘rnatuvchi har bir faylning hajmi, manbasi va litsenziyasini oldindan ko‘rsatadi.`,
+            html`Once, during setup: the AI model, the program that runs it and a pattern scanner (${fact(mb(record.scanner_download.size))}), which helps Plumb decide which questions to ask first. In all, at most ${fact(gb(Math.max(downloads.cpu, downloads.measured)))}. Setup shows the size, source and licence of each file before it starts.`,
+            html`Faqat bir marta, o‘rnatish paytida: SI modeli, uni ishga tushiradigan dastur va andoza skaneri (${fact(mb(record.scanner_download.size))}). Skaner Plumbga qaysi savolni birinchi berishni tanlashda yordam beradi. Hammasi birga ko‘pi bilan ${fact(gb(Math.max(downloads.cpu, downloads.measured)))}. O‘rnatuvchi har bir faylning hajmi, manbasi va litsenziyasini oldindan ko‘rsatadi.`,
           )}</dd></div>
         <div><dt>${t('Time', 'Vaqt')}</dt>
           <dd>${t(

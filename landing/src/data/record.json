@@ -1087,6 +1087,7 @@
     "id": "cpu-8k",
     "backend": "cpu",
     "recorded_on": "2026-10-10",
+    "from_source": true,
     "required_ram_bytes": 2436385888,
     "same_computer_as_recorded_run": true,
     "first_use_check": {
@@ -1138,23 +1139,42 @@
     "release": "v1.30.0",
     "size": 53652992
   },
-  "package": {
-    "archive_bytes": 97471080,
-    "archive_sha256": "d614855c61db3c311017be7d906eacf2358dc1f3edc90fe578d7b1e20ed4ae1b",
-    "inventoried_files": 2951,
-    "references_checked": 294,
-    "clean_user_profile": false
-  },
   "download": {
-    "name": "plumb-0.0.0-prototype-20261009-h.zip",
-    "archive_bytes": 97183740,
-    "archive_sha256": "471cdb591b1d8a9b2bf4de68c5974d7b36e6260c33c2af63539e4cf07488ebca",
-    "inventoried_files": 2940,
-    "files_left_out": 11,
-    "investigator_files_identical": 63,
-    "has_cpu_profile": false,
-    "checked_at": "2026-10-09T13:09:25.941136+00:00",
-    "doctor_refused_for_memory": true
+    "name": "plumb-0.0.0-prototype-20261010-i.zip",
+    "archive_bytes": 97204958,
+    "archive_sha256": "9926688a3b6b55c778a4b2f1cc5922a1e95d0105e9d3020a8173a3d5d5f3606a",
+    "inventoried_files": 2950,
+    "built_on": "2026-10-10",
+    "checked_at": "2026-10-10T09:57:19.834016+00:00",
+    "source_files_checked": 489,
+    "investigator_files": 64,
+    "investigator_same_as_source": true,
+    "same_investigator_as_cpu_profile_run": true,
+    "since_recorded_test": {
+      "same": 60,
+      "changed": [
+        "backend/review.py",
+        "backend/profiles.py",
+        "backend/vulkan_profile.py"
+      ],
+      "added": [
+        "backend/cpu_profile.py"
+      ]
+    },
+    "has_cpu_profile": true,
+    "has_calibrate_command": true,
+    "first_use_check_importable": true,
+    "doctor_advises_on_models": true,
+    "setup_takes_model": true,
+    "knows_pattern_scanner": true,
+    "model_loaded": false,
+    "downloaded_or_installed": false,
+    "model_already_installed": true,
+    "developer_tools_on_path": false,
+    "clean_user_profile": false,
+    "folder_name_had_spaces": true,
+    "doctor_refused_for_memory": true,
+    "older_report_refused": true
   },
   "software": {
     "python": {
@@ -1267,7 +1287,6 @@
     "docs/results/2026-10-08-m7.7f-current-candidate.md": "46c133921a4c1f004711471649d9406cbc20a88c5f123c1e9ff8e45e9340cdfa",
     "docs/results/2026-10-08-m7.7f-package-smoke.json": "ec552e33922b7a6be16d810564ed4e315ad374f59b26ef0c56fb76bd67e76113",
     "docs/results/2026-10-08-m7.7f-python-checkpoint.json": "3dc9923725c571d91ff70ba7bb5c3df66fd6a42d67bcbc946fa7350bd8380495",
-    "docs/results/2026-10-08-m7.8-handoff-checks.json": "0cc4f51994d02ffbb2ba3d53171d5b694d9859ff1bdc294d46cbc58144cca9a8",
     "docs/results/2026-10-08-m7.8a-journey.json": "58616fd1a115a1e30555d6d07af3236b9bcf03dd1b36781b8aa812447b6ea71c",
     "docs/results/2026-10-08-m7.8a-preparation.json": "a1a333560d48997cf4002611554d98538dbfa124b4afb1a6d7cf4c969f29bb46",
     "docs/results/2026-10-08-m7.8a-raw/questions.json": "7d69dc13ee68974204eefdf268378b00163ca416c40fdc59836f4c5d71c382c6",
@@ -1275,11 +1294,12 @@
     "docs/results/2026-10-08-m7.8a-raw/report.json": "9076a57cb8727ba1d2b21f25ee4e3e05cdab9c1ceabf906935686b1c46638a0f",
     "docs/results/2026-10-08-m7.8a-raw/report.md": "95a1a3b451e51bd3015145da31219d7f088a159687d662f18c9128d498ce57f1",
     "docs/results/2026-10-08-m7.8a-raw/report.sarif": "82d9d7b14f3ccf9a5102d1a91ad14b9000a49b1e7f6e30f7c0e8a23b0b11b022",
-    "docs/results/2026-10-09-m7.9b-package-followup.json": "30e6b9db2e5afbd171bb5f9d98eaa804d114b58e69ddf7f870d30f2b2c6387d6",
-    "docs/results/2026-10-09-m7.9b-package-smoke.json": "ba945a1fe2ec0e56bd40a937f56342af72bb5c9fb76438461c2bc6868c170a3d",
     "docs/results/2026-10-10-a1-cpu-profile-attempt-2.json": "0ebc2ab3dff6891dc20f95df15c62e9f3b1af47b88cef0c5922ac6042fc6f8f4",
     "docs/results/2026-10-10-a1-cpu-profile-first-use-check.json": "a6d94e3de6663743def55d579a3654858e0f2aacf6361d06c0b09d5cbef408d4",
+    "docs/results/2026-10-10-a1-cpu-profile-review/invocation-20261009-195948-576621.json": "904f385749f6319dd31c03afe16a65c46e2e93722606cb575a0b45fd3c4d88f1",
     "docs/results/2026-10-10-a1-cpu-profile-review/report.json": "893e6a2a22bf24a410f1b363f4ba19e703fbe7c1fd8b1463d5dc7d5b6be2fdd7",
+    "docs/results/2026-10-10-m7.9g-package-followup.json": "bc0dd366e2a4c6c8831dbd1396ec7fdbb0cab8689baa5cfcddf6d8f8177319a3",
+    "docs/results/2026-10-10-m7.9g-package-smoke.json": "c2d6996b4b8e8bdb35a5d740f1b3d43aaa2460606cefd7697dd835e986c2fa58",
     "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",
     "labs/tandir/api/tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
     "labs/tandir/api/tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",

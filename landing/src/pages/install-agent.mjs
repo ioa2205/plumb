@@ -48,8 +48,8 @@ export function render(context) {
             html`<strong>Plumb papkasi.</strong> Kod hali ommaga ochilmagan, shuning uchun agent uni o‘zi yuklab ololmaydi. <a href="/contact">Nusxa so‘rang</a>, uni arxivdan chiqaring va papka yo‘lini quyidagi xabarga qo‘ying.`,
           )}</p></div></li>
       <li><div><p>${t(
-        html`<strong>Room for the downloads.</strong> Setup downloads at most ${fact(gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured)))}: the AI model, the program that runs it and a pattern scanner. The agent shows you the list and asks first.`,
-        html`<strong>Yuklanadigan fayllar uchun joy.</strong> O‘rnatuvchi ko‘pi bilan ${fact(gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured)))} yuklab oladi: SI modeli, uni ishga tushiradigan dastur va andoza skaneri. Agent avval ro‘yxatni ko‘rsatib, sizdan ruxsat so‘raydi.`,
+        html`<strong>Room for the downloads.</strong> Setup downloads at most ${fact(gb(Math.max(downloads.cpu, downloads.measured)))}: the AI model, the program that runs it and a pattern scanner. The agent shows you the list and asks first.`,
+        html`<strong>Yuklanadigan fayllar uchun joy.</strong> O‘rnatuvchi ko‘pi bilan ${fact(gb(Math.max(downloads.cpu, downloads.measured)))} yuklab oladi: SI modeli, uni ishga tushiradigan dastur va andoza skaneri. Agent avval ro‘yxatni ko‘rsatib, sizdan ruxsat so‘raydi.`,
       )}</p></div></li>
     </ol>`,
   });

@@ -138,20 +138,37 @@ the general patterns alone when it is not.
 
 When `site.json` has a `download` link, the install page leads with it and the
 overview says Plumb can be downloaded. The size, file count and SHA-256 shown
-come from the saved package checks (`docs/results/2026-10-09-m7.9b-package-*`),
+come from the saved package checks (`docs/results/2026-10-10-m7.9g-package-*`),
 which extraction refuses unless the archive checks passed, the source was
-clean, the recorded report opened, and the investigator files match the
-package used in the recorded run.
+clean, the commands and the browser view passed, and the recorded run's report
+opened unchanged. The record's own top-level verdict is not required: as for
+every earlier package, `doctor` refuses when too little memory is free and the
+report of a run saved by an older version is refused. Extraction records both,
+and the limits page says so.
 
-The download is older than the source code. It was built before the audit
-fixes: it has one profile, so it starts a review only on the measured laptop
-model, and it lacks `calibrate`, `--model`, the model advice in `doctor`, the
-scanner step of setup and the fix that keeps programs in the working folder
-from being started. Pages keep "the download" and "from source" apart and never
-describe the package as having those changes. Extraction records that the
-package's investigator has no `backend/cpu_profile.py`, and pages assert it
-with `holds(...)`, so a newer package stops the build until the wording is
-revisited.
+The download is package I, built on 10 October 2026 from the audited source. It
+holds the same code as the source: the second profile, `calibrate`, `--model`,
+the model advice in `doctor`, the scanner step of setup and the fix that keeps
+programs in the working folder from being started. Extraction records what
+backs that up. The package's own `doctor` and setup preview name those
+features. Its 64 investigator files hash to the same values as the files in
+the repository today (`investigator_same_as_source`) and as the files that
+completed the one `cpu-8k` review (`same_investigator_as_cpu_profile_run`).
+They are no longer the files of the recorded run's package: extraction counts
+how many are the same, changed and new. Pages assert all of this with
+`holds(...)`, so a change to an investigator file, or a different package,
+stops the build until a new package is built or the wording is revisited. The
+working-folder fix has no field of its own; it rests on the package matching
+the source.
+
+What the pages must keep saying, because the records say it: the package's
+checks loaded no model, so it has not run a review; they downloaded and
+installed nothing, because the model was already on the laptop; and it has only
+been tried on the laptop it was built on, under the account that built it. The
+recorded test used an earlier package, and the `cpu-8k` run was done from
+source. A check fails when the overview, the install page or the limits page
+stops saying so, when a page still describes the earlier package, or when
+`site.json` links a package other than the one the records describe.
 
 ## Installing, for people and for AI agents
 
@@ -161,10 +178,13 @@ AI coding agent (in English; the Uzbek page asks the agent to explain in
 Uzbek), and the build writes them to `dist/agent-install.md` for agents that
 read web pages. A check keeps the rules and commands the same in all three.
 Download sizes come from the pinned model, the pinned program that runs it for
-each profile, and the pinned pattern scanner. The source steps leave the
-profile option out of the review command, so Plumb picks the profile for the
-computer it is on; the package steps keep the recorded command, which names the
-only profile the package has.
+each profile, and the pinned pattern scanner; they are the same for the package
+and from source. The package steps on `/install` are the source steps with
+`.\plumb.cmd` in place of `uv run plumb` and the bundled practice app's folder.
+The steps that fetch the code and its tools are left out, because the package
+carries them. Both leave the profile option out of the review command, so Plumb
+picks the profile for the computer it is on. A check keeps the two sets of
+steps the same.
 
 ## Pictures of the saved report
 

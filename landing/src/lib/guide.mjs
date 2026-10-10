@@ -1,14 +1,16 @@
 // @ts-check
-// How to install and run Plumb from source, written once. The install page shows it to
-// people, the agent page turns it into a message for an AI coding agent, and the build writes
-// it out as agent-install.md for agents that read web pages. Commands come from the README's
-// documented commands and the recorded run; sizes come from the pinned downloads.
+// How to install and run Plumb, written once. The install page shows the steps to people,
+// from source and with the Windows package; the agent page turns the source steps into a
+// message for an AI coding agent, and the build writes them out as agent-install.md for agents
+// that read web pages. Commands come from the README's documented commands and the recorded
+// run; sizes come from the pinned downloads.
 
 import { commandLine, gb, mb, minutes } from './format.mjs';
 import { holds } from './holds.mjs';
 import { lang, t } from './lang.mjs';
 
 const PACKAGED_LAB = '.\\app\\labs\\tandir';
+const SOURCE_LAB = 'labs/tandir';
 
 /**
  * @typedef {object} Step
@@ -24,40 +26,42 @@ const PACKAGED_LAB = '.\\app\\labs\\tandir';
  */
 
 /**
- * The recorded review, as the Windows package typed it and as a source checkout types it.
- * The package has one profile and the recorded command names it. From source the option is
- * left out, so Plumb picks the profile that fits the computer it is on.
+ * The recorded review, as the Windows package types it and as a source checkout types it.
+ * The recorded command named the one profile that existed then. Both forms leave the option
+ * out now, so Plumb picks the profile that fits the computer it is on.
  */
 export function reviewCommands(/** @type {any} */ run) {
   holds(run.command.includes(PACKAGED_LAB), 'the recorded command reviews the bundled practice app');
+  holds(run.command[run.command.indexOf('--profile') + 1] === run.profile, 'the recorded command names its profile');
   const without = (/** @type {string[]} */ args, /** @type {string} */ option) => {
     const at = args.indexOf(option);
     return at < 0 ? args : args.filter((_arg, index) => index !== at && index !== at + 1);
   };
-  const args = without(run.command, '--guard-cache');
-  holds(args[args.indexOf('--profile') + 1] === run.profile, 'the recorded command names its profile');
+  const args = without(without(run.command, '--guard-cache'), '--profile');
   return {
     packaged: commandLine(args),
-    source: commandLine(
-      without(args, '--profile').map((/** @type {string} */ arg) => (arg === PACKAGED_LAB ? 'labs/tandir' : arg)),
-      'uv run plumb',
-    ),
+    source: commandLine(args.map((/** @type {string} */ arg) => (arg === PACKAGED_LAB ? SOURCE_LAB : arg)), 'uv run plumb'),
     lab: PACKAGED_LAB,
   };
 }
 
+/** A source command as the Windows package types it: its own launcher and its bundled practice app. */
+const packaged = (/** @type {string} */ line) =>
+  line.replace(/^uv run (?:--locked )?plumb(?= )/, '.\\plumb.cmd').replace(SOURCE_LAB, PACKAGED_LAB);
+
+/** The source steps that the Windows package repeats. The rest fetch the code and its tools, which the package carries. */
+const PACKAGE_STEPS = ['preview', 'install', 'inspect', 'doctor', 'calibrate', 'review', 'report'];
+
 /**
- * What setup downloads, in bytes, for each way of getting Plumb. Run from source it fetches
- * the AI model, the program that runs it for the chosen profile, and the pattern scanner. The
- * package predates the scanner step and the second profile.
+ * What setup downloads, in bytes: the AI model, the program that runs it for the chosen
+ * profile, and the pattern scanner. It is the same for the Windows package and from source.
  * @param {any} record
  */
 export function downloadSizes(record) {
   const { model, runtime_download: measuredRuntime, cpu_runtime_download: cpuRuntime, scanner_download: scanner } = record;
   return {
-    sourceCpu: model.size + cpuRuntime.size + scanner.size,
-    sourceMeasured: model.size + measuredRuntime.size + scanner.size,
-    packageMeasured: model.size + measuredRuntime.size,
+    cpu: model.size + cpuRuntime.size + scanner.size,
+    measured: model.size + measuredRuntime.size + scanner.size,
   };
 }
 
@@ -67,14 +71,18 @@ export const repositoryFolder = (/** @type {string} */ repository) => repository
 /**
  * @param {any} record
  * @param {any} site
- * @returns {{ steps: Step[], downloads: ReturnType<typeof downloadSizes> }}
+ * @returns {{ steps: Step[], packageSteps: Step[], downloads: ReturnType<typeof downloadSizes> }}
  */
 export function guide(record, site) {
-  const { run, model, runtime_download: runtime, cpu_runtime_download: cpuRuntime, scanner_download: scanner, cpu_profile: cpu } = record;
+  const { run, model, runtime_download: runtime, cpu_runtime_download: cpuRuntime, scanner_download: scanner, cpu_profile: cpu, download } = record;
   const review = reviewCommands(run);
   const check = cpu.first_use_check;
   holds(cpu.id === 'cpu-8k' && run.profile === 'mx350-vulkan-8k', 'the two profiles are mx350-vulkan-8k and cpu-8k');
   holds(check.answers === 3 && check.leak_pairs === 10, 'the first-use check asks three questions and sends ten pairs of requests');
+  holds(
+    download.investigator_same_as_source && download.source_files_checked > 0 && download.has_cpu_profile && download.has_calibrate_command && download.knows_pattern_scanner,
+    'the Windows package takes the same steps as the source, with its own launcher',
+  );
 
   /** @type {Step} */
   const code = site.repository
@@ -174,10 +182,10 @@ export function guide(record, site) {
       id: 'review',
       title: t('Run the recorded review.', 'Yozib olingan tekshiruvni takrorlang.'),
       detail: t(
-        `Asks the AI model about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: ${run.profile} on the measured laptop model, ${cpu.id} on any other. On the measured laptop model the recorded run took ${minutes(run.elapsed_seconds)}. How long it takes on another computer is not known.`,
-        `SI modelidan sinov ilovasidagi chek va hisob-faktura haqida so‘raydi va oxirida tekshiruv identifikatorini chiqaradi. Profilni Plumb shu kompyuterga qarab o‘zi tanlaydi: o‘lchangan noutbuk modelida ${run.profile}, boshqa har qanday kompyuterda ${cpu.id}. O‘lchangan noutbuk modelida yozib olingan sinov ${minutes(run.elapsed_seconds)} davom etgan. Boshqa kompyuterda qancha vaqt ketishi noma’lum.`,
+        `Asks the AI model about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: ${run.profile} on the measured laptop model, ${cpu.id} on any other. With ${cpu.id}, the first review on a computer begins with the short check from the step before, unless that check has already passed there. On the measured laptop model the recorded run took ${minutes(run.elapsed_seconds)}. How long it takes on another computer is not known.`,
+        `SI modelidan sinov ilovasidagi chek va hisob-faktura haqida so‘raydi va oxirida tekshiruv identifikatorini chiqaradi. Profilni Plumb shu kompyuterga qarab o‘zi tanlaydi: o‘lchangan noutbuk modelida ${run.profile}, boshqa har qanday kompyuterda ${cpu.id}. ${cpu.id} profilida kompyuterdagi birinchi tekshiruv oldingi qadamdagi qisqa sinov bilan boshlanadi; u yerda bu sinovdan allaqachon o‘tilgan bo‘lsa, sinov takrorlanmaydi. O‘lchangan noutbuk modelida yozib olingan sinov ${minutes(run.elapsed_seconds)} davom etgan. Boshqa kompyuterda qancha vaqt ketishi noma’lum.`,
       ),
-      agent: `Only if the person asks for a review: it loads the AI model. It asks about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: ${run.profile} on the measured laptop model, ${cpu.id} on any other. On the measured laptop model the recorded run took ${minutes(run.elapsed_seconds)}; how long it takes on another computer is not known.`,
+      agent: `Only if the person asks for a review: it loads the AI model. It asks about the receipt and the invoice of the practice app and prints a run ID at the end. Plumb picks the profile for this computer: ${run.profile} on the measured laptop model, ${cpu.id} on any other. With ${cpu.id}, the first review on a computer begins with the check from the step before, unless that check has already passed there. On the measured laptop model the recorded run took ${minutes(run.elapsed_seconds)}; how long it takes on another computer is not known.`,
       commands: [review.source],
     },
     {
@@ -200,7 +208,14 @@ export function guide(record, site) {
       optional: true,
     },
   ];
-  return { steps, downloads: downloadSizes(record) };
+  const packageSteps = steps
+    .filter((step) => PACKAGE_STEPS.includes(step.id))
+    .map((step) => ({ ...step, commands: step.commands?.map(packaged), otherCommands: step.otherCommands?.map(packaged) }));
+  holds(
+    packageSteps.find((step) => step.id === 'review')?.commands?.[0] === review.packaged,
+    'the package review command is the recorded one, with the profile left for Plumb to pick',
+  );
+  return { steps, packageSteps, downloads: downloadSizes(record) };
 }
 
 /** What Plumb says when it refuses, and what to do. Shared by the install page and the agent file. */
@@ -213,8 +228,8 @@ export function refusals() {
     {
       says: t('No review profile for this computer', 'Bu kompyuter uchun tekshiruv profili yo‘q'),
       action: t(
-        'With the download, this is any computer other than the measured laptop model. Install from source instead: there the cpu-8k profile covers other 64-bit Windows computers. Mapping with inspect and saved reports work without a profile.',
-        'Tayyor to‘plamda o‘lchangan noutbuk modelidan boshqa har qanday kompyuterda shunday bo‘ladi. Buning o‘rniga manba kodidan o‘rnating: u yerda cpu-8k profili boshqa 64 bitli Windows kompyuterlarni ham qamraydi. inspect buyrug‘i va saqlangan hisobotlar profilsiz ham ishlaydi.',
+        'A review with the AI model needs 64-bit Windows on an Intel or AMD processor. On any other system, install with the --inspect-only option instead: mapping with inspect and saved reports work without a profile.',
+        'SI modeli bilan tekshiruv uchun Intel yoki AMD protsessorli kompyuterda 64 bitli Windows kerak. Boshqa tizimlarda buning o‘rniga --inspect-only parametri bilan o‘rnating: inspect buyrug‘i va saqlangan hisobotlar profilsiz ham ishlaydi.',
       ),
     },
     {
@@ -238,8 +253,8 @@ export function refusals() {
     {
       says: t('No supported checks match', 'Mos keladigan tekshiruv topilmadi'),
       action: t(
-        'From source, Plumb names the kinds of check your project does have and the exact option to use, for example --family nextjs_exposure for a project with only Next.js code. If it names none, read the overview to see what it recognised. An empty selection is not a safety verdict.',
-        'Manba kodidan o‘rnatilgan Plumb loyihangizda qaysi turdagi tekshiruvlar borligini va aynan qaysi parametrni yozish kerakligini aytadi, masalan faqat Next.js kodi bor loyiha uchun --family nextjs_exposure. Hech birini aytmasa, Plumb nimani taniganini bilish uchun umumiy ko‘rinishni o‘qing. Bo‘sh natija «xavfsiz» degani emas.',
+        'Plumb names the kinds of check your project does have and the exact option to use, for example --family nextjs_exposure for a project with only Next.js code. If it names none, read the overview to see what it recognised. An empty selection is not a safety verdict.',
+        'Plumb loyihangizda qaysi turdagi tekshiruvlar borligini va aynan qaysi parametrni yozish kerakligini aytadi, masalan faqat Next.js kodi bor loyiha uchun --family nextjs_exposure. Hech birini aytmasa, Plumb nimani taniganini bilish uchun umumiy ko‘rinishni o‘qing. Bo‘sh natija «xavfsiz» degani emas.',
       ),
     },
     {
@@ -341,7 +356,7 @@ export function agentFile(record, site) {
     '',
     '- Windows 10 or 11, 64-bit, and PowerShell. On macOS or Linux every `plumb` command prints one sentence saying the system is not supported yet, and stops.',
     '- Git, uv, Node.js 24 or newer, and pnpm. Plumb’s setup does not install them. uv provides Python 3.12.',
-    `- For a full review: ${gb(Math.max(downloads.sourceCpu, downloads.sourceMeasured))} of free disk space for the downloads, and enough free memory for the profile Plumb picks. That is \`${run.profile}\` on an Intel Core i5-1135G7 laptop with ${run.machine.gpu} graphics, and \`${cpu.id}\` on any other 64-bit Windows computer with an x64 processor: the same AI model on the processor alone, needing ${gb(cpu.required_ram_bytes)} of free RAM. \`${cpu.id}\` has completed one real run, on the laptop Plumb is developed on. It has not been tried on a second computer, and how fast it is there is not known.`,
+    `- For a full review: ${gb(Math.max(downloads.cpu, downloads.measured))} of free disk space for the downloads, and enough free memory for the profile Plumb picks. That is \`${run.profile}\` on an Intel Core i5-1135G7 laptop with ${run.machine.gpu} graphics, and \`${cpu.id}\` on any other 64-bit Windows computer with an x64 processor: the same AI model on the processor alone, needing ${gb(cpu.required_ram_bytes)} of free RAM. \`${cpu.id}\` has completed one real run, on the laptop Plumb is developed on. It has not been tried on a second computer, and how fast it is there is not known.`,
     site.repository ? `- The code: ${site.repository}` : '- The code: not public yet. The person must give you the folder they received.',
     '',
     '## Steps',

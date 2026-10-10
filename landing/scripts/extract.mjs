@@ -9,7 +9,7 @@
 // anything that looks private. This script needs the whole repository; the build does not.
 
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -440,6 +440,9 @@ function extractRuntime() {
 
 // ---------------------------------------------------------------- the second profile
 
+/** The summary record of the one real run of the processor-only profile. */
+const CPU_RUN = '2026-10-10-a1-cpu-profile-attempt-2.json';
+
 /** "3 of 3" in a summary record, as two numbers. */
 function countOf(/** @type {unknown} */ value) {
   const found = String(value).match(/^(\d+) of (\d+)$/);
@@ -457,7 +460,7 @@ function countOf(/** @type {unknown} */ value) {
  * @param {any} recorded the recorded run, as extracted above
  */
 function extractCpuProfile(recorded) {
-  const name = '2026-10-10-a1-cpu-profile-attempt-2.json';
+  const name = CPU_RUN;
   const summary = json(`${RESULTS}/${name}`);
   const check = json(summary.first_use_check.record);
   const report = json(`${summary.review.records}report.json`);
@@ -510,6 +513,8 @@ function extractCpuProfile(recorded) {
     id: summary.profile,
     backend: check.profile.backend,
     recorded_on: recordedOn,
+    // The review was typed in a source checkout, at a named commit, against the lab's source folder.
+    from_source: typeof summary.commit === 'string' && /^plumb review labs\/tandir /.test(review.command),
     required_ram_bytes: summary.required_ram_bytes,
     // The same laptop as the recorded run: same processor, same installed memory.
     same_computer_as_recorded_run:
@@ -533,6 +538,27 @@ function extractCpuProfile(recorded) {
       findings,
     },
   };
+}
+
+/**
+ * The investigator files, by hash, that completed the processor-only review. The review's own
+ * invocation record lists them. Only the hashes are read; nothing else in it is published.
+ * @param {any} cpuProfile the processor-only run, as extracted above
+ * @returns {Record<string, string>}
+ */
+function extractCpuInvestigator(cpuProfile) {
+  const folder = String(json(`${RESULTS}/${CPU_RUN}`).review.records).replace(/\/$/, '');
+  const found = readdirSync(join(REPO, folder)).filter((entry) => /^invocation-[\d-]+\.json$/.test(entry));
+  must(found.length === 1, `expected one invocation record of the processor-only review, found ${found.length}`);
+  const invocation = json(`${folder}/${found[0]}`);
+  must(
+    invocation.run_id === cpuProfile.review.id &&
+      invocation.profile.id === cpuProfile.id &&
+      invocation.lifecycle === cpuProfile.review.lifecycle &&
+      invocation.requests.length === cpuProfile.review.model_requests,
+    'the invocation record is not the processor-only review',
+  );
+  return invocation.implementation;
 }
 
 // ---------------------------------------------------------------- model, package, checks
@@ -649,48 +675,95 @@ function extractScannerPin() {
 }
 
 /**
- * The Windows package offered for download. It is a rebuild of the recorded run's package
- * that leaves out launcher files naming the build folder and two private names; the
- * investigator code is checked to be identical. Only facts the checks recorded are kept.
+ * The Windows package offered for download, built from the audited source. Only facts its two
+ * saved checks recorded are kept. Neither check loaded a model, so nothing here says that the
+ * package has run a review: the pages have to say that it has not.
+ *
+ * The smoke record's own top-level verdict is not required. As for every earlier package, two
+ * of its commands refuse by design (doctor when too little memory is free, and the report of a
+ * run saved by an older version); both are recorded below instead.
+ * @param {any} run the recorded run, as extracted above
+ * @param {any} cpuProfile the processor-only run, as extracted above
+ * @param {Record<string, string>} cpuInvestigator the files that completed that run, by hash
+ * @param {any} scanner the pinned pattern scanner
  */
-function extractDownload() {
-  const smoke = json(`${RESULTS}/2026-10-09-m7.9b-package-smoke.json`);
-  const followup = json(`${RESULTS}/2026-10-09-m7.9b-package-followup.json`);
+function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
+  const smoke = json(`${RESULTS}/2026-10-10-m7.9g-package-smoke.json`);
+  const followup = json(`${RESULTS}/2026-10-10-m7.9g-package-followup.json`);
   const recorded = json(`${RESULTS}/2026-10-08-m7.7f-package-smoke.json`).artifact;
   const { artifact } = smoke;
+  must(smoke.package === followup.package, 'the two download checks name different packages');
   must(artifact.passed && artifact.zip_inventory_and_hashes_pass && artifact.private_files_absent, 'download artifact checks did not pass');
   must(artifact.source_dirty === false, 'download was built from uncommitted source');
-  must(JSON.stringify(artifact.implementation_sha256) === JSON.stringify(recorded.implementation_sha256), 'download investigator differs from the recorded package');
-  const passed = Object.fromEntries(smoke.checks.map((/** @type {any} */ check) => [check.args[0], check.passed]));
-  must(passed['--help'] && passed.setup && passed.inspect && smoke.web.passed, 'download command checks did not pass');
+  const check = (/** @type {string} */ command) => smoke.checks.find((/** @type {any} */ entry) => entry.args[0] === command);
+  must(check('--help')?.passed && check('setup')?.passed && check('inspect')?.passed && smoke.web.passed, 'download command checks did not pass');
   must(followup.report_opened && followup.current_report_unchanged, 'download did not open the recorded report');
-  const name = String(artifact.archive).split(/[\\/]/).pop();
+  must(
+    followup.checks.some((/** @type {any} */ entry) => entry.passed && entry.args[0] === 'report' && entry.args[1] === run.id),
+    'the report the download opened is not the recorded run',
+  );
+  const name = String(artifact.archive).split(/[\\/]/).pop() ?? '';
   must(/^plumb-[\w.-]+\.zip$/.test(name), 'unexpected download name');
+  const built = name.match(/-(\d{4})(\d{2})(\d{2})-[a-z]\.zip$/);
+  must(built, 'the download name carries no build day');
+
+  // The investigator: the files Plumb records as its identity in every review.
+  const files = /** @type {Record<string, string>} */ (artifact.implementation_sha256);
+  const before = /** @type {Record<string, string>} */ (recorded.implementation_sha256);
+  const names = Object.keys(files);
+  must(Object.keys(before).every((file) => file in files), 'the download dropped an investigator file of the recorded package');
+  must(names.every((file) => artifact.implementation_matches[file] === true), 'a packaged investigator file differs from its declared identity');
+  const sameAs = (/** @type {Record<string, string>} */ other) =>
+    Object.keys(other).length === names.length && names.every((file) => other[file] === files[file]);
+  // The same files in the source code as it stands now, hashed here rather than taken on trust.
+  const sourceNow = Object.fromEntries(
+    names.map((file) => [file, existsSync(join(REPO, file)) ? sha256(readFileSync(join(REPO, file))) : '']),
+  );
+
+  // What the package's own commands printed, with no model loaded.
+  const doctor = JSON.parse(check('doctor').stdout);
+  const preview = JSON.parse(check('setup').stdout);
+  const olderReport = check('report');
+
   return {
     name,
     archive_bytes: artifact.archive_bytes,
     archive_sha256: artifact.archive_sha256,
     inventoried_files: artifact.inventoried_files,
-    files_left_out: recorded.inventoried_files - artifact.inventoried_files,
-    investigator_files_identical: Object.keys(artifact.implementation_sha256).length,
-    // The package was built before the processor-only profile: its investigator has no such file.
-    has_cpu_profile: Object.keys(artifact.implementation_sha256).includes('backend/cpu_profile.py'),
+    built_on: /** @type {RegExpMatchArray} */ (built).slice(1).join('-'),
     checked_at: smoke.created_at,
-    doctor_refused_for_memory: followup.doctor_summary?.messages?.some((/** @type {string} */ m) => /RAM/.test(m)) ?? false,
-  };
-}
-
-function extractPackage() {
-  const handoff = json(`${RESULTS}/2026-10-08-m7.8-handoff-checks.json`);
-  const smoke = json(`${RESULTS}/2026-10-08-m7.7f-package-smoke.json`);
-  must(handoff.passed === true, 'handoff verification did not pass');
-  must(smoke.artifact.archive_sha256 === handoff.archive_sha256, 'package records disagree');
-  return {
-    archive_bytes: handoff.archive_bytes,
-    archive_sha256: handoff.archive_sha256,
-    inventoried_files: smoke.artifact.inventoried_files,
-    references_checked: handoff.local_references_checked,
+    // Every source file inside the package was compared with the checkout it was built from;
+    // the artifact check does not pass unless all of them match.
+    source_files_checked: artifact.current_source_files_checked,
+    investigator_files: names.length,
+    investigator_same_as_source: sameAs(sourceNow),
+    same_investigator_as_cpu_profile_run: sameAs(cpuInvestigator),
+    since_recorded_test: {
+      same: names.filter((file) => before[file] === files[file]).length,
+      changed: names.filter((file) => file in before && before[file] !== files[file]),
+      added: names.filter((file) => !(file in before)),
+    },
+    has_cpu_profile: names.includes('backend/cpu_profile.py') && followup.profile_ids.includes(cpuProfile.id),
+    has_calibrate_command: followup.has_calibrate_command === true,
+    first_use_check_importable: followup.first_use_modules_import === true,
+    // doctor names the default model and says, model by model, whether it fits in free memory.
+    doctor_advises_on_models:
+      doctor.model_recommendation?.default_model === run.model.id &&
+      doctor.model_candidates.length > 1 &&
+      doctor.model_candidates.every((/** @type {any} */ entry) => 'fits_available_ram' in entry),
+    // The setup preview carries the model chosen with --model; earlier packages had no such field.
+    setup_takes_model: 'model' in preview,
+    knows_pattern_scanner: doctor.pattern_scanner?.name === scanner.name && doctor.pattern_scanner?.release === scanner.release,
+    model_loaded: [smoke.model_loaded, followup.model_loaded, followup.model_loaded_by_doctor, doctor.model_loaded, preview.model_loaded].some((value) => value !== false),
+    // The checks used the model and its runner as already installed on the laptop: the
+    // package's own install step fetched nothing.
+    downloaded_or_installed: [smoke.downloads_or_installation, followup.downloads_started_by_doctor, doctor.downloads_started].some((value) => value !== false),
+    model_already_installed: followup.doctor_summary?.model_verified === true && followup.doctor_summary?.runtime_verified === true,
+    developer_tools_on_path: smoke.developer_tools_on_path || followup.developer_tools_on_path,
     clean_user_profile: smoke.clean_user_profile,
+    folder_name_had_spaces: smoke.package_path_contains_spaces,
+    doctor_refused_for_memory: followup.doctor_summary?.messages?.some((/** @type {string} */ m) => /RAM/.test(m)) ?? false,
+    older_report_refused: smoke.saved_report_is_historical === true && olderReport?.passed === false && /refused/i.test(olderReport.stdout),
   };
 }
 
@@ -846,6 +919,7 @@ function main() {
   const tokens = tokensCss();
   const run = extractRun();
   const cpuProfile = extractCpuProfile(run);
+  const scanner = extractScannerPin();
   const record = {
     run,
     excerpts: extractExcerpts(),
@@ -856,9 +930,8 @@ function main() {
     runtime_download: extractRuntimePin(run.toolchain.backend),
     cpu_profile: cpuProfile,
     cpu_runtime_download: extractRuntimePin(cpuProfile.backend),
-    scanner_download: extractScannerPin(),
-    package: extractPackage(),
-    download: extractDownload(),
+    scanner_download: scanner,
+    download: extractDownload(run, cpuProfile, extractCpuInvestigator(cpuProfile), scanner),
     software: extractSoftware(),
     development: extractDevelopment(),
     sources: Object.fromEntries([...sources.entries()].sort(([a], [b]) => a.localeCompare(b))),
