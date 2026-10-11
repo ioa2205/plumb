@@ -332,6 +332,12 @@ def build(output: Path, cache: Path) -> Path:
         copy_file(ROOT / name, output / "inputs" / name)
     copy_file(requirements, output / "inputs/requirements.txt")
     copy_file(PINS, output / "inputs/portable.json")
+    # Public checkouts have LICENSE at their root; internal checkouts keep the
+    # reviewed publication notice beside the exporter. Ship the same notice.
+    license_source = ROOT / "LICENSE"
+    if not license_source.is_file():
+        license_source = ROOT / "docs/public-export/LICENSE"
+    copy_file(license_source, output / "LICENSE")
     copy_file(Path(__file__).with_name("portable_launch.py"), output / "launch.py")
     (runtime / "python312._pth").write_text("python312.zip\n.\n../app\n../deps\n", encoding="utf-8")
     (output / "plumb.cmd").write_text(
@@ -361,7 +367,8 @@ def build(output: Path, cache: Path) -> Path:
         "--approve-large-downloads. Existing verified assets are reused.\n"
         "Inference stays local. There are two profiles: the measured laptop profile, and\n"
         "cpu-8k for other 64-bit Intel or AMD Windows computers, whose first review begins\n"
-        "with a check of the model runner. Only the first has measurements behind it.\n\n"
+        "with a check of the model runner. Both were exercised on the development laptop;\n"
+        "a second computer has not been tested.\n\n"
         "TERMINAL ALTERNATIVES\n"
         'plumb.cmd inspect "D:\\path\\to\\project"\n'
         'plumb.cmd review "D:\\path\\to\\project" --limit 1\n'
@@ -371,6 +378,15 @@ def build(output: Path, cache: Path) -> Path:
         "Saved reports open without a model; completed matching receipt replays are shown.\n"
         "The replay command needs an optional pinned Tandir execution environment that\n"
         "this portable package does not include. Source reviews do not require that runner.\n\n"
+        "CURRENT EXPERIMENTAL TOOLS\n"
+        "Local conversations, private assessment scopes and reviewed observation reports\n"
+        "are included. plumb.cmd chat --help and plumb.cmd assess --help describe them.\n"
+        "Website-start previews also require the optional pinned practice-app runner.\n"
+        "Approved HTTP collection requires the separate hash-pinned practice-app runner;\n"
+        "external website testing stays disabled and collected artifacts need human review.\n"
+        "Local security playbooks and fact/decomposed reasoning options are included.\n"
+        "They have software checks, but the latest model comparison did not establish\n"
+        "better accuracy. The baseline stays the default and all evidence gates remain.\n\n"
         "STORAGE AND PROTOTYPE LIMITS\n"
         "Data and reports stay outside this installation. Do not add files here.\n"
         "Packaged local inference/resume was checked on the development laptop with an\n"
@@ -379,9 +395,12 @@ def build(output: Path, cache: Path) -> Path:
         "and known model-quality gaps are shown by setup. This is not a certified release.\n"
         "Python 3.12.5 and Node 24.11.0 preserve development versions; runtime upgrades\n"
         "and release signing are not certified by this prototype build.\n"
-        "Python/dependency licenses remain in python/ and deps/*dist-info/. Node's\n"
+        "Plumb's MIT notice is in LICENSE. Python/dependency licenses remain in python/\n"
+        "and deps/*dist-info/. Node's\n"
         "LICENSE is in node/. TypeScript notices are beside its package. Frontend\n"
-        "notices are in licenses/frontend/. release.json records inputs and file hashes;\n"
+        "notices are in licenses/frontend/. Security-card attribution and the separate\n"
+        "CC BY-SA data licence are in app/knowledge/data/. release.json records inputs\n"
+        "and file hashes;\n"
         "it detects damage, not a malicious replacement of both launcher and inventory.\n",
         encoding="utf-8",
     )
@@ -403,6 +422,8 @@ def build(output: Path, cache: Path) -> Path:
                     "agent",
                     "verification",
                     "frontend",
+                    "knowledge",
+                    "eval",
                 ]
             )
         ),

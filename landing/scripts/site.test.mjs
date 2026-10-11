@@ -17,6 +17,7 @@ import { holds } from '../src/lib/holds.mjs';
 import { AGENT_RULES, AGENT_RULES_FOR_FILE, guide } from '../src/lib/guide.mjs';
 import { localPath, setLang, t } from '../src/lib/lang.mjs';
 import { tone } from '../src/lib/tone.mjs';
+import { render as installPage } from '../src/pages/install.mjs';
 import { build } from './build.mjs';
 import { PRIVATE_PATTERNS, PRIVATE_WORDS_LOADED } from './private.mjs';
 
@@ -116,13 +117,20 @@ test('the download is the package its saved checks describe, and is not said to 
 
   // What its checks recorded: the same code as the source, and no model loaded.
   assert.equal(download.investigator_same_as_source, true, 'its investigator is the one in the source code');
-  assert.equal(download.same_investigator_as_cpu_profile_run, true, 'and the one that completed the processor-only review');
+  assert.equal(download.same_investigator_as_cpu_profile_run, false, 'the investigator has changed since the processor-only review');
   assert.ok(download.has_cpu_profile && download.has_calibrate_command && download.first_use_check_importable, `it has ${cpu.id} and its first-use check`);
   assert.ok(download.doctor_advises_on_models && download.setup_takes_model && download.knows_pattern_scanner, 'it has the model advice, --model and the pattern scanner');
   assert.equal(download.model_loaded, false, 'its checks loaded no model');
   assert.equal(download.downloaded_or_installed, false, 'its checks downloaded and installed nothing');
   assert.equal(download.clean_user_profile, false, 'a fresh Windows account was not tried');
   assert.equal(download.developer_tools_on_path, false);
+  assert.equal(download.features.security_card_count, 3);
+  assert.equal(download.features.security_card_license_present, true);
+  assert.equal(download.features.baseline_default_preserved, true);
+  assert.equal(download.features.website_missing_runner_refused, true);
+  assert.equal(download.features.external_testing_enabled, false);
+  assert.equal(record.observation_comparison.acceptance_met, false);
+  assert.equal(record.observation_comparison.completed_analyses_inconclusive, true);
   // It is no longer the investigator of the recorded test, file for file, and the pages must not say so.
   const since = download.since_recorded_test;
   assert.equal(since.same + since.changed.length + since.added.length, download.investigator_files);
@@ -143,6 +151,11 @@ test('the download is the package its saved checks describe, and is not said to 
   }
   // Nothing still describes the earlier package, which was older than the source.
   for (const path of [...pages(), join(DIST, 'agent-install.md')]) {
+    assert.doesNotMatch(
+      text(path),
+      /investigator is the one that completed|investigator files are the ones that completed|tekshiruvchisi.+tekshiruvni bajargan kodning o‘zi|ta fayli faqat protsessorda o‘tkazilgan tekshiruvni bajargan fayllarning o‘zi/i,
+      `${name(path)}: attributes an earlier model review to the current package`,
+    );
     assert.doesNotMatch(
       text(path),
       /older than the source|download is older|not equal today|lacks one safety fix|only profile in the download|built before this fix|investigator from the recorded test/i,
@@ -176,6 +189,24 @@ test('the package steps are the source steps with the package’s own launcher',
   for (const step of [...steps, ...packageSteps]) {
     for (const line of [...(step.commands ?? []), ...(step.otherCommands ?? [])]) assert.doesNotMatch(line, /--profile/, `${step.id}: names a profile`);
   }
+});
+
+test('the package page refuses changed safety defaults and inherited model acceptance', () => {
+  const context = () => ({
+    record: structuredClone(record), site,
+    assets: { css: '/assets/site.css', js: '/assets/site.js' },
+    themeColor: { day: '', night: '' },
+  });
+  assert.doesNotThrow(() => installPage(context()));
+  const external = context();
+  external.record.download.features.external_testing_enabled = true;
+  assert.throws(() => installPage(external), /saved records do not/);
+  const historical = context();
+  historical.record.download.same_investigator_as_cpu_profile_run = true;
+  assert.throws(() => installPage(historical), /saved records do not/);
+  const claimed = context();
+  claimed.record.observation_comparison.acceptance_met = true;
+  assert.throws(() => installPage(claimed), /saved records do not/);
 });
 
 test('nothing private is published', () => {

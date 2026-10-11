@@ -1140,16 +1140,16 @@
     "size": 53652992
   },
   "download": {
-    "name": "plumb-0.0.0-prototype-20261010-i.zip",
-    "archive_bytes": 97204958,
-    "archive_sha256": "9926688a3b6b55c778a4b2f1cc5922a1e95d0105e9d3020a8173a3d5d5f3606a",
-    "inventoried_files": 2950,
-    "built_on": "2026-10-10",
-    "checked_at": "2026-10-10T09:57:19.834016+00:00",
-    "source_files_checked": 489,
+    "name": "plumb-0.0.0-prototype-20261011-j.zip",
+    "archive_bytes": 97404466,
+    "archive_sha256": "022885c0ca6faa66a99f89ec1bc49c8c5162835974d365f017c76f7d387b0fdb",
+    "inventoried_files": 3033,
+    "built_on": "2026-10-11",
+    "checked_at": "2026-10-11T18:32:11.481534+00:00",
+    "source_files_checked": 571,
     "investigator_files": 64,
     "investigator_same_as_source": true,
-    "same_investigator_as_cpu_profile_run": true,
+    "same_investigator_as_cpu_profile_run": false,
     "since_recorded_test": {
       "same": 60,
       "changed": [
@@ -1173,8 +1173,23 @@
     "developer_tools_on_path": false,
     "clean_user_profile": false,
     "folder_name_had_spaces": true,
-    "doctor_refused_for_memory": true,
-    "older_report_refused": true
+    "launch_rechecks_memory": true,
+    "doctor_refused_for_memory": false,
+    "older_report_refused": true,
+    "features": {
+      "included_modules_import": true,
+      "security_card_count": 3,
+      "security_card_license_present": true,
+      "baseline_default_preserved": true,
+      "website_missing_runner_refused": true,
+      "external_testing_enabled": false
+    }
+  },
+  "observation_comparison": {
+    "acceptance_met": false,
+    "completed_analyses_inconclusive": true,
+    "conditions_unrun": true,
+    "baseline_retained": true
   },
   "software": {
     "python": {
@@ -1274,7 +1289,7 @@
     ]
   },
   "sources": {
-    "backend/profiles.py": "727136d0b4ea709c3d7bffb89b4904549b78e1a08db5aa99aa2d505e42494073",
+    "backend/profiles.py": "0a5bc199e1d4679c86b9176cf34f591cf5f342d8ee2897c20b29c1c66d6eba6e",
     "backend/setup/pins/llama_cpp.toml": "4e289c977fa76f257b37edcfc67769f71a39b142b60e67b6f4bbf754594c1fca",
     "backend/setup/pins/models.toml": "5aaecdee08e3476305857284b3ace0ccb70a0540ede36e0eb8acaadabd620088",
     "backend/setup/pins/opengrep.toml": "2f90d9ca77c8151e041293733853d431ac8dcc4c16ecb599286671f7dbf31bc4",
@@ -1298,8 +1313,9 @@
     "docs/results/2026-10-10-a1-cpu-profile-first-use-check.json": "a6d94e3de6663743def55d579a3654858e0f2aacf6361d06c0b09d5cbef408d4",
     "docs/results/2026-10-10-a1-cpu-profile-review/invocation-20261009-195948-576621.json": "904f385749f6319dd31c03afe16a65c46e2e93722606cb575a0b45fd3c4d88f1",
     "docs/results/2026-10-10-a1-cpu-profile-review/report.json": "893e6a2a22bf24a410f1b363f4ba19e703fbe7c1fd8b1463d5dc7d5b6be2fdd7",
-    "docs/results/2026-10-10-m7.9g-package-followup.json": "bc0dd366e2a4c6c8831dbd1396ec7fdbb0cab8689baa5cfcddf6d8f8177319a3",
-    "docs/results/2026-10-10-m7.9g-package-smoke.json": "c2d6996b4b8e8bdb35a5d740f1b3d43aaa2460606cefd7697dd835e986c2fa58",
+    "docs/results/2026-10-11-m7.9i-package-followup.json": "0259ba80f23d788e4b3dbcec706542ef8d4a8e64ddc9dbbd52a7c6a2fc9d2617",
+    "docs/results/2026-10-11-m7.9i-package-smoke.json": "8ee475e2ba02128e6472609b6985e9c1fd8b6bd3652e1b01186a41519f6a900d",
+    "docs/results/2026-10-11-tool-assisted/accounting.json": "badc13b38804b2337c4460aaa77ec2b22722c17fe037b7df5d7882fcd11621b7",
     "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",
     "labs/tandir/api/tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
     "labs/tandir/api/tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",

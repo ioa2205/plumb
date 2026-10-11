@@ -675,21 +675,20 @@ function extractScannerPin() {
 }
 
 /**
- * The Windows package offered for download, built from the audited source. Only facts its two
+ * The Windows package offered for download, built from the current source. Only facts its two
  * saved checks recorded are kept. Neither check loaded a model, so nothing here says that the
  * package has run a review: the pages have to say that it has not.
  *
- * The smoke record's own top-level verdict is not required. As for every earlier package, two
- * of its commands refuse by design (doctor when too little memory is free, and the report of a
- * run saved by an older version); both are recorded below instead.
+ * The smoke record's own top-level verdict is not required: the preserved report of a run saved
+ * by an older version refuses by design. That refusal is recorded below separately.
  * @param {any} run the recorded run, as extracted above
  * @param {any} cpuProfile the processor-only run, as extracted above
  * @param {Record<string, string>} cpuInvestigator the files that completed that run, by hash
  * @param {any} scanner the pinned pattern scanner
  */
 function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
-  const smoke = json(`${RESULTS}/2026-10-10-m7.9g-package-smoke.json`);
-  const followup = json(`${RESULTS}/2026-10-10-m7.9g-package-followup.json`);
+  const smoke = json(`${RESULTS}/2026-10-11-m7.9i-package-smoke.json`);
+  const followup = json(`${RESULTS}/2026-10-11-m7.9i-package-followup.json`);
   const recorded = json(`${RESULTS}/2026-10-08-m7.7f-package-smoke.json`).artifact;
   const { artifact } = smoke;
   must(smoke.package === followup.package, 'the two download checks name different packages');
@@ -698,6 +697,14 @@ function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
   const check = (/** @type {string} */ command) => smoke.checks.find((/** @type {any} */ entry) => entry.args[0] === command);
   must(check('--help')?.passed && check('setup')?.passed && check('inspect')?.passed && smoke.web.passed, 'download command checks did not pass');
   must(followup.report_opened && followup.current_report_unchanged, 'download did not open the recorded report');
+  const features = followup.feature_checks;
+  must(
+    features?.included_modules_import === true && features.security_card_pack_loaded === true &&
+      features.security_card_count === 3 && features.security_card_license_present === true &&
+      features.baseline_default_preserved === true && features.website_missing_runner_refused === true &&
+      features.model_loaded === false && features.external_testing_enabled === false,
+    'the current package features or unchanged safety defaults were not checked',
+  );
   must(
     followup.checks.some((/** @type {any} */ entry) => entry.passed && entry.args[0] === 'report' && entry.args[1] === run.id),
     'the report the download opened is not the recorded run',
@@ -762,9 +769,31 @@ function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
     developer_tools_on_path: smoke.developer_tools_on_path || followup.developer_tools_on_path,
     clean_user_profile: smoke.clean_user_profile,
     folder_name_had_spaces: smoke.package_path_contains_spaces,
+    launch_rechecks_memory: doctor.profiles.length > 0 && doctor.profiles.every((/** @type {any} */ profile) => profile.launch_rechecks_memory === true),
     doctor_refused_for_memory: followup.doctor_summary?.messages?.some((/** @type {string} */ m) => /RAM/.test(m)) ?? false,
     older_report_refused: smoke.saved_report_is_historical === true && olderReport?.passed === false && /refused/i.test(olderReport.stdout),
+    features: {
+      included_modules_import: features.included_modules_import,
+      security_card_count: features.security_card_count,
+      security_card_license_present: features.security_card_license_present,
+      baseline_default_preserved: features.baseline_default_preserved,
+      website_missing_runner_refused: features.website_missing_runner_refused,
+      external_testing_enabled: features.external_testing_enabled,
+    },
   };
+}
+
+/** Separate saved accounting of the later experimental observation comparison, never a ZIP review. */
+function extractObservationComparison() {
+  const accounting = json(`${RESULTS}/2026-10-11-tool-assisted/accounting.json`);
+  must(accounting.saved_outputs_validated === true && accounting.replay_only === true, 'observation accounting was not validated as saved output');
+  must(accounting.execution_state === 'resource_or_scope_stopped' && accounting.unrun_conditions > 0, 'observation comparison did not stop with unfinished conditions');
+  must(
+    accounting.summary.length === 4 && accounting.summary.every((/** @type {any} */ result) =>
+      result.correct === 0 && result.incorrect_decisive === 0 && result.supported === 0 && result.inconclusive === result.analyzed_cases),
+    'the observation comparison no longer supports the stated quality limit',
+  );
+  return { acceptance_met: false, completed_analyses_inconclusive: true, conditions_unrun: true, baseline_retained: true };
 }
 
 function extractSoftware() {
@@ -932,6 +961,7 @@ function main() {
     cpu_runtime_download: extractRuntimePin(cpuProfile.backend),
     scanner_download: scanner,
     download: extractDownload(run, cpuProfile, extractCpuInvestigator(cpuProfile), scanner),
+    observation_comparison: extractObservationComparison(),
     software: extractSoftware(),
     development: extractDevelopment(),
     sources: Object.fromEntries([...sources.entries()].sort(([a], [b]) => a.localeCompare(b))),

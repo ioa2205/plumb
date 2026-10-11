@@ -99,6 +99,12 @@ def test_distribution_allowlist_excludes_private_and_evaluation_data() -> None:
         "eval/feasibility/constrained_answers.py",
         "eval/feasibility/common.py",
         "eval/fixtures/snippets/receipt_authn_only.py",
+        "backend/conversation.py",
+        "backend/assessment/store.py",
+        "agent/observation_facts.py",
+        "knowledge/cards.py",
+        "knowledge/data/security-cards-v1.json",
+        "knowledge/data/LICENSE.md",
     } <= set(names)
     assert all("tests" not in Path(n).parts for n in names)
     assert all(not n.startswith(("docs/", "tmp/", "eval/corpus", "eval/splits")) for n in names)

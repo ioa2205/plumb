@@ -45,7 +45,8 @@ are retained as reviewed evidence, without image-model interpretation.
 ## What it does not do
 
 - Upload your code, or need the internet after setup.
-- Run your app or attack it. It only reads the code.
+- Run your project. Approved HTTP collection is restricted to the separate,
+  pinned practice-app runner; external website testing remains disabled.
 - Fix the code for you. Suggested fixes are not reliable yet.
 - Promise that an app is safe. An empty report means nothing was found in what
   was checked.
@@ -61,9 +62,9 @@ are retained as reviewed evidence, without image-model interpretation.
   runs the same model on the processor alone. That profile has completed one real
   run, from source, on the same laptop on 10 October 2026, with the same result
   as the recorded test below. Nothing has been tried on a second computer. The
-  downloadable package holds that 10 October source-review code, but no review
-  with the AI model has been run from it since it was rebuilt. The newer source
-  additions are not yet packaged.
+  downloadable package now includes the newer source additions. Its investigator
+  has changed since those earlier reviews, and no review with the AI model has
+  been run from this ZIP.
 - How well it finds other kinds of flaw. In development runs it missed an
   unsafe database query and an exposed phone number.
 
@@ -84,7 +85,7 @@ code; that run sent no request to the app.
 
 The easiest way in: a ZIP with Python, Node and the browser view inside, so
 nothing else has to be installed first. Get it from
-[Releases](https://github.com/ioa2205/plumb/releases).
+[the current Windows ZIP](https://github.com/ioa2205/plumb/releases/download/prototype-2026-10-11/plumb-0.0.0-prototype-20261011-j.zip).
 
 1. Extract the ZIP anywhere. Folder names with spaces are fine.
 2. Double-click **Start Plumb.cmd** for the browser view, or open PowerShell in
@@ -103,11 +104,12 @@ To map a project without the AI model, use
 `.\plumb.cmd setup --install --inspect-only` instead: it sets up source mapping
 and downloads no model.
 
-The current package was built on 10 October 2026. It includes the recorded source
-review, the CPU profile and the working-folder fix. The source additions listed
-above were made on 11 October and are **not included in that ZIP**. A new package
-has not been built for this source update. For the package's existing review
-commands, write `.\plumb.cmd` in place of `uv run plumb`.
+The current package was built on 11 October 2026. It includes local conversations,
+private assessments, bounded collection tools, reviewed local security cards and
+experimental fact/decomposed reasoning, alongside the CPU profile and working-folder
+fix. The baseline remains the default. Website-start previews and collection need
+the separate pinned practice-app runner, which this ZIP does not include; they
+refuse until it is available. Write `.\plumb.cmd` in place of `uv run plumb`.
 
 It has been checked only on the laptop it was built on, under that laptop's
 Windows account. The model was already installed there, so those checks

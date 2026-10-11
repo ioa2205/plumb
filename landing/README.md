@@ -138,7 +138,7 @@ the general patterns alone when it is not.
 
 When `site.json` has a `download` link, the install page leads with it and the
 overview says Plumb can be downloaded. The size, file count and SHA-256 shown
-come from the saved package checks (`docs/results/2026-10-10-m7.9g-package-*`),
+come from the saved package checks (`docs/results/2026-10-11-m7.9i-package-*`),
 which extraction refuses unless the archive checks passed, the source was
 clean, the commands and the browser view passed, and the recorded run's report
 opened unchanged. The record's own top-level verdict is not required: as for
@@ -146,20 +146,26 @@ every earlier package, `doctor` refuses when too little memory is free and the
 report of a run saved by an older version is refused. Extraction records both,
 and the limits page says so.
 
-The download is package I, built on 10 October 2026 from the audited source. It
+The download is package J, built on 11 October 2026 from the current source. It
 holds the same code as the source: the second profile, `calibrate`, `--model`,
 the model advice in `doctor`, the scanner step of setup and the fix that keeps
 programs in the working folder from being started. Extraction records what
 backs that up. The package's own `doctor` and setup preview name those
-features. Its 64 investigator files hash to the same values as the files in
-the repository today (`investigator_same_as_source`) and as the files that
-completed the one `cpu-8k` review (`same_investigator_as_cpu_profile_run`).
+features. Its investigator files hash to the same values as the files in
+the repository today (`investigator_same_as_source`). They differ from the files
+that completed the earlier `cpu-8k` review; its success remains historical.
 They are no longer the files of the recorded run's package: extraction counts
 how many are the same, changed and new. Pages assert all of this with
 `holds(...)`, so a change to an investigator file, or a different package,
 stops the build until a new package is built or the wording is revisited. The
 working-folder fix has no field of its own; it rests on the package matching
 the source.
+
+The extracted feature checks require the new conversation/assessment imports,
+pinned three-card pack and its separate licence, default baseline and missing
+optional-runner refusal. The separate October 11 observation comparison is
+validated from saved accounting and remains incomplete with no demonstrated
+accuracy improvement; it is never treated as a review of this ZIP.
 
 What the pages must keep saying, because the records say it: the package's
 checks loaded no model, so it has not run a review; they downloaded and
