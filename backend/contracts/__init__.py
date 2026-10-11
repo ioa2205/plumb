@@ -6,6 +6,46 @@ and the workbench's TypeScript types are generated from those schemas.
 """
 
 from backend.contracts.application_map import ApplicationMap
+from backend.contracts.assessment import (
+    AccessExpectation,
+    AssessmentAnswer,
+    AssessmentBudget,
+    AssessmentChecklist,
+    AssessmentList,
+    AssessmentReport,
+    AssessmentScope,
+    AssessmentTask,
+    AssessmentView,
+    AttachmentReview,
+    ComparisonRequest,
+    EvidenceArtifact,
+    EvidenceCitation,
+    EvidenceImportRequest,
+    ObservationComparison,
+    ObservedMap,
+    PrivateReportRequest,
+    ReportPreview,
+    ScopeCreate,
+    TaskResolveRequest,
+)
+from backend.contracts.assessment_engine import (
+    ControlledHTTPAction,
+    ControlledHTTPPermission,
+    ControlledHTTPPreview,
+    ControlledHTTPResult,
+    HTTPActionProgress,
+    ObservationAnalysis,
+    ObservationJudgment,
+)
+from backend.contracts.assessment_jobs import (
+    AssessmentJob,
+    LabActionPreview,
+    LabActionPreviewRequest,
+    LabActionRunRequest,
+    LabCollectionCheckpoint,
+    LabCollectionImportRequest,
+    ObservationAnalysisRequest,
+)
 from backend.contracts.capabilities import CapabilityTable
 from backend.contracts.cases import (
     CaseDetail,
@@ -25,6 +65,7 @@ from backend.contracts.code import (
     Symbol,
 )
 from backend.contracts.common import Contract
+from backend.contracts.conversation import ConversationAsk, ConversationCreate, ConversationView
 from backend.contracts.investigation import (
     DispositionDecision,
     DispositionUpdate,
@@ -32,8 +73,15 @@ from backend.contracts.investigation import (
     Question,
     ToolObservation,
 )
+from backend.contracts.model_choices import ModelCatalog, ModelChoice, ModelProfileChoice
 from backend.contracts.policies import BoundPolicy, PolicyInput
 from backend.contracts.project_view import PolicyConfirm, ProjectExcerpt, ProjectPage, ProjectRule
+from backend.contracts.prompts import (
+    SavedAnswerRequest,
+    SavedFindingAnswer,
+    SourcePromptRequest,
+    SourcePromptResolution,
+)
 from backend.contracts.review_view import FindingList, QueueEdit, ReviewPage
 from backend.contracts.run_history import RunComparison, RunHistory
 from backend.contracts.runs import ReviewRun, RunEvent
@@ -47,6 +95,7 @@ from backend.contracts.setup_view import (
 )
 from backend.contracts.signals import SignalSet
 from backend.contracts.verification import FixProposal, ProbeRun, ProbeSpec, SuggestedChange
+from backend.contracts.website import WebsiteScopeCreate
 
 CONTRACTS: tuple[type[Contract], ...] = (
     ProjectSnapshot,
@@ -70,6 +119,51 @@ CONTRACTS: tuple[type[Contract], ...] = (
 
 # Transport projections are generated alongside entities, but are not persisted entities.
 READ_CONTRACTS: tuple[type[Contract], ...] = (
+    ConversationAsk,
+    ConversationCreate,
+    ConversationView,
+    WebsiteScopeCreate,
+    ModelCatalog,
+    ModelChoice,
+    ModelProfileChoice,
+    ControlledHTTPAction,
+    ControlledHTTPPermission,
+    ControlledHTTPPreview,
+    ControlledHTTPResult,
+    HTTPActionProgress,
+    ObservationAnalysis,
+    ObservationJudgment,
+    AssessmentJob,
+    LabActionPreview,
+    LabActionPreviewRequest,
+    LabActionRunRequest,
+    LabCollectionImportRequest,
+    LabCollectionCheckpoint,
+    ObservationAnalysisRequest,
+    SavedAnswerRequest,
+    SavedFindingAnswer,
+    SourcePromptRequest,
+    SourcePromptResolution,
+    AssessmentScope,
+    AssessmentBudget,
+    AssessmentView,
+    AssessmentList,
+    AssessmentTask,
+    AssessmentAnswer,
+    AttachmentReview,
+    EvidenceArtifact,
+    EvidenceCitation,
+    AccessExpectation,
+    ComparisonRequest,
+    ObservationComparison,
+    ObservedMap,
+    AssessmentChecklist,
+    AssessmentReport,
+    ScopeCreate,
+    EvidenceImportRequest,
+    TaskResolveRequest,
+    PrivateReportRequest,
+    ReportPreview,
     CapabilityTable,
     DispositionUpdate,
     DispositionDecision,

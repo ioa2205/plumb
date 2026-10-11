@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "AssessmentBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_requests": {
+          "default": 3,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 180,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Max Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "AssessmentBudget",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/AssessmentTask.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "compare",
+        "explain",
+        "missing",
+        "plan",
+        "report",
+        "analyze",
+        "source_review"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "authorization_granted": {
+      "const": false,
+      "default": false,
+      "title": "Authorization Granted",
+      "type": "boolean"
+    },
+    "budget": {
+      "$ref": "#/$defs/AssessmentBudget"
+    },
+    "clarification": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clarification"
+    },
+    "evidence_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 3,
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "focus": {
+      "default": "",
+      "maxLength": 256,
+      "title": "Focus",
+      "type": "string"
+    },
+    "network_activity": {
+      "const": false,
+      "default": false,
+      "title": "Network Activity",
+      "type": "boolean"
+    },
+    "prompt": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    },
+    "status": {
+      "default": "resolved",
+      "enum": [
+        "resolved",
+        "clarification_required",
+        "refused"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Target Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "target_id",
+    "action",
+    "prompt"
+  ],
+  "title": "AssessmentTask",
+  "type": "object"
+}

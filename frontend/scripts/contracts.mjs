@@ -59,11 +59,14 @@ export function renderContracts(directory = schemas) {
 
 export function generateContracts(check = false) {
   const files = {"contracts.ts":renderContracts()};
+  files["conversation-view.schema.json"]=readFileSync(join(schemas,"ConversationView.schema.json"),"utf8");
   files["bound-policy.schema.json"]=readFileSync(join(schemas,"BoundPolicy.schema.json"),"utf8");
   files["disposition-decision.schema.json"]=readFileSync(join(schemas,"DispositionDecision.schema.json"),"utf8");
   files["capability-table.schema.json"]=readFileSync(join(schemas,"CapabilityTable.schema.json"),"utf8");
   for(const [file,contract] of [["source-check","SourceCheck"],["setup-readiness","SetupReadiness"],["inspection-view","InspectionView"]]) files[`${file}.schema.json`]=readFileSync(join(schemas,`${contract}.schema.json`),"utf8");
   for(const [file,contract] of [["run-history","RunHistory"],["run-comparison","RunComparison"],["project-page","ProjectPage"],["project-rule","ProjectRule"],["project-excerpt","ProjectExcerpt"],["review-page","ReviewPage"],["finding-list","FindingList"],["run-event","RunEvent"],["review-run","ReviewRun"],["finding-page","FindingPage"],["case-detail","CaseDetail"],["cited-excerpt","CitedExcerpt"],["peer-excerpt","PeerExcerpt"],["snapshot-code-page","SnapshotCodePage"]]) files[`${file}.schema.json`]=readFileSync(join(schemas,`${contract}.schema.json`),"utf8");
+  for(const [file,contract] of [["assessment-scope","AssessmentScope"],["assessment-view","AssessmentView"],["assessment-task","AssessmentTask"],["assessment-answer","AssessmentAnswer"],["observed-map","ObservedMap"],["assessment-checklist","AssessmentChecklist"],["observation-comparison","ObservationComparison"],["assessment-report","AssessmentReport"],["report-preview","ReportPreview"]]) files[`${file}.schema.json`]=readFileSync(join(schemas,`${contract}.schema.json`),"utf8");
+  for(const [file,contract] of [["source-prompt-resolution","SourcePromptResolution"],["saved-finding-answer","SavedFindingAnswer"],["assessment-job","AssessmentJob"],["lab-action-preview","LabActionPreview"]]) files[`${file}.schema.json`]=readFileSync(join(schemas,`${contract}.schema.json`),"utf8");
   if (!check) mkdirSync(destination,{recursive:true});
   for (const [name,text] of Object.entries(files)) {
     const path = join(destination,name);

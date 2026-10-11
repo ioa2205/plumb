@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
+import {existsSync,readFileSync} from "node:fs";
 import {createHash} from "node:crypto";
 import {changeState,diffPage,diffTone,validChangeEvidence} from "../lib/change-data.ts";
 import {probeOutcome,proofAnchor} from "../lib/proof-data.ts";
@@ -25,7 +25,9 @@ test("frozen proposals retain exact case links, scope and unavailable regression
   assert.match(component,/not executed/);assert.match(component,/proposal.probe_reason/);
 });
 
-test("both actual archived standalone replays retain their original IDs, source and fixed observations",()=>{
+test("both actual archived standalone replays retain their original IDs, source and fixed observations",{
+  skip: !existsSync(new URL('../../docs/results/',import.meta.url)) && "needs private archived replay records; public copies retain synthetic and integrity checks",
+},()=>{
   const bytes=readFileSync(new URL('../../'+fixture.source_record,import.meta.url));
   assert.equal(createHash('sha256').update(bytes).digest('hex'),fixture.source_sha256);
   const originals=JSON.parse(bytes).calls.filter(c=>c.manifest.replay).map(c=>c.manifest.replay);

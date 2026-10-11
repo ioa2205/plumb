@@ -5,7 +5,9 @@ recorded as unavailable with the reason, never estimated.
 """
 
 import json
+import math
 import subprocess
+from contextlib import suppress
 from datetime import UTC, datetime
 from typing import Any
 
@@ -65,20 +67,46 @@ def _cim() -> dict[str, Any]:
     out = _run(POWERSHELL, "-NoProfile", "-NonInteractive", "-Command", _CIM_SCRIPT)
     if not out:
         return {"error": "CIM query failed"}
-    data = json.loads(out)
+    try:
+        data = json.loads(out)
+    except (json.JSONDecodeError, RecursionError):
+        return {"error": "CIM query returned malformed JSON"}
+    if not isinstance(data, dict):
+        return {"error": "CIM query returned a non-object JSON root"}
+    raw_zones = data.get("thermal_zones")
     zones = []
-    for zone in data.get("thermal_zones") or []:
+    unavailable = None
+    if not isinstance(raw_zones, list):
+        unavailable = "CIM thermal-zone sensor list is unavailable or malformed"
+        raw_zones = []
+    elif not raw_zones:
+        unavailable = "CIM returned no thermal-zone sensor readings"
+    invalid_entries = 0
+    for zone in raw_zones:
+        if not isinstance(zone, dict):
+            invalid_entries += 1
+            continue
         kelvin = zone.get("Temperature")
-        zones.append(
-            {
-                "name": zone.get("Name"),
-                "celsius": round(kelvin - 273.15, 1) if isinstance(kelvin, int | float) else None,
-                "percent_passive_limit": zone.get("PercentPassiveLimit"),
-                "throttle_reasons": zone.get("ThrottleReasons"),
-            }
-        )
+        valid_temperature = False
+        if type(kelvin) in {int, float}:
+            with suppress(OverflowError):
+                valid_temperature = math.isfinite(kelvin) and kelvin > 0
+        reading = {
+            "name": zone.get("Name"),
+            "celsius": round(kelvin - 273.15, 1) if valid_temperature else None,
+            "percent_passive_limit": zone.get("PercentPassiveLimit"),
+            "throttle_reasons": zone.get("ThrottleReasons"),
+        }
+        if not valid_temperature:
+            reading["temperature_unavailable_reason"] = (
+                "CIM temperature is missing or not a finite positive Kelvin reading"
+            )
+        zones.append(reading)
+    if invalid_entries:
+        unavailable = "CIM returned non-object thermal-zone entries; those readings are unavailable"
     return {
         "thermal_zones": zones,
+        **({"thermal_zones_unavailable_reason": unavailable} if unavailable else {}),
         "cpu": data.get("cpu"),
         "power_scheme": data.get("power_scheme"),
     }

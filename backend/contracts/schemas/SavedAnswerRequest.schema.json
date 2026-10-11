@@ -1,0 +1,18 @@
+{
+  "$id": "https://plumb.local/schemas/SavedAnswerRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "prompt": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt"
+  ],
+  "title": "SavedAnswerRequest",
+  "type": "object"
+}

@@ -1,0 +1,23 @@
+{
+  "$id": "https://plumb.local/schemas/AssessmentBudget.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "max_requests": {
+      "default": 3,
+      "maximum": 30,
+      "minimum": 1,
+      "title": "Max Requests",
+      "type": "integer"
+    },
+    "max_seconds": {
+      "default": 180,
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Max Seconds",
+      "type": "integer"
+    }
+  },
+  "title": "AssessmentBudget",
+  "type": "object"
+}

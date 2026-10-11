@@ -1,0 +1,611 @@
+{
+  "$defs": {
+    "Access": {
+      "enum": [
+        "allowed",
+        "denied"
+      ],
+      "title": "Access",
+      "type": "string"
+    },
+    "ControlledHTTPAction": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "alice",
+                "bob"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Account Id"
+        },
+        "action_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Action Id",
+          "type": "string"
+        },
+        "body_preview": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body Preview"
+        },
+        "max_attempts": {
+          "default": 1,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "readiness",
+            "authenticate",
+            "create_synthetic",
+            "read"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "state_change": {
+          "title": "State Change",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "action_id",
+        "account_id",
+        "method",
+        "path",
+        "purpose",
+        "state_change"
+      ],
+      "title": "ControlledHTTPAction",
+      "type": "object"
+    },
+    "ControlledHTTPPermission": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_action_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 9,
+          "minItems": 1,
+          "title": "Approved Action Ids",
+          "type": "array"
+        },
+        "approved_by": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Approved By",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "granted_at": {
+          "format": "date-time",
+          "title": "Granted At",
+          "type": "string"
+        },
+        "preview_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preview Sha256",
+          "type": "string"
+        },
+        "reviewed_preview": {
+          "const": true,
+          "title": "Reviewed Preview",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "preview_sha256",
+        "approved_action_ids",
+        "approved_by",
+        "granted_at",
+        "expires_at",
+        "reviewed_preview"
+      ],
+      "title": "ControlledHTTPPermission",
+      "type": "object"
+    },
+    "ControlledHTTPPreview": {
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/ControlledHTTPAction"
+          },
+          "maxItems": 9,
+          "minItems": 6,
+          "title": "Actions",
+          "type": "array"
+        },
+        "assessment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "control_spec": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProbeSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "external_access_enabled": {
+          "const": false,
+          "default": false,
+          "title": "External Access Enabled",
+          "type": "boolean"
+        },
+        "max_requests": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "max_response_bytes": {
+          "default": 65536,
+          "maximum": 65536,
+          "minimum": 1,
+          "title": "Max Response Bytes",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Max Seconds",
+          "type": "integer"
+        },
+        "max_total_bytes": {
+          "default": 786432,
+          "maximum": 786432,
+          "minimum": 1,
+          "title": "Max Total Bytes",
+          "type": "integer"
+        },
+        "preview_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Preview Id",
+          "type": "string"
+        },
+        "runner": {
+          "const": "hash_pinned_owned_tandir",
+          "default": "hash_pinned_owned_tandir",
+          "title": "Runner",
+          "type": "string"
+        },
+        "runner_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Runner Manifest Sha256",
+          "type": "string"
+        },
+        "scope_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Scope Sha256",
+          "type": "string"
+        },
+        "spec": {
+          "$ref": "#/$defs/ProbeSpec"
+        },
+        "synthetic_object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Synthetic Object Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "preview_id",
+        "assessment_id",
+        "scope_sha256",
+        "runner_manifest_sha256",
+        "synthetic_object_id",
+        "spec",
+        "actions",
+        "created_at",
+        "expires_at",
+        "max_requests",
+        "max_seconds"
+      ],
+      "title": "ControlledHTTPPreview",
+      "type": "object"
+    },
+    "ControlledHTTPResult": {
+      "additionalProperties": false,
+      "properties": {
+        "action_progress": {
+          "items": {
+            "$ref": "#/$defs/HTTPActionProgress"
+          },
+          "maxItems": 9,
+          "title": "Action Progress",
+          "type": "array"
+        },
+        "bytes_received": {
+          "default": 0,
+          "description": "Counted decoded body and normalized header bytes; excludes HTTP wire framing.",
+          "maximum": 917504,
+          "minimum": 0,
+          "title": "Bytes Received",
+          "type": "integer"
+        },
+        "execution_status": {
+          "const": "collected_owned_lab",
+          "default": "collected_owned_lab",
+          "title": "Execution Status",
+          "type": "string"
+        },
+        "preview_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Preview Id",
+          "type": "string"
+        },
+        "preview_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preview Sha256",
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": {
+              "$ref": "#/$defs/JsonValue"
+            },
+            "type": "object"
+          },
+          "maxItems": 6,
+          "title": "Records",
+          "type": "array"
+        },
+        "requests_used": {
+          "maximum": 30,
+          "minimum": 0,
+          "title": "Requests Used",
+          "type": "integer"
+        },
+        "runner_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Runner Manifest Sha256",
+          "type": "string"
+        },
+        "runner_origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runner Origin"
+        },
+        "runtime_verification": {
+          "const": "not_attempted",
+          "default": "not_attempted",
+          "title": "Runtime Verification",
+          "type": "string"
+        },
+        "seconds": {
+          "minimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Reason"
+        },
+        "stopped": {
+          "title": "Stopped",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "preview_id",
+        "preview_sha256",
+        "runner_manifest_sha256",
+        "requests_used",
+        "seconds",
+        "stopped"
+      ],
+      "title": "ControlledHTTPResult",
+      "type": "object"
+    },
+    "HTTPActionProgress": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Action Id",
+          "type": "string"
+        },
+        "artifact_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 1,
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "attempts": {
+          "default": 0,
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "completed": {
+          "default": false,
+          "title": "Completed",
+          "type": "boolean"
+        },
+        "missing_evidence": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Missing Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HTTPActionProgress",
+      "type": "object"
+    },
+    "HTTPProbeRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "capture": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 3,
+          "title": "Capture",
+          "type": "object"
+        },
+        "expected_if_safe": {
+          "$ref": "#/$defs/Access"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "principal": {
+          "pattern": "^[a-z][a-z0-9_]{0,31}$",
+          "title": "Principal",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/StepRole"
+        }
+      },
+      "required": [
+        "role",
+        "principal",
+        "method",
+        "path",
+        "expected_if_safe"
+      ],
+      "title": "HTTPProbeRequest",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ProbeSpec": {
+      "additionalProperties": false,
+      "description": "Data for a trusted transport; never a script or a model-written command.",
+      "properties": {
+        "finding_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "marker": {
+          "pattern": "^[A-Za-z0-9_-]{8,128}$",
+          "title": "Marker",
+          "type": "string"
+        },
+        "requests": {
+          "items": {
+            "$ref": "#/$defs/HTTPProbeRequest"
+          },
+          "maxItems": 8,
+          "minItems": 2,
+          "title": "Requests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "finding_id",
+        "marker",
+        "requests"
+      ],
+      "title": "ProbeSpec",
+      "type": "object"
+    },
+    "StepRole": {
+      "enum": [
+        "setup",
+        "attack",
+        "control"
+      ],
+      "title": "StepRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/LabCollectionCheckpoint.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "automatic_replay_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Automatic Replay Allowed",
+      "type": "boolean"
+    },
+    "evidence_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Evidence Review Required",
+      "type": "boolean"
+    },
+    "message": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "permission": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ControlledHTTPPermission"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "phase": {
+      "enum": [
+        "proposed",
+        "approved",
+        "executing",
+        "completed",
+        "stopped",
+        "interrupted"
+      ],
+      "title": "Phase",
+      "type": "string"
+    },
+    "preview": {
+      "$ref": "#/$defs/ControlledHTTPPreview"
+    },
+    "preview_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Preview Sha256",
+      "type": "string"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ControlledHTTPResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "preview_sha256",
+    "preview",
+    "phase",
+    "updated_at",
+    "message"
+  ],
+  "title": "LabCollectionCheckpoint",
+  "type": "object"
+}

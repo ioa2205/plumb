@@ -45,6 +45,25 @@
       "title": "Limit",
       "type": "integer"
     },
+    "profile": {
+      "default": "auto",
+      "pattern": "^(auto|[a-z][a-z0-9._-]{0,127})$",
+      "title": "Profile",
+      "type": "string"
+    },
+    "prompt_task_id": {
+      "anyOf": [
+        {
+          "pattern": "^source-task-[0-9a-f]{24}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Task Id"
+    },
     "resources": {
       "default": [],
       "items": {

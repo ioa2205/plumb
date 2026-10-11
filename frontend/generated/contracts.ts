@@ -1,6 +1,12 @@
 // Generated from backend JSON Schemas. Run pnpm contracts; never edit by hand.
 // Structural types only. Backend validators remain authoritative for evidence and invariants.
 
+// AccessExpectation.schema.json · SHA256 10e045d0af04e435de5a6c60b328e565139b697483961de8c12bd7b2328e7f8f
+export namespace AccessExpectationSchema {
+  export type AccessExpectation = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "expectation_id": string; readonly "object_id": string; readonly "path": string; readonly "statement": string; };
+}
+export type AccessExpectation = AccessExpectationSchema.AccessExpectation;
+
 // AccessSite.schema.json · SHA256 d9b77567283b0283788c6140912a54f4c9a30517b14abcd92e599d24a2cfdeb6
 export namespace AccessSiteSchema {
   export type DataLayer = "sqlalchemy" | "raw_sql" | "prisma" | "drizzle" | "other";
@@ -33,6 +39,106 @@ export namespace ApplicationMapSchema {
   export type ApplicationMap = { readonly "access_sites": ReadonlyArray<AccessSite>; readonly "entries": ReadonlyArray<EntryPoint>; readonly "guards": ReadonlyArray<Guard>; readonly "issues"?: ReadonlyArray<string>; readonly "limitations"?: ReadonlyArray<string>; readonly "links": ReadonlyArray<MapLink>; readonly "schema_version"?: 1; readonly "snapshot_id": string; readonly "symbols": ReadonlyArray<Symbol>; readonly "unknown_targets": ReadonlyArray<UnknownTarget>; };
 }
 export type ApplicationMap = ApplicationMapSchema.ApplicationMap;
+
+// AssessmentAnswer.schema.json · SHA256 a2d60b43b348087f945f5854a01427436bef70af26d260362fa448df16e261c2
+export namespace AssessmentAnswerSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type AssessmentTask = { readonly "action": "compare" | "explain" | "missing" | "plan" | "report" | "analyze" | "source_review"; readonly "authorization_granted"?: false; readonly "budget"?: AssessmentBudget; readonly "clarification"?: (string) | (null); readonly "evidence_ids"?: ReadonlyArray<string>; readonly "focus"?: string; readonly "network_activity"?: false; readonly "prompt": string; readonly "status"?: "resolved" | "clarification_required" | "refused"; readonly "target_id": string; readonly "task_id": string; };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type AssessmentAnswer = { readonly "answer_id": string; readonly "citations"?: ReadonlyArray<EvidenceCitation>; readonly "generated_by"?: "deterministic" | "local_model"; readonly "task": AssessmentTask; readonly "text": string; readonly "unknowns"?: ReadonlyArray<string>; };
+}
+export type AssessmentAnswer = AssessmentAnswerSchema.AssessmentAnswer;
+
+// AssessmentBudget.schema.json · SHA256 320ed22634575c8905bd61ad8c4f555f24a22d77adb28c069f62b9c9c80ed03a
+export namespace AssessmentBudgetSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+}
+export type AssessmentBudget = AssessmentBudgetSchema.AssessmentBudget;
+
+// AssessmentChecklist.schema.json · SHA256 5bd28222286c7163f23d807dc3ac30419cf00589a0a2f27fb9e784e44ee657bb
+export namespace AssessmentChecklistSchema {
+  export type ChecklistItem = { readonly "account_ids": ReadonlyArray<string>; readonly "action"?: "read"; readonly "artifact_ids"?: ReadonlyArray<string>; readonly "check_id": string; readonly "expectation_id"?: (string) | (null); readonly "instructions": string; readonly "limitations"?: ReadonlyArray<string>; readonly "object_ids": ReadonlyArray<string>; readonly "path": string; readonly "status"?: "planned" | "observations_available" | "compared"; };
+  export type AssessmentChecklist = { readonly "assessment_id": string; readonly "execution_status"?: "plan_only"; readonly "items": ReadonlyArray<ChecklistItem>; readonly "untested_paths": ReadonlyArray<string>; };
+}
+export type AssessmentChecklist = AssessmentChecklistSchema.AssessmentChecklist;
+
+// AssessmentJob.schema.json · SHA256 1d9b7ca4daf54a6be8e6f0f09347fe5f1b4800e662a3045716bf24a78df3be48
+export namespace AssessmentJobSchema {
+  export type JsonValue = unknown;
+  export type AssessmentJob = { readonly "action": "analyze" | "collect"; readonly "assessment_id": string; readonly "created_at": string; readonly "ended_at"?: (string) | (null); readonly "job_id": string; readonly "message": string; readonly "result"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "state": "queued" | "running" | "completed" | "canceled" | "failed"; };
+}
+export type AssessmentJob = AssessmentJobSchema.AssessmentJob;
+
+// AssessmentList.schema.json · SHA256 e93ff1cc3d42bf853ccfcb384ac2d0c5f152fc07ccf582bccc51eb78a59ea80e
+export namespace AssessmentListSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type AssessmentScope = { readonly "accounts": ReadonlyArray<TestAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "compare" | "plan" | "report" | "analyze" | "collect" | "authenticate" | "create_synthetic">; readonly "allowed_paths": ReadonlyArray<string>; readonly "application_id": string; readonly "application_name": string; readonly "assessment_id": string; readonly "authority": ScopeAuthority; readonly "budget"?: AssessmentBudget; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "origin": string; readonly "scope_id": string; readonly "stop_conditions": ReadonlyArray<string>; readonly "synthetic_objects"?: ReadonlyArray<SyntheticObject>; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SyntheticObject = { readonly "kind": string; readonly "object_id": string; readonly "owner_account_id": string; readonly "synthetic"?: true; readonly "synthetic_marker"?: (string) | (null); };
+  export type TestAccount = { readonly "account_id": string; readonly "label": string; readonly "role": string; };
+  export type AssessmentList = { readonly "assessments": ReadonlyArray<AssessmentScope>; };
+}
+export type AssessmentList = AssessmentListSchema.AssessmentList;
+
+// AssessmentReport.schema.json · SHA256 fc4e66e3327046509b7dae387b616b8a0db2c314964af309303356db3056bc62
+export namespace AssessmentReportSchema {
+  export type AccessExpectation = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "expectation_id": string; readonly "object_id": string; readonly "path": string; readonly "statement": string; };
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type ComparisonRequest = { readonly "control_artifact_id"?: (string) | (null); readonly "expectation_id"?: (string) | (null); readonly "left_artifact_id": string; readonly "right_artifact_id": string; };
+  export type EvidenceArtifact = { readonly "artifact_id": string; readonly "assessment_id": string; readonly "attachment_path"?: (string) | (null); readonly "collected_at": string; readonly "context"?: (ObservationContext) | (null); readonly "execution_status"?: "imported"; readonly "fields": Readonly<Record<string, string>>; readonly "imported_at": string; readonly "kind": "request_response" | "note" | "screenshot"; readonly "provenance": string; readonly "review": AttachmentReview; readonly "sha256": string; readonly "trusted_lab_collection"?: (LabCollectionBinding) | (null); };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type LabCollectionBinding = { readonly "manifest_sha256": string; readonly "preview_sha256": string; readonly "runner_origin": string; readonly "scope_origin": string; };
+  export type ObservationComparison = { readonly "alternative_explanations"?: ReadonlyArray<string>; readonly "citations"?: ReadonlyArray<EvidenceCitation>; readonly "comparison_id": string; readonly "conclusion": "candidate" | "rejected" | "inconclusive"; readonly "execution_status"?: "imported"; readonly "missing_evidence"?: ReadonlyArray<string>; readonly "request": ComparisonRequest; readonly "summary": string; };
+  export type ObservationContext = { readonly "account_id": string; readonly "object_id": string; readonly "request_context_id": string; readonly "session_context_id": string; };
+  export type ReportClaim = { readonly "citations": ReadonlyArray<EvidenceCitation>; readonly "text": string; };
+  export type AssessmentReport = { readonly "affected_endpoints": ReadonlyArray<string>; readonly "assessment_id": string; readonly "claims": ReadonlyArray<ReportClaim>; readonly "comparisons": ReadonlyArray<ObservationComparison>; readonly "confidentiality"?: "private_local"; readonly "description": string; readonly "dismissed_leads": ReadonlyArray<string>; readonly "evidence": ReadonlyArray<EvidenceArtifact>; readonly "expected_behavior": ReadonlyArray<AccessExpectation>; readonly "human_preview_required"?: true; readonly "impact": string; readonly "limitations": ReadonlyArray<string>; readonly "methodology": ReadonlyArray<string>; readonly "mitigation": ReadonlyArray<string>; readonly "runtime_verification"?: "not_attempted"; readonly "safe_reproduction": ReadonlyArray<string>; readonly "tested_coverage": ReadonlyArray<string>; readonly "title": string; readonly "tools_and_models": ReadonlyArray<string>; readonly "untested_coverage": ReadonlyArray<string>; };
+}
+export type AssessmentReport = AssessmentReportSchema.AssessmentReport;
+
+// AssessmentScope.schema.json · SHA256 5a6cf23ee296e4886d5036f479373a6ee70ee7325956b68d2042b5bf06805117
+export namespace AssessmentScopeSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SyntheticObject = { readonly "kind": string; readonly "object_id": string; readonly "owner_account_id": string; readonly "synthetic"?: true; readonly "synthetic_marker"?: (string) | (null); };
+  export type TestAccount = { readonly "account_id": string; readonly "label": string; readonly "role": string; };
+  export type AssessmentScope = { readonly "accounts": ReadonlyArray<TestAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "compare" | "plan" | "report" | "analyze" | "collect" | "authenticate" | "create_synthetic">; readonly "allowed_paths": ReadonlyArray<string>; readonly "application_id": string; readonly "application_name": string; readonly "assessment_id": string; readonly "authority": ScopeAuthority; readonly "budget"?: AssessmentBudget; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "origin": string; readonly "scope_id": string; readonly "stop_conditions": ReadonlyArray<string>; readonly "synthetic_objects"?: ReadonlyArray<SyntheticObject>; };
+}
+export type AssessmentScope = AssessmentScopeSchema.AssessmentScope;
+
+// AssessmentTask.schema.json · SHA256 1c9f392567e434c043b45574cd724e9c9dff2a0e329bedb3c97056491902bd60
+export namespace AssessmentTaskSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type AssessmentTask = { readonly "action": "compare" | "explain" | "missing" | "plan" | "report" | "analyze" | "source_review"; readonly "authorization_granted"?: false; readonly "budget"?: AssessmentBudget; readonly "clarification"?: (string) | (null); readonly "evidence_ids"?: ReadonlyArray<string>; readonly "focus"?: string; readonly "network_activity"?: false; readonly "prompt": string; readonly "status"?: "resolved" | "clarification_required" | "refused"; readonly "target_id": string; readonly "task_id": string; };
+}
+export type AssessmentTask = AssessmentTaskSchema.AssessmentTask;
+
+// AssessmentView.schema.json · SHA256 b149d1fc617b4e7af8513f0f4adb44dcc00849f82e48d753cdedd1f0bb4b33fa
+export namespace AssessmentViewSchema {
+  export type AccessExpectation = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "expectation_id": string; readonly "object_id": string; readonly "path": string; readonly "statement": string; };
+  export type AssessmentAnswer = { readonly "answer_id": string; readonly "citations"?: ReadonlyArray<EvidenceCitation>; readonly "generated_by"?: "deterministic" | "local_model"; readonly "task": AssessmentTask; readonly "text": string; readonly "unknowns"?: ReadonlyArray<string>; };
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type AssessmentScope = { readonly "accounts": ReadonlyArray<TestAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "compare" | "plan" | "report" | "analyze" | "collect" | "authenticate" | "create_synthetic">; readonly "allowed_paths": ReadonlyArray<string>; readonly "application_id": string; readonly "application_name": string; readonly "assessment_id": string; readonly "authority": ScopeAuthority; readonly "budget"?: AssessmentBudget; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "origin": string; readonly "scope_id": string; readonly "stop_conditions": ReadonlyArray<string>; readonly "synthetic_objects"?: ReadonlyArray<SyntheticObject>; };
+  export type AssessmentTask = { readonly "action": "compare" | "explain" | "missing" | "plan" | "report" | "analyze" | "source_review"; readonly "authorization_granted"?: false; readonly "budget"?: AssessmentBudget; readonly "clarification"?: (string) | (null); readonly "evidence_ids"?: ReadonlyArray<string>; readonly "focus"?: string; readonly "network_activity"?: false; readonly "prompt": string; readonly "status"?: "resolved" | "clarification_required" | "refused"; readonly "target_id": string; readonly "task_id": string; };
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type ComparisonRequest = { readonly "control_artifact_id"?: (string) | (null); readonly "expectation_id"?: (string) | (null); readonly "left_artifact_id": string; readonly "right_artifact_id": string; };
+  export type EvidenceArtifact = { readonly "artifact_id": string; readonly "assessment_id": string; readonly "attachment_path"?: (string) | (null); readonly "collected_at": string; readonly "context"?: (ObservationContext) | (null); readonly "execution_status"?: "imported"; readonly "fields": Readonly<Record<string, string>>; readonly "imported_at": string; readonly "kind": "request_response" | "note" | "screenshot"; readonly "provenance": string; readonly "review": AttachmentReview; readonly "sha256": string; readonly "trusted_lab_collection"?: (LabCollectionBinding) | (null); };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type JsonValue = unknown;
+  export type LabCollectionBinding = { readonly "manifest_sha256": string; readonly "preview_sha256": string; readonly "runner_origin": string; readonly "scope_origin": string; };
+  export type ObservationComparison = { readonly "alternative_explanations"?: ReadonlyArray<string>; readonly "citations"?: ReadonlyArray<EvidenceCitation>; readonly "comparison_id": string; readonly "conclusion": "candidate" | "rejected" | "inconclusive"; readonly "execution_status"?: "imported"; readonly "missing_evidence"?: ReadonlyArray<string>; readonly "request": ComparisonRequest; readonly "summary": string; };
+  export type ObservationContext = { readonly "account_id": string; readonly "object_id": string; readonly "request_context_id": string; readonly "session_context_id": string; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SyntheticObject = { readonly "kind": string; readonly "object_id": string; readonly "owner_account_id": string; readonly "synthetic"?: true; readonly "synthetic_marker"?: (string) | (null); };
+  export type TestAccount = { readonly "account_id": string; readonly "label": string; readonly "role": string; };
+  export type AssessmentView = { readonly "analyses"?: ReadonlyArray<Readonly<Record<string, JsonValue>>>; readonly "answers"?: ReadonlyArray<AssessmentAnswer>; readonly "artifacts"?: ReadonlyArray<EvidenceArtifact>; readonly "comparisons"?: ReadonlyArray<ObservationComparison>; readonly "expectations"?: ReadonlyArray<AccessExpectation>; readonly "scope": AssessmentScope; readonly "spent_requests"?: number; readonly "spent_seconds"?: number; readonly "stop_reason"?: (string) | (null); readonly "stopped"?: boolean; };
+}
+export type AssessmentView = AssessmentViewSchema.AssessmentView;
+
+// AttachmentReview.schema.json · SHA256 b2e39c44cf25d9240898a3fc6dd178f9c14ebfa728156bf36ed71f7d6a0b0018
+export namespace AttachmentReviewSchema {
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+}
+export type AttachmentReview = AttachmentReviewSchema.AttachmentReview;
 
 // BoundPolicy.schema.json · SHA256 bd9eae7f90a11126aabaf8c47d4ae2e2e8c2a0e3375dd146114c64f184ccedd9
 export namespace BoundPolicySchema {
@@ -126,6 +232,67 @@ export namespace CitedExcerptSchema {
 }
 export type CitedExcerpt = CitedExcerptSchema.CitedExcerpt;
 
+// ComparisonRequest.schema.json · SHA256 483de2961c1509849b2097e7564a1ff760300b024d4f543628e96ef18a0c7d9c
+export namespace ComparisonRequestSchema {
+  export type ComparisonRequest = { readonly "control_artifact_id"?: (string) | (null); readonly "expectation_id"?: (string) | (null); readonly "left_artifact_id": string; readonly "right_artifact_id": string; };
+}
+export type ComparisonRequest = ComparisonRequestSchema.ComparisonRequest;
+
+// ControlledHTTPAction.schema.json · SHA256 c741923d8891a30d1a4908872be94748e529974442edbfcb467fa4f96b4b5073
+export namespace ControlledHTTPActionSchema {
+  export type JsonValue = unknown;
+  export type ControlledHTTPAction = { readonly "account_id": ("alice" | "bob") | (null); readonly "action_id": string; readonly "body_preview"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "max_attempts"?: number; readonly "method": "GET" | "POST"; readonly "path": string; readonly "purpose": "readiness" | "authenticate" | "create_synthetic" | "read"; readonly "state_change": boolean; };
+}
+export type ControlledHTTPAction = ControlledHTTPActionSchema.ControlledHTTPAction;
+
+// ControlledHTTPPermission.schema.json · SHA256 98b119c427a0ea5d89ce524b3c1ded7f06d6525140b307faa12171aeec556401
+export namespace ControlledHTTPPermissionSchema {
+  export type ControlledHTTPPermission = { readonly "approved_action_ids": ReadonlyArray<string>; readonly "approved_by": string; readonly "expires_at": string; readonly "granted_at": string; readonly "preview_sha256": string; readonly "reviewed_preview": true; };
+}
+export type ControlledHTTPPermission = ControlledHTTPPermissionSchema.ControlledHTTPPermission;
+
+// ControlledHTTPPreview.schema.json · SHA256 4a9e88848a6ae791b57a1b52ab843d5a48110e3c122658beb107ea5763f1df97
+export namespace ControlledHTTPPreviewSchema {
+  export type Access = "allowed" | "denied";
+  export type ControlledHTTPAction = { readonly "account_id": ("alice" | "bob") | (null); readonly "action_id": string; readonly "body_preview"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "max_attempts"?: number; readonly "method": "GET" | "POST"; readonly "path": string; readonly "purpose": "readiness" | "authenticate" | "create_synthetic" | "read"; readonly "state_change": boolean; };
+  export type HTTPProbeRequest = { readonly "body"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "capture"?: Readonly<Record<string, string>>; readonly "expected_if_safe": Access; readonly "method": "GET" | "POST"; readonly "path": string; readonly "principal": string; readonly "role": StepRole; };
+  export type JsonValue = unknown;
+  export type ProbeSpec = { readonly "finding_id": string; readonly "id": string; readonly "marker": string; readonly "requests": ReadonlyArray<HTTPProbeRequest>; };
+  export type StepRole = "setup" | "attack" | "control";
+  export type ControlledHTTPPreview = { readonly "actions": ReadonlyArray<ControlledHTTPAction>; readonly "assessment_id": string; readonly "control_spec"?: (ProbeSpec) | (null); readonly "created_at": string; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "max_requests": number; readonly "max_response_bytes"?: number; readonly "max_seconds": number; readonly "max_total_bytes"?: number; readonly "preview_id": string; readonly "runner"?: "hash_pinned_owned_tandir"; readonly "runner_manifest_sha256": string; readonly "scope_sha256": string; readonly "spec": ProbeSpec; readonly "synthetic_object_id": string; };
+}
+export type ControlledHTTPPreview = ControlledHTTPPreviewSchema.ControlledHTTPPreview;
+
+// ControlledHTTPResult.schema.json · SHA256 962f9ba937ee8ca94368a81daf6eed4a6e50dc6d7e334ea906d0aa31a8512d83
+export namespace ControlledHTTPResultSchema {
+  export type HTTPActionProgress = { readonly "action_id": string; readonly "artifact_ids"?: ReadonlyArray<string>; readonly "attempts"?: number; readonly "completed"?: boolean; readonly "missing_evidence"?: ReadonlyArray<string>; };
+  export type JsonValue = unknown;
+  export type ControlledHTTPResult = { readonly "action_progress"?: ReadonlyArray<HTTPActionProgress>; readonly "bytes_received"?: number; readonly "execution_status"?: "collected_owned_lab"; readonly "preview_id": string; readonly "preview_sha256": string; readonly "records"?: ReadonlyArray<Readonly<Record<string, JsonValue>>>; readonly "requests_used": number; readonly "runner_manifest_sha256": string; readonly "runner_origin"?: (string) | (null); readonly "runtime_verification"?: "not_attempted"; readonly "seconds": number; readonly "stop_reason"?: (string) | (null); readonly "stopped": boolean; };
+}
+export type ControlledHTTPResult = ControlledHTTPResultSchema.ControlledHTTPResult;
+
+// ConversationAsk.schema.json · SHA256 993889fbad3f3105013039299d50d8f47d160274ce8e5db9a87cc25b6e19c0cd
+export namespace ConversationAskSchema {
+  export type ConversationAsk = { readonly "max_seconds"?: number; readonly "profile"?: string; readonly "prompt": string; };
+}
+export type ConversationAsk = ConversationAskSchema.ConversationAsk;
+
+// ConversationCreate.schema.json · SHA256 f2e94287a0be61f51fd4e52543c689fc5719c5c654efd3e856ac5702d04d31d2
+export namespace ConversationCreateSchema {
+  export type ConversationCreate = { readonly "target_id": string; readonly "target_kind": "inspection" | "review" | "assessment"; };
+}
+export type ConversationCreate = ConversationCreateSchema.ConversationCreate;
+
+// ConversationView.schema.json · SHA256 3320745825634b6a7b5a5c947c1edf3ea6b3df685f5f2e5ac3d6d7f11aed47c1
+export namespace ConversationViewSchema {
+  export type ConversationEvidence = { readonly "label": string; readonly "model_quote"?: (string) | (null); readonly "observation"?: (EvidenceCitation) | (null); readonly "quote": string; readonly "reference_id": string; readonly "source"?: (SourceSpan) | (null); };
+  export type ConversationTurn = { readonly "actions_executed"?: false; readonly "answer": string; readonly "authorization_granted"?: false; readonly "evidence": ReadonlyArray<ConversationEvidence>; readonly "evidence_sha256": string; readonly "generated_by": "local_model" | "unresolved"; readonly "prompt": string; readonly "unknowns": ReadonlyArray<string>; readonly "verdict_changed"?: false; };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type SourceSpan = { readonly "content_sha256": string; readonly "end_line": number; readonly "path": string; readonly "snapshot_id": string; readonly "start_line": number; };
+  export type ConversationView = { readonly "confidentiality"?: "private_local"; readonly "conversation_id": string; readonly "message"?: string; readonly "state"?: "idle" | "running" | "completed" | "failed" | "canceled"; readonly "target_id": string; readonly "target_kind": "inspection" | "review" | "assessment"; readonly "turns"?: ReadonlyArray<ConversationTurn>; };
+}
+export type ConversationView = ConversationViewSchema.ConversationView;
+
 // DispositionDecision.schema.json · SHA256 5c30c5b3d436b989c4378b52ac0820b29bb3ec8aa06aa8a0e3b790c79021951e
 export namespace DispositionDecisionSchema {
   export type Disposition = "open" | "dismissed" | "accepted_risk" | "resolved";
@@ -148,6 +315,28 @@ export namespace EntryPointSchema {
   export type EntryPoint = { readonly "framework": Framework; readonly "handler_symbol_id": string; readonly "id": string; readonly "kind": EntryPointKind; readonly "method"?: (string) | (null); readonly "route"?: (string) | (null); readonly "snapshot_id": string; readonly "span": SourceSpan; };
 }
 export type EntryPoint = EntryPointSchema.EntryPoint;
+
+// EvidenceArtifact.schema.json · SHA256 3fde2587a91d43f2600d9c2d5c80f98b56ad386c10e82453dae13a6e382dacdc
+export namespace EvidenceArtifactSchema {
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type LabCollectionBinding = { readonly "manifest_sha256": string; readonly "preview_sha256": string; readonly "runner_origin": string; readonly "scope_origin": string; };
+  export type ObservationContext = { readonly "account_id": string; readonly "object_id": string; readonly "request_context_id": string; readonly "session_context_id": string; };
+  export type EvidenceArtifact = { readonly "artifact_id": string; readonly "assessment_id": string; readonly "attachment_path"?: (string) | (null); readonly "collected_at": string; readonly "context"?: (ObservationContext) | (null); readonly "execution_status"?: "imported"; readonly "fields": Readonly<Record<string, string>>; readonly "imported_at": string; readonly "kind": "request_response" | "note" | "screenshot"; readonly "provenance": string; readonly "review": AttachmentReview; readonly "sha256": string; readonly "trusted_lab_collection"?: (LabCollectionBinding) | (null); };
+}
+export type EvidenceArtifact = EvidenceArtifactSchema.EvidenceArtifact;
+
+// EvidenceCitation.schema.json · SHA256 6186f62ab7710e5be308d16cdf1d0ce47ff95e7e03b7e833af390568a1d41b4d
+export namespace EvidenceCitationSchema {
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+}
+export type EvidenceCitation = EvidenceCitationSchema.EvidenceCitation;
+
+// EvidenceImportRequest.schema.json · SHA256 d726238ccd403d1359dd9ccc15f89d803bd3d3fc64c9e8903f85cbcce8453f98
+export namespace EvidenceImportRequestSchema {
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type EvidenceImportRequest = { readonly "payload": string; readonly "review": AttachmentReview; };
+}
+export type EvidenceImportRequest = EvidenceImportRequestSchema.EvidenceImportRequest;
 
 // Finding.schema.json · SHA256 edd43060203b98b121b01c285e61a683f3bb60a109303f722c216c6fdbba3ae5
 export namespace FindingSchema {
@@ -259,6 +448,12 @@ export namespace GuardSchema {
 }
 export type Guard = GuardSchema.Guard;
 
+// HTTPActionProgress.schema.json · SHA256 2d2e9ad6871b8c68e1416a1e3220dbf5af8a08956941c76cc9ff8fbb402d28c9
+export namespace HTTPActionProgressSchema {
+  export type HTTPActionProgress = { readonly "action_id": string; readonly "artifact_ids"?: ReadonlyArray<string>; readonly "attempts"?: number; readonly "completed"?: boolean; readonly "missing_evidence"?: ReadonlyArray<string>; };
+}
+export type HTTPActionProgress = HTTPActionProgressSchema.HTTPActionProgress;
+
 // InspectRequest.schema.json · SHA256 eea4cf008c837fdf62a13f4e9da9ec0f5d6b7d0579b7be2618d432098f67a341
 export namespace InspectRequestSchema {
   export type InspectRequest = { readonly "authorized": true; readonly "folder": string; };
@@ -280,12 +475,126 @@ export namespace InspectionViewSchema {
 }
 export type InspectionView = InspectionViewSchema.InspectionView;
 
-// LaunchRequest.schema.json · SHA256 e75fc0b15a1df15e280b191ac5c210fe4d20af72e3c6241d46cff4459902d160
+// LabActionPreview.schema.json · SHA256 625c7215955854db6e3b4b36bab1c3a753e7f549b32fc898d70725123dca73ab
+export namespace LabActionPreviewSchema {
+  export type Access = "allowed" | "denied";
+  export type ControlledHTTPAction = { readonly "account_id": ("alice" | "bob") | (null); readonly "action_id": string; readonly "body_preview"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "max_attempts"?: number; readonly "method": "GET" | "POST"; readonly "path": string; readonly "purpose": "readiness" | "authenticate" | "create_synthetic" | "read"; readonly "state_change": boolean; };
+  export type ControlledHTTPPreview = { readonly "actions": ReadonlyArray<ControlledHTTPAction>; readonly "assessment_id": string; readonly "control_spec"?: (ProbeSpec) | (null); readonly "created_at": string; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "max_requests": number; readonly "max_response_bytes"?: number; readonly "max_seconds": number; readonly "max_total_bytes"?: number; readonly "preview_id": string; readonly "runner"?: "hash_pinned_owned_tandir"; readonly "runner_manifest_sha256": string; readonly "scope_sha256": string; readonly "spec": ProbeSpec; readonly "synthetic_object_id": string; };
+  export type HTTPProbeRequest = { readonly "body"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "capture"?: Readonly<Record<string, string>>; readonly "expected_if_safe": Access; readonly "method": "GET" | "POST"; readonly "path": string; readonly "principal": string; readonly "role": StepRole; };
+  export type JsonValue = unknown;
+  export type ProbeSpec = { readonly "finding_id": string; readonly "id": string; readonly "marker": string; readonly "requests": ReadonlyArray<HTTPProbeRequest>; };
+  export type StepRole = "setup" | "attack" | "control";
+  export type LabActionPreview = { readonly "preview": ControlledHTTPPreview; readonly "preview_sha256": string; };
+}
+export type LabActionPreview = LabActionPreviewSchema.LabActionPreview;
+
+// LabActionPreviewRequest.schema.json · SHA256 6323c5d618897aabae68a690f7f27d543a95e376e9e8c84883632b6b410e3852
+export namespace LabActionPreviewRequestSchema {
+  export type LabActionPreviewRequest = { readonly "invoice"?: boolean; readonly "paired"?: boolean; };
+}
+export type LabActionPreviewRequest = LabActionPreviewRequestSchema.LabActionPreviewRequest;
+
+// LabActionRunRequest.schema.json · SHA256 11906cefa2fd3092972c922eaabd72e9f5899560a31d20e2899897d2806fadf2
+export namespace LabActionRunRequestSchema {
+  export type ControlledHTTPPermission = { readonly "approved_action_ids": ReadonlyArray<string>; readonly "approved_by": string; readonly "expires_at": string; readonly "granted_at": string; readonly "preview_sha256": string; readonly "reviewed_preview": true; };
+  export type LabActionRunRequest = { readonly "permission": ControlledHTTPPermission; readonly "preview_sha256": string; };
+}
+export type LabActionRunRequest = LabActionRunRequestSchema.LabActionRunRequest;
+
+// LabCollectionCheckpoint.schema.json · SHA256 d7545a0a80025528cb161c449787ce8ed849dc355808608507a900680eafe0a2
+export namespace LabCollectionCheckpointSchema {
+  export type Access = "allowed" | "denied";
+  export type ControlledHTTPAction = { readonly "account_id": ("alice" | "bob") | (null); readonly "action_id": string; readonly "body_preview"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "max_attempts"?: number; readonly "method": "GET" | "POST"; readonly "path": string; readonly "purpose": "readiness" | "authenticate" | "create_synthetic" | "read"; readonly "state_change": boolean; };
+  export type ControlledHTTPPermission = { readonly "approved_action_ids": ReadonlyArray<string>; readonly "approved_by": string; readonly "expires_at": string; readonly "granted_at": string; readonly "preview_sha256": string; readonly "reviewed_preview": true; };
+  export type ControlledHTTPPreview = { readonly "actions": ReadonlyArray<ControlledHTTPAction>; readonly "assessment_id": string; readonly "control_spec"?: (ProbeSpec) | (null); readonly "created_at": string; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "max_requests": number; readonly "max_response_bytes"?: number; readonly "max_seconds": number; readonly "max_total_bytes"?: number; readonly "preview_id": string; readonly "runner"?: "hash_pinned_owned_tandir"; readonly "runner_manifest_sha256": string; readonly "scope_sha256": string; readonly "spec": ProbeSpec; readonly "synthetic_object_id": string; };
+  export type ControlledHTTPResult = { readonly "action_progress"?: ReadonlyArray<HTTPActionProgress>; readonly "bytes_received"?: number; readonly "execution_status"?: "collected_owned_lab"; readonly "preview_id": string; readonly "preview_sha256": string; readonly "records"?: ReadonlyArray<Readonly<Record<string, JsonValue>>>; readonly "requests_used": number; readonly "runner_manifest_sha256": string; readonly "runner_origin"?: (string) | (null); readonly "runtime_verification"?: "not_attempted"; readonly "seconds": number; readonly "stop_reason"?: (string) | (null); readonly "stopped": boolean; };
+  export type HTTPActionProgress = { readonly "action_id": string; readonly "artifact_ids"?: ReadonlyArray<string>; readonly "attempts"?: number; readonly "completed"?: boolean; readonly "missing_evidence"?: ReadonlyArray<string>; };
+  export type HTTPProbeRequest = { readonly "body"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "capture"?: Readonly<Record<string, string>>; readonly "expected_if_safe": Access; readonly "method": "GET" | "POST"; readonly "path": string; readonly "principal": string; readonly "role": StepRole; };
+  export type JsonValue = unknown;
+  export type ProbeSpec = { readonly "finding_id": string; readonly "id": string; readonly "marker": string; readonly "requests": ReadonlyArray<HTTPProbeRequest>; };
+  export type StepRole = "setup" | "attack" | "control";
+  export type LabCollectionCheckpoint = { readonly "assessment_id": string; readonly "automatic_replay_allowed"?: false; readonly "evidence_review_required"?: true; readonly "message": string; readonly "permission"?: (ControlledHTTPPermission) | (null); readonly "phase": "proposed" | "approved" | "executing" | "completed" | "stopped" | "interrupted"; readonly "preview": ControlledHTTPPreview; readonly "preview_sha256": string; readonly "result"?: (ControlledHTTPResult) | (null); readonly "updated_at": string; };
+}
+export type LabCollectionCheckpoint = LabCollectionCheckpointSchema.LabCollectionCheckpoint;
+
+// LabCollectionImportRequest.schema.json · SHA256 c84cff3dd325eb4878c82988c0c58e1c4e39d82c6c0e4d192aaa2a17343826f2
+export namespace LabCollectionImportRequestSchema {
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type LabCollectionImportRequest = { readonly "prepare_website_comparisons"?: boolean; readonly "preview_sha256": string; readonly "review": AttachmentReview; };
+}
+export type LabCollectionImportRequest = LabCollectionImportRequestSchema.LabCollectionImportRequest;
+
+// LaunchRequest.schema.json · SHA256 8d13758dd6cd4c2552d044d5ff2a950c069cb3d7e448fc16375423ff6337ce9d
 export namespace LaunchRequestSchema {
   export type Family = "authorization" | "injection" | "path_traversal" | "nextjs_exposure";
-  export type LaunchRequest = { readonly "authorized": true; readonly "families"?: ReadonlyArray<Family>; readonly "inspection_id": string; readonly "limit"?: number; readonly "resources"?: ReadonlyArray<string>; readonly "routes"?: ReadonlyArray<string>; };
+  export type LaunchRequest = { readonly "authorized": true; readonly "families"?: ReadonlyArray<Family>; readonly "inspection_id": string; readonly "limit"?: number; readonly "profile"?: string; readonly "prompt_task_id"?: (string) | (null); readonly "resources"?: ReadonlyArray<string>; readonly "routes"?: ReadonlyArray<string>; };
 }
 export type LaunchRequest = LaunchRequestSchema.LaunchRequest;
+
+// ModelCatalog.schema.json · SHA256 4af1064e6957172c6b1c703c9fca559022f7e6c92aa46fb1698bc1bc2f4c0d41
+export namespace ModelCatalogSchema {
+  export type ModelChoice = { readonly "family": string; readonly "model_id": string; readonly "profiles": ReadonlyArray<ModelProfileChoice>; readonly "quantization": string; readonly "requires_download_approval": boolean; readonly "size_bytes": number; readonly "unavailable_reason"?: (string) | (null); readonly "verified_installed": boolean; };
+  export type ModelProfileChoice = { readonly "automatic_eligible": boolean; readonly "available_vram_bytes": (number) | (null); readonly "backend": "cpu" | "vulkan"; readonly "conditions": ReadonlyArray<string>; readonly "first_use_check": "not needed" | "pending" | "passed" | "failed"; readonly "hardware_compatible": boolean; readonly "launch_available": boolean; readonly "memory_fit": boolean; readonly "profile_id": string; readonly "quality_note": string; readonly "quality_records": ReadonlyArray<ModelQualityRecord>; readonly "quality_state": "recorded_scoped" | "untested"; readonly "required_ram_bytes": number; readonly "required_vram_bytes": number; readonly "runtime_compatible": (boolean) | (null); readonly "runtime_verified": boolean; };
+  export type ModelQualityRecord = { readonly "path": string; readonly "sha256": string; };
+  export type ModelCatalog = { readonly "available_ram_bytes": number; readonly "available_vram_bytes": (number) | (null); readonly "checked_at": string; readonly "downloads_started"?: false; readonly "model_loaded"?: false; readonly "models": ReadonlyArray<ModelChoice>; readonly "recommended_profile": (string) | (null); readonly "selected_profile": (string) | (null); readonly "selection_basis": string; };
+}
+export type ModelCatalog = ModelCatalogSchema.ModelCatalog;
+
+// ModelChoice.schema.json · SHA256 c222b3e4afd0558dfb09e2f723b8b4d8f08c756b29a8e88f9edeffc23d79146f
+export namespace ModelChoiceSchema {
+  export type ModelProfileChoice = { readonly "automatic_eligible": boolean; readonly "available_vram_bytes": (number) | (null); readonly "backend": "cpu" | "vulkan"; readonly "conditions": ReadonlyArray<string>; readonly "first_use_check": "not needed" | "pending" | "passed" | "failed"; readonly "hardware_compatible": boolean; readonly "launch_available": boolean; readonly "memory_fit": boolean; readonly "profile_id": string; readonly "quality_note": string; readonly "quality_records": ReadonlyArray<ModelQualityRecord>; readonly "quality_state": "recorded_scoped" | "untested"; readonly "required_ram_bytes": number; readonly "required_vram_bytes": number; readonly "runtime_compatible": (boolean) | (null); readonly "runtime_verified": boolean; };
+  export type ModelQualityRecord = { readonly "path": string; readonly "sha256": string; };
+  export type ModelChoice = { readonly "family": string; readonly "model_id": string; readonly "profiles": ReadonlyArray<ModelProfileChoice>; readonly "quantization": string; readonly "requires_download_approval": boolean; readonly "size_bytes": number; readonly "unavailable_reason"?: (string) | (null); readonly "verified_installed": boolean; };
+}
+export type ModelChoice = ModelChoiceSchema.ModelChoice;
+
+// ModelProfileChoice.schema.json · SHA256 55b4112da3d6de68eb974c2d14b74929781553e44861135b75571ebfbab156b2
+export namespace ModelProfileChoiceSchema {
+  export type ModelQualityRecord = { readonly "path": string; readonly "sha256": string; };
+  export type ModelProfileChoice = { readonly "automatic_eligible": boolean; readonly "available_vram_bytes": (number) | (null); readonly "backend": "cpu" | "vulkan"; readonly "conditions": ReadonlyArray<string>; readonly "first_use_check": "not needed" | "pending" | "passed" | "failed"; readonly "hardware_compatible": boolean; readonly "launch_available": boolean; readonly "memory_fit": boolean; readonly "profile_id": string; readonly "quality_note": string; readonly "quality_records": ReadonlyArray<ModelQualityRecord>; readonly "quality_state": "recorded_scoped" | "untested"; readonly "required_ram_bytes": number; readonly "required_vram_bytes": number; readonly "runtime_compatible": (boolean) | (null); readonly "runtime_verified": boolean; };
+}
+export type ModelProfileChoice = ModelProfileChoiceSchema.ModelProfileChoice;
+
+// ObservationAnalysis.schema.json · SHA256 9d1e81cf5ebcf317aa8e0b13b80d2fee5301101db9c441a50c16e14fadca74aa
+export namespace ObservationAnalysisSchema {
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type ObservationClaim = { readonly "citation": EvidenceCitation; readonly "value": string; };
+  export type ObservationJudgment = { readonly "alternative_explanations": ReadonlyArray<string>; readonly "claims": ReadonlyArray<ObservationClaim>; readonly "missing_evidence": ReadonlyArray<string>; readonly "mitigation": string; readonly "rationale": string; readonly "verdict": "supported" | "rejected" | "inconclusive"; };
+  export type ValidatedObservationJudgment = { readonly "answer"?: (ObservationJudgment) | (null); readonly "error"?: (string) | (null); readonly "evidence_order": ReadonlyArray<string>; readonly "raw_answer"?: (string) | (null); readonly "seed": number; readonly "violations"?: ReadonlyArray<string>; };
+  export type ObservationAnalysis = { readonly "alternative_explanations": ReadonlyArray<string>; readonly "citations": ReadonlyArray<EvidenceCitation>; readonly "comparison_id": string; readonly "conclusion": "supported" | "rejected" | "inconclusive"; readonly "generated_by"?: "local_model"; readonly "judgments": ReadonlyArray<ValidatedObservationJudgment>; readonly "missing_evidence": ReadonlyArray<string>; readonly "model_provenance"?: ReadonlyArray<string>; readonly "packet_sha256": string; readonly "requests_used": number; readonly "runtime_verification"?: "not_attempted"; readonly "seconds": number; readonly "stop_reason"?: (string) | (null); };
+}
+export type ObservationAnalysis = ObservationAnalysisSchema.ObservationAnalysis;
+
+// ObservationAnalysisRequest.schema.json · SHA256 d513863e1d8c45c8925de7bcde6a1eecf97dcf805f0a344bad7936093fa88f16
+export namespace ObservationAnalysisRequestSchema {
+  export type ObservationAnalysisRequest = { readonly "approach"?: "baseline" | "facts" | "decomposed"; readonly "comparison_id": string; readonly "guidance_card_id"?: (string) | (null); readonly "profile"?: string; };
+}
+export type ObservationAnalysisRequest = ObservationAnalysisRequestSchema.ObservationAnalysisRequest;
+
+// ObservationComparison.schema.json · SHA256 67780992318e8ee2d7ac8431ddd3ffe44c30299da66c0b1541df50dea7d3d5d4
+export namespace ObservationComparisonSchema {
+  export type ComparisonRequest = { readonly "control_artifact_id"?: (string) | (null); readonly "expectation_id"?: (string) | (null); readonly "left_artifact_id": string; readonly "right_artifact_id": string; };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type ObservationComparison = { readonly "alternative_explanations"?: ReadonlyArray<string>; readonly "citations"?: ReadonlyArray<EvidenceCitation>; readonly "comparison_id": string; readonly "conclusion": "candidate" | "rejected" | "inconclusive"; readonly "execution_status"?: "imported"; readonly "missing_evidence"?: ReadonlyArray<string>; readonly "request": ComparisonRequest; readonly "summary": string; };
+}
+export type ObservationComparison = ObservationComparisonSchema.ObservationComparison;
+
+// ObservationJudgment.schema.json · SHA256 eac3709e6349005119c0535254edab198114f7373bcea1f6b2783248a4c709ce
+export namespace ObservationJudgmentSchema {
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type ObservationClaim = { readonly "citation": EvidenceCitation; readonly "value": string; };
+  export type ObservationJudgment = { readonly "alternative_explanations": ReadonlyArray<string>; readonly "claims": ReadonlyArray<ObservationClaim>; readonly "missing_evidence": ReadonlyArray<string>; readonly "mitigation": string; readonly "rationale": string; readonly "verdict": "supported" | "rejected" | "inconclusive"; };
+}
+export type ObservationJudgment = ObservationJudgmentSchema.ObservationJudgment;
+
+// ObservedMap.schema.json · SHA256 a453b9ce1eae6b152f0c4f29424e90475ff089468a857151021bd44c1a185542
+export namespace ObservedMapSchema {
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type ObservedEndpoint = { readonly "account_ids": ReadonlyArray<string>; readonly "artifact_ids": ReadonlyArray<string>; readonly "citations": ReadonlyArray<EvidenceCitation>; readonly "coverage"?: "observed_import"; readonly "endpoint_id": string; readonly "method": string; readonly "object_ids": ReadonlyArray<string>; readonly "path": string; };
+  export type TestAccount = { readonly "account_id": string; readonly "label": string; readonly "role": string; };
+  export type ObservedMap = { readonly "assessment_id": string; readonly "collection_performed"?: false; readonly "declared_roles": ReadonlyArray<TestAccount>; readonly "endpoints"?: ReadonlyArray<ObservedEndpoint>; readonly "unknowns": ReadonlyArray<string>; };
+}
+export type ObservedMap = ObservedMapSchema.ObservedMap;
 
 // PeerExcerpt.schema.json · SHA256 c678332397f13ba378336bf765929c897efbaaf9a4da5833e3d9a8c0fee73b65
 export namespace PeerExcerptSchema {
@@ -324,6 +633,13 @@ export namespace PolicyInputSchema {
   export type PolicyInput = { readonly "author": string; readonly "forbidden_fields"?: ReadonlyArray<string>; readonly "required_guard"?: (GuardKind) | (null); readonly "required_role"?: (string) | (null); readonly "site_ids": ReadonlyArray<string>; readonly "snapshot_id": string; readonly "statement": string; };
 }
 export type PolicyInput = PolicyInputSchema.PolicyInput;
+
+// PrivateReportRequest.schema.json · SHA256 3c8c1c9d0426789604e43caff9105e94486e613b53d98429b324ad43e55fdc3a
+export namespace PrivateReportRequestSchema {
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type PrivateReportRequest = { readonly "preview_sha256": string; readonly "review": AttachmentReview; };
+}
+export type PrivateReportRequest = PrivateReportRequestSchema.PrivateReportRequest;
 
 // ProbeRun.schema.json · SHA256 17d2e8092510729c586332ad86da4d61ef6c6cab107577ac130ec2302c14b8b8
 export namespace ProbeRunSchema {
@@ -421,6 +737,22 @@ export namespace QueueEditSchema {
 }
 export type QueueEdit = QueueEditSchema.QueueEdit;
 
+// ReportPreview.schema.json · SHA256 693ce2737a373cf60150b0847bb32a5cb0efe6c78db553fcca3b3d484829a16e
+export namespace ReportPreviewSchema {
+  export type AccessExpectation = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "expectation_id": string; readonly "object_id": string; readonly "path": string; readonly "statement": string; };
+  export type AssessmentReport = { readonly "affected_endpoints": ReadonlyArray<string>; readonly "assessment_id": string; readonly "claims": ReadonlyArray<ReportClaim>; readonly "comparisons": ReadonlyArray<ObservationComparison>; readonly "confidentiality"?: "private_local"; readonly "description": string; readonly "dismissed_leads": ReadonlyArray<string>; readonly "evidence": ReadonlyArray<EvidenceArtifact>; readonly "expected_behavior": ReadonlyArray<AccessExpectation>; readonly "human_preview_required"?: true; readonly "impact": string; readonly "limitations": ReadonlyArray<string>; readonly "methodology": ReadonlyArray<string>; readonly "mitigation": ReadonlyArray<string>; readonly "runtime_verification"?: "not_attempted"; readonly "safe_reproduction": ReadonlyArray<string>; readonly "tested_coverage": ReadonlyArray<string>; readonly "title": string; readonly "tools_and_models": ReadonlyArray<string>; readonly "untested_coverage": ReadonlyArray<string>; };
+  export type AttachmentReview = { readonly "confirmed_sanitized": true; readonly "reviewed_at": string; readonly "reviewed_by": string; };
+  export type ComparisonRequest = { readonly "control_artifact_id"?: (string) | (null); readonly "expectation_id"?: (string) | (null); readonly "left_artifact_id": string; readonly "right_artifact_id": string; };
+  export type EvidenceArtifact = { readonly "artifact_id": string; readonly "assessment_id": string; readonly "attachment_path"?: (string) | (null); readonly "collected_at": string; readonly "context"?: (ObservationContext) | (null); readonly "execution_status"?: "imported"; readonly "fields": Readonly<Record<string, string>>; readonly "imported_at": string; readonly "kind": "request_response" | "note" | "screenshot"; readonly "provenance": string; readonly "review": AttachmentReview; readonly "sha256": string; readonly "trusted_lab_collection"?: (LabCollectionBinding) | (null); };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type LabCollectionBinding = { readonly "manifest_sha256": string; readonly "preview_sha256": string; readonly "runner_origin": string; readonly "scope_origin": string; };
+  export type ObservationComparison = { readonly "alternative_explanations"?: ReadonlyArray<string>; readonly "citations"?: ReadonlyArray<EvidenceCitation>; readonly "comparison_id": string; readonly "conclusion": "candidate" | "rejected" | "inconclusive"; readonly "execution_status"?: "imported"; readonly "missing_evidence"?: ReadonlyArray<string>; readonly "request": ComparisonRequest; readonly "summary": string; };
+  export type ObservationContext = { readonly "account_id": string; readonly "object_id": string; readonly "request_context_id": string; readonly "session_context_id": string; };
+  export type ReportClaim = { readonly "citations": ReadonlyArray<EvidenceCitation>; readonly "text": string; };
+  export type ReportPreview = { readonly "export_path"?: (string) | (null); readonly "markdown": string; readonly "preview_sha256": string; readonly "report": AssessmentReport; readonly "submitted"?: false; };
+}
+export type ReportPreview = ReportPreviewSchema.ReportPreview;
+
 // ResumeRequest.schema.json · SHA256 e788f3d3f44c9d09305eed13651796e4c30c46293992ca52204676ba1ac5c60f
 export namespace ResumeRequestSchema {
   export type ResumeRequest = { readonly "limit"?: number; };
@@ -516,14 +848,61 @@ export namespace RunHistorySchema {
 }
 export type RunHistory = RunHistorySchema.RunHistory;
 
-// SetupReadiness.schema.json · SHA256 69513980bc07aa68f2941056fb8c22becfc5ec0d5cbbf6e7d070b86b99a3f51d
+// SavedAnswerRequest.schema.json · SHA256 277ffb7dbe7efdf4fa63655b31a8a7ccb06d252e0dffc35211d05fcfdf948001
+export namespace SavedAnswerRequestSchema {
+  export type SavedAnswerRequest = { readonly "prompt": string; };
+}
+export type SavedAnswerRequest = SavedAnswerRequestSchema.SavedAnswerRequest;
+
+// SavedFindingAnswer.schema.json · SHA256 1f18530401f4b23ddba146059dfa24832c26a6b97ce951dbdda979435fa7d062
+export namespace SavedFindingAnswerSchema {
+  export type AccessSite = { readonly "data_layer": DataLayer; readonly "entry_point_id": string; readonly "guard_ids"?: ReadonlyArray<string>; readonly "id": string; readonly "key_origin": InputOrigin; readonly "operation": Operation; readonly "resource": string; readonly "snapshot_id": string; readonly "span": SourceSpan; };
+  export type BoundPolicy = { readonly "assertion": PolicyAssertion; readonly "forbidden_fields"?: ReadonlyArray<string>; readonly "provenance": string; readonly "required_role"?: (string) | (null); readonly "sites": ReadonlyArray<AccessSite>; readonly "snapshot_id": string; readonly "source_run_id": string; };
+  export type ChallengeCheck = { readonly "exhibit_tag"?: (string) | (null); readonly "found": boolean; readonly "item": string; readonly "searched": string; };
+  export type Conclusion = "candidate" | "supported" | "rejected" | "inconclusive";
+  export type DataLayer = "sqlalchemy" | "raw_sql" | "prisma" | "drizzle" | "other";
+  export type Disposition = "open" | "dismissed" | "accepted_risk" | "resolved";
+  export type EvidenceStrength = "complete" | "partial" | "thin";
+  export type Exhibit = { readonly "gloss": string; readonly "role": ExhibitRole; readonly "span": SourceSpan; readonly "tag": string; };
+  export type ExhibitRole = "evidence" | "source" | "sink" | "guard" | "deviant" | "developer_note";
+  export type Family = "authorization" | "injection" | "path_traversal" | "nextjs_exposure";
+  export type Finding = { readonly "checks"?: ReadonlyArray<ChallengeCheck>; readonly "conclusion": Conclusion; readonly "cwe": ReadonlyArray<number>; readonly "display_id": string; readonly "disposition"?: Disposition; readonly "disposition_reason"?: (string) | (null); readonly "exhibits": ReadonlyArray<Exhibit>; readonly "family": Family; readonly "flow"?: ReadonlyArray<FlowStep>; readonly "gaps"?: ReadonlyArray<string>; readonly "id": string; readonly "lede": string; readonly "peer_group_id"?: (string) | (null); readonly "policy_basis"?: ReadonlyArray<BoundPolicy>; readonly "probe_run_ids"?: ReadonlyArray<string>; readonly "question_ids"?: ReadonlyArray<string>; readonly "run_id": string; readonly "runtime_verification"?: RuntimeVerification; readonly "severity": Severity; readonly "severity_rationale": string; readonly "snapshot_id": string; readonly "strength": EvidenceStrength; readonly "suggested_change_id"?: (string) | (null); readonly "title": string; readonly "unknowns"?: ReadonlyArray<string>; };
+  export type FlowStep = { readonly "exhibit_tag": string; readonly "label": string; };
+  export type GuardKind = "authenticated" | "owner" | "tenant" | "role" | "none" | "unknown" | "parameterized" | "allowlisted" | "contained" | "minimized";
+  export type InputOrigin = "path" | "query" | "body" | "header" | "session" | "constant" | "unknown";
+  export type Operation = "read" | "list" | "create" | "update" | "delete";
+  export type PolicyAssertion = { readonly "author": string; readonly "canonical": string; readonly "confirmed_at"?: (string) | (null); readonly "confirmed_by"?: (string) | (null); readonly "created_at": string; readonly "evidence"?: ReadonlyArray<SourceSpan>; readonly "id": string; readonly "kind": GuardKind; readonly "resource": string; readonly "statement": string; readonly "status": PolicyStatus; };
+  export type PolicyStatus = "inferred" | "confirmed" | "declared";
+  export type RuntimeVerification = "not_attempted" | "unavailable" | "inconclusive" | "reproduced" | "not_reproduced";
+  export type Severity = "critical" | "high" | "medium" | "low" | "unknown";
+  export type SourceSpan = { readonly "content_sha256": string; readonly "end_line": number; readonly "path": string; readonly "snapshot_id": string; readonly "start_line": number; };
+  export type SavedFindingAnswer = { readonly "authorization_granted"?: false; readonly "finding": Finding; readonly "generated_by"?: "saved_evidence"; readonly "limitations": ReadonlyArray<string>; readonly "network_activity"?: false; readonly "prompt": string; readonly "report_path": string; readonly "run_id": string; };
+}
+export type SavedFindingAnswer = SavedFindingAnswerSchema.SavedFindingAnswer;
+
+// ScopeCreate.schema.json · SHA256 81ec9619f0011283b48cbc10c973a6d3284ec1643a4962cae787bf1efcf91239
+export namespace ScopeCreateSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type AssessmentScope = { readonly "accounts": ReadonlyArray<TestAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "compare" | "plan" | "report" | "analyze" | "collect" | "authenticate" | "create_synthetic">; readonly "allowed_paths": ReadonlyArray<string>; readonly "application_id": string; readonly "application_name": string; readonly "assessment_id": string; readonly "authority": ScopeAuthority; readonly "budget"?: AssessmentBudget; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "origin": string; readonly "scope_id": string; readonly "stop_conditions": ReadonlyArray<string>; readonly "synthetic_objects"?: ReadonlyArray<SyntheticObject>; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SyntheticObject = { readonly "kind": string; readonly "object_id": string; readonly "owner_account_id": string; readonly "synthetic"?: true; readonly "synthetic_marker"?: (string) | (null); };
+  export type TestAccount = { readonly "account_id": string; readonly "label": string; readonly "role": string; };
+  export type ScopeCreate = { readonly "confirmed_authority": true; readonly "scope": AssessmentScope; };
+}
+export type ScopeCreate = ScopeCreateSchema.ScopeCreate;
+
+// SetupReadiness.schema.json · SHA256 2f19028bbfb6394cd29f1b6070e038259eb17e5ad4fb2df7933542d53f3c0153
 export namespace SetupReadinessSchema {
   export type CapabilityEvidence = { readonly "current_engine_acceptance"?: false; readonly "record": string; readonly "scope": string; readonly "sha256": string; };
   export type CapabilityRow = { readonly "category": "language" | "framework" | "family"; readonly "indexed": "observed" | "partial" | "unverified" | "not_applicable"; readonly "indexed_units"?: (number) | (null); readonly "investigated"?: false; readonly "name": string; readonly "parsed": "observed" | "partial" | "unverified" | "not_applicable"; readonly "parsed_units"?: (number) | (null); readonly "reason": string; readonly "runtime_testable"?: false; readonly "units"?: (number) | (null); readonly "workflow_implemented": boolean; };
   export type CapabilityTable = { readonly "evidence": ReadonlyArray<CapabilityEvidence>; readonly "quality_note": string; readonly "registry_sha256": string; readonly "rows": ReadonlyArray<CapabilityRow>; readonly "runtime_note": string; readonly "schema_version"?: 1; readonly "snapshot_id"?: (string) | (null); };
   export type Condition = { readonly "action"?: (string) | (null); readonly "kind": ConditionKind; readonly "message": string; };
   export type ConditionKind = "setup_required" | "model_too_large" | "runner_unavailable" | "stale_source" | "unsupported_framework" | "unreadable_file" | "partial_coverage";
-  export type SetupReadiness = { readonly "available_ram_bytes": number; readonly "available_vram_bytes": (number) | (null); readonly "capabilities"?: (CapabilityTable) | (null); readonly "checked_at": string; readonly "conditions": ReadonlyArray<Condition>; readonly "downloads_started"?: false; readonly "inspect_ready": boolean; readonly "limitations": ReadonlyArray<string>; readonly "measured_host": boolean; readonly "memory_fit": boolean; readonly "missing_download_bytes": number; readonly "model_id": string; readonly "model_loaded"?: false; readonly "model_size_bytes": number; readonly "model_verified": boolean; readonly "profile_id": string; readonly "ready": boolean; readonly "required_ram_bytes": number; readonly "required_vram_bytes": number; readonly "requires_large_download_approval": boolean; readonly "runtime_verified": boolean; };
+  export type ModelCatalog = { readonly "available_ram_bytes": number; readonly "available_vram_bytes": (number) | (null); readonly "checked_at": string; readonly "downloads_started"?: false; readonly "model_loaded"?: false; readonly "models": ReadonlyArray<ModelChoice>; readonly "recommended_profile": (string) | (null); readonly "selected_profile": (string) | (null); readonly "selection_basis": string; };
+  export type ModelChoice = { readonly "family": string; readonly "model_id": string; readonly "profiles": ReadonlyArray<ModelProfileChoice>; readonly "quantization": string; readonly "requires_download_approval": boolean; readonly "size_bytes": number; readonly "unavailable_reason"?: (string) | (null); readonly "verified_installed": boolean; };
+  export type ModelProfileChoice = { readonly "automatic_eligible": boolean; readonly "available_vram_bytes": (number) | (null); readonly "backend": "cpu" | "vulkan"; readonly "conditions": ReadonlyArray<string>; readonly "first_use_check": "not needed" | "pending" | "passed" | "failed"; readonly "hardware_compatible": boolean; readonly "launch_available": boolean; readonly "memory_fit": boolean; readonly "profile_id": string; readonly "quality_note": string; readonly "quality_records": ReadonlyArray<ModelQualityRecord>; readonly "quality_state": "recorded_scoped" | "untested"; readonly "required_ram_bytes": number; readonly "required_vram_bytes": number; readonly "runtime_compatible": (boolean) | (null); readonly "runtime_verified": boolean; };
+  export type ModelQualityRecord = { readonly "path": string; readonly "sha256": string; };
+  export type SetupReadiness = { readonly "available_ram_bytes": number; readonly "available_vram_bytes": (number) | (null); readonly "capabilities"?: (CapabilityTable) | (null); readonly "checked_at": string; readonly "conditions": ReadonlyArray<Condition>; readonly "downloads_started"?: false; readonly "inspect_ready": boolean; readonly "limitations": ReadonlyArray<string>; readonly "measured_host": boolean; readonly "memory_fit": boolean; readonly "missing_download_bytes": number; readonly "model_catalog"?: (ModelCatalog) | (null); readonly "model_id": string; readonly "model_loaded"?: false; readonly "model_size_bytes": number; readonly "model_verified": boolean; readonly "profile_id": string; readonly "ready": boolean; readonly "required_ram_bytes": number; readonly "required_vram_bytes": number; readonly "requires_large_download_approval": boolean; readonly "runtime_verified": boolean; };
 }
 export type SetupReadiness = SetupReadinessSchema.SetupReadiness;
 
@@ -551,6 +930,19 @@ export namespace SourceCheckSchema {
 }
 export type SourceCheck = SourceCheckSchema.SourceCheck;
 
+// SourcePromptRequest.schema.json · SHA256 37c3cea84c8d81996503f80f40447842fa99dda1ebd735166af6093bb8165dd2
+export namespace SourcePromptRequestSchema {
+  export type SourcePromptRequest = { readonly "inspection_id": string; readonly "limit"?: number; readonly "prompt": string; };
+}
+export type SourcePromptRequest = SourcePromptRequestSchema.SourcePromptRequest;
+
+// SourcePromptResolution.schema.json · SHA256 fb6c7ce7eb8e6dc24f78ff6b4676f2e2d2e59b18a9130ea72fb8d3c75835ebd2
+export namespace SourcePromptResolutionSchema {
+  export type Family = "authorization" | "injection" | "path_traversal" | "nextjs_exposure";
+  export type SourcePromptResolution = { readonly "authorization_granted"?: false; readonly "clarification"?: (string) | (null); readonly "families": ReadonlyArray<Family>; readonly "limit": number; readonly "network_activity"?: false; readonly "prompt": string; readonly "resources": ReadonlyArray<string>; readonly "routes": ReadonlyArray<string>; readonly "status": "resolved" | "clarification_required" | "refused"; readonly "target_id": string; readonly "task_id": string; };
+}
+export type SourcePromptResolution = SourcePromptResolutionSchema.SourcePromptResolution;
+
 // SourceSpan.schema.json · SHA256 958d6cd5a368d3c0fb7b6c257ced6981196537b69e6722eeea24fcf7fc1d65ec
 export namespace SourceSpanSchema {
   export type SourceSpan = { readonly "content_sha256": string; readonly "end_line": number; readonly "path": string; readonly "snapshot_id": string; readonly "start_line": number; };
@@ -575,6 +967,13 @@ export namespace SymbolSchema {
 }
 export type Symbol = SymbolSchema.Symbol;
 
+// TaskResolveRequest.schema.json · SHA256 6bc3228c83a7a0e48365d9d83dd3801796b31cef1a354f91b0ee23b23dbb5625
+export namespace TaskResolveRequestSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type TaskResolveRequest = { readonly "budget"?: AssessmentBudget; readonly "evidence_ids"?: ReadonlyArray<string>; readonly "prompt": string; };
+}
+export type TaskResolveRequest = TaskResolveRequestSchema.TaskResolveRequest;
+
 // ToolObservation.schema.json · SHA256 03d982822f06ea293f979b2c11fbaae30342ec39028bda400acfad23dc80734d
 export namespace ToolObservationSchema {
   export type JsonValue = unknown;
@@ -582,4 +981,15 @@ export namespace ToolObservationSchema {
   export type ToolObservation = { readonly "finished_at": string; readonly "id": string; readonly "inputs": Readonly<Record<string, JsonValue>>; readonly "output_sha256"?: (string) | (null); readonly "question_id"?: (string) | (null); readonly "run_id": string; readonly "started_at": string; readonly "status": ObservationStatus; readonly "tool": string; readonly "tool_version": string; };
 }
 export type ToolObservation = ToolObservationSchema.ToolObservation;
+
+// WebsiteScopeCreate.schema.json · SHA256 b8f39971a475caa807a3045ba91a30f4be59eae19c8013180b21a727ab151cfd
+export namespace WebsiteScopeCreateSchema {
+  export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type AssessmentScope = { readonly "accounts": ReadonlyArray<TestAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "compare" | "plan" | "report" | "analyze" | "collect" | "authenticate" | "create_synthetic">; readonly "allowed_paths": ReadonlyArray<string>; readonly "application_id": string; readonly "application_name": string; readonly "assessment_id": string; readonly "authority": ScopeAuthority; readonly "budget"?: AssessmentBudget; readonly "expires_at": string; readonly "external_access_enabled"?: false; readonly "origin": string; readonly "scope_id": string; readonly "stop_conditions": ReadonlyArray<string>; readonly "synthetic_objects"?: ReadonlyArray<SyntheticObject>; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SyntheticObject = { readonly "kind": string; readonly "object_id": string; readonly "owner_account_id": string; readonly "synthetic"?: true; readonly "synthetic_marker"?: (string) | (null); };
+  export type TestAccount = { readonly "account_id": string; readonly "label": string; readonly "role": string; };
+  export type WebsiteScopeCreate = { readonly "confirmed_authority": true; readonly "expectation_basis": string; readonly "expected_owner_only": true; readonly "scope": AssessmentScope; readonly "url": string; };
+}
+export type WebsiteScopeCreate = WebsiteScopeCreateSchema.WebsiteScopeCreate;
 

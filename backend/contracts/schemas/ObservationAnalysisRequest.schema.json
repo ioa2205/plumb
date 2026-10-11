@@ -1,0 +1,47 @@
+{
+  "$id": "https://plumb.local/schemas/ObservationAnalysisRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approach": {
+      "default": "baseline",
+      "enum": [
+        "baseline",
+        "facts",
+        "decomposed"
+      ],
+      "title": "Approach",
+      "type": "string"
+    },
+    "comparison_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "guidance_card_id": {
+      "anyOf": [
+        {
+          "maxLength": 96,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Guidance Card Id"
+    },
+    "profile": {
+      "default": "auto",
+      "maxLength": 128,
+      "title": "Profile",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparison_id"
+  ],
+  "title": "ObservationAnalysisRequest",
+  "type": "object"
+}

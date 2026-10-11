@@ -1,0 +1,51 @@
+{
+  "$defs": {
+    "AttachmentReview": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed_sanitized": {
+          "const": true,
+          "title": "Confirmed Sanitized",
+          "type": "boolean"
+        },
+        "reviewed_at": {
+          "format": "date-time",
+          "title": "Reviewed At",
+          "type": "string"
+        },
+        "reviewed_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reviewed By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewed_by",
+        "confirmed_sanitized",
+        "reviewed_at"
+      ],
+      "title": "AttachmentReview",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/PrivateReportRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "preview_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Preview Sha256",
+      "type": "string"
+    },
+    "review": {
+      "$ref": "#/$defs/AttachmentReview"
+    }
+  },
+  "required": [
+    "review",
+    "preview_sha256"
+  ],
+  "title": "PrivateReportRequest",
+  "type": "object"
+}

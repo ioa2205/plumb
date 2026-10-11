@@ -11,6 +11,7 @@ import { CodePane } from "./CodePane";
 import { ChangeSection } from "./ChangeSection";
 import { ProofRecord } from "./ProofRecord";
 import { DispositionActions } from "./DispositionActions";
+import { SavedFindingPrompt } from "./SavedFindingPrompt";
 
 const family={authorization:"Object-level authorization",injection:"Injection",path_traversal:"Path traversal",nextjs_exposure:"Client exposure"};
 const conclusionGlyph:Record<FindingSchema.Conclusion,GlyphName>={supported:"dot",rejected:"slash",inconclusive:"half",candidate:"ring"};
@@ -61,6 +62,7 @@ export function CaseFile({detail,initialCodePages=emptyCodePages}:{detail:CaseDe
         </section>
         <section className={styles.part} aria-labelledby="change-title"><h2 id="change-title">Suggested change</h2><ChangeSection key={detail.suggested_change?.id??f.id} finding={f} change={detail.suggested_change} proposal={detail.proposal} probes={detail.probe_runs} /></section>
         <section className={styles.part} aria-labelledby="unknown-title"><h2 id="unknown-title">Still unknown</h2>{[...(f.gaps||[]),...(f.unknowns||[])].length ? <ul>{[...(f.gaps||[]),...(f.unknowns||[])].map((text,i)=><li key={i}>{text}</li>)}</ul> : <p>No additional unknowns were recorded. The review limitations still apply.</p>}<details><summary>Review limitations ({detail.limitations.length})</summary><ul>{detail.limitations.map((text,i)=><li key={i}>{text}</li>)}</ul></details></section>
+        <SavedFindingPrompt key={`${detail.run.id}/${f.id}`} detail={detail} onExhibit={select} />
       </article>
       <section className={styles.exhibits} aria-labelledby="exhibits-title"><header className={styles.exhibitHead}><h2 id="exhibits-title">Exhibits</h2><p>Snapshot <code title={detail.run.snapshot_id}>{detail.run.snapshot_id.slice(0,12)}</code></p></header>
         <button className={styles.action} type="button" onClick={()=>{setPane("case");setReturning(true);}}>Back to citation in case</button>

@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://plumb.local/schemas/ControlledHTTPAction.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "account_id": {
+      "anyOf": [
+        {
+          "enum": [
+            "alice",
+            "bob"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Account Id"
+    },
+    "action_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Action Id",
+      "type": "string"
+    },
+    "body_preview": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Body Preview"
+    },
+    "max_attempts": {
+      "default": 1,
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Max Attempts",
+      "type": "integer"
+    },
+    "method": {
+      "enum": [
+        "GET",
+        "POST"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "purpose": {
+      "enum": [
+        "readiness",
+        "authenticate",
+        "create_synthetic",
+        "read"
+      ],
+      "title": "Purpose",
+      "type": "string"
+    },
+    "state_change": {
+      "title": "State Change",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "action_id",
+    "account_id",
+    "method",
+    "path",
+    "purpose",
+    "state_change"
+  ],
+  "title": "ControlledHTTPAction",
+  "type": "object"
+}

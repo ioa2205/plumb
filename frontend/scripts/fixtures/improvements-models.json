@@ -1,0 +1,182 @@
+{
+  "label": "Synthetic model-selection appearance fixture; pins and historical references are exact, current readiness/model quality not claimed",
+  "catalog": {
+    "checked_at": "2026-10-06T18:09:46.979588Z",
+    "selected_profile": "mx350-vulkan-8k",
+    "recommended_profile": "mx350-vulkan-8k",
+    "selection_basis": "UI fixture using saved low-memory facts and exact historical source-review record references. Automatic selection excludes untested models; fresh conversation and web-observation acceptance remain deferred.",
+    "available_ram_bytes": 1095892992,
+    "available_vram_bytes": 1987051520,
+    "models": [
+      {
+        "model_id": "qwen3.5-2b-q4_k_m",
+        "family": "Qwen3.5-2B",
+        "quantization": "Q4_K_M",
+        "size_bytes": 1396198496,
+        "verified_installed": true,
+        "requires_download_approval": true,
+        "profiles": [
+          {
+            "profile_id": "mx350-vulkan-8k",
+            "backend": "vulkan",
+            "hardware_compatible": true,
+            "memory_fit": false,
+            "required_ram_bytes": 1361051648,
+            "required_vram_bytes": 1776287744,
+            "available_vram_bytes": 1987051520,
+            "runtime_verified": true,
+            "runtime_compatible": true,
+            "first_use_check": "passed",
+            "launch_available": false,
+            "automatic_eligible": true,
+            "quality_state": "recorded_scoped",
+            "quality_records": [
+              {
+                "path": "docs/results/2026-10-08-m7.8a-raw/report.json",
+                "sha256": "9076a57cb8727ba1d2b21f25ee4e3e05cdab9c1ceabf906935686b1c46638a0f"
+              }
+            ],
+            "quality_note": "Historical owned Tandir source review: receipt Supported, protected invoice Rejected. No cross-model comparison or general accuracy qualification. Fresh web-observation quality and other failed/unrun gates remain unmet.",
+            "conditions": [
+              "Synthetic UI display uses saved low-memory reading; no current readiness or launch claim."
+            ]
+          },
+          {
+            "profile_id": "cpu-8k",
+            "backend": "cpu",
+            "hardware_compatible": true,
+            "memory_fit": false,
+            "required_ram_bytes": 2436385888,
+            "required_vram_bytes": 0,
+            "available_vram_bytes": null,
+            "runtime_verified": true,
+            "runtime_compatible": true,
+            "first_use_check": "passed",
+            "launch_available": false,
+            "automatic_eligible": true,
+            "quality_state": "recorded_scoped",
+            "quality_records": [
+              {
+                "path": "docs/results/2026-10-10-a1-cpu-profile-review/report.json",
+                "sha256": "893e6a2a22bf24a410f1b363f4ba19e703fbe7c1fd8b1463d5dc7d5b6be2fdd7"
+              }
+            ],
+            "quality_note": "Historical owned Tandir source review: receipt Supported, protected invoice Rejected. No cross-model comparison or general accuracy qualification. Fresh web-observation quality and other failed/unrun gates remain unmet.",
+            "conditions": [
+              "Synthetic UI display uses saved low-memory reading; no current readiness or launch claim."
+            ]
+          }
+        ],
+        "unavailable_reason": null
+      },
+      {
+        "model_id": "qwen3.5-0.8b-q4_k_m",
+        "family": "Qwen3.5-0.8B",
+        "quantization": "Q4_K_M",
+        "size_bytes": 579615840,
+        "verified_installed": false,
+        "requires_download_approval": true,
+        "profiles": [
+          {
+            "profile_id": "cpu-8k-qwen3.5-0.8b-q4_k_m",
+            "backend": "cpu",
+            "hardware_compatible": true,
+            "memory_fit": false,
+            "required_ram_bytes": 1619803232,
+            "required_vram_bytes": 0,
+            "available_vram_bytes": null,
+            "runtime_verified": true,
+            "runtime_compatible": true,
+            "first_use_check": "pending",
+            "launch_available": false,
+            "automatic_eligible": false,
+            "quality_state": "untested",
+            "quality_records": [],
+            "quality_note": "Untested for Plumb review quality; a memory estimate or first-use format/leak check does not establish security judgment quality.",
+            "conditions": [
+              "Synthetic UI display uses saved low-memory reading; no current readiness or launch claim.",
+              "Model not installed in this display fixture; download approval and first-use check required."
+            ]
+          }
+        ],
+        "unavailable_reason": null
+      },
+      {
+        "model_id": "qwen3.5-4b-q4_k_m",
+        "family": "Qwen3.5-4B",
+        "quantization": "Q4_K_M",
+        "size_bytes": 3013027808,
+        "verified_installed": false,
+        "requires_download_approval": true,
+        "profiles": [
+          {
+            "profile_id": "cpu-8k-qwen3.5-4b-q4_k_m",
+            "backend": "cpu",
+            "hardware_compatible": true,
+            "memory_fit": false,
+            "required_ram_bytes": 5026293728,
+            "required_vram_bytes": 0,
+            "available_vram_bytes": null,
+            "runtime_verified": true,
+            "runtime_compatible": true,
+            "first_use_check": "pending",
+            "launch_available": false,
+            "automatic_eligible": false,
+            "quality_state": "untested",
+            "quality_records": [],
+            "quality_note": "Untested for Plumb review quality; a memory estimate or first-use format/leak check does not establish security judgment quality.",
+            "conditions": [
+              "Synthetic UI display uses saved low-memory reading; no current readiness or launch claim.",
+              "Model not installed in this display fixture; download approval and first-use check required."
+            ]
+          }
+        ],
+        "unavailable_reason": null
+      },
+      {
+        "model_id": "gemma-4-e2b-it-qat-q4_0",
+        "family": "Gemma 4 E2B",
+        "quantization": "Q4_0 (official QAT)",
+        "size_bytes": 3349516256,
+        "verified_installed": false,
+        "requires_download_approval": true,
+        "profiles": [],
+        "unavailable_reason": "No pinned context-memory estimate is available."
+      },
+      {
+        "model_id": "qwen3-4b-instruct-2507-q4_k_m",
+        "family": "Qwen3-4B-Instruct-2507",
+        "quantization": "Q4_K_M",
+        "size_bytes": 2497280736,
+        "verified_installed": false,
+        "requires_download_approval": true,
+        "profiles": [
+          {
+            "profile_id": "cpu-8k-qwen3-4b-instruct-2507-q4_k_m",
+            "backend": "cpu",
+            "hardware_compatible": true,
+            "memory_fit": false,
+            "required_ram_bytes": 5181635296,
+            "required_vram_bytes": 0,
+            "available_vram_bytes": null,
+            "runtime_verified": true,
+            "runtime_compatible": true,
+            "first_use_check": "pending",
+            "launch_available": false,
+            "automatic_eligible": false,
+            "quality_state": "untested",
+            "quality_records": [],
+            "quality_note": "Untested for Plumb review quality; a memory estimate or first-use format/leak check does not establish security judgment quality.",
+            "conditions": [
+              "Synthetic UI display uses saved low-memory reading; no current readiness or launch claim.",
+              "Model not installed in this display fixture; download approval and first-use check required."
+            ]
+          }
+        ],
+        "unavailable_reason": null
+      }
+    ],
+    "model_loaded": false,
+    "downloads_started": false
+  }
+}

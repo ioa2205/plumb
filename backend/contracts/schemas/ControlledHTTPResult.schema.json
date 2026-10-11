@@ -1,0 +1,159 @@
+{
+  "$defs": {
+    "HTTPActionProgress": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Action Id",
+          "type": "string"
+        },
+        "artifact_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 1,
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "attempts": {
+          "default": 0,
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "completed": {
+          "default": false,
+          "title": "Completed",
+          "type": "boolean"
+        },
+        "missing_evidence": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Missing Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HTTPActionProgress",
+      "type": "object"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://plumb.local/schemas/ControlledHTTPResult.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action_progress": {
+      "items": {
+        "$ref": "#/$defs/HTTPActionProgress"
+      },
+      "maxItems": 9,
+      "title": "Action Progress",
+      "type": "array"
+    },
+    "bytes_received": {
+      "default": 0,
+      "description": "Counted decoded body and normalized header bytes; excludes HTTP wire framing.",
+      "maximum": 917504,
+      "minimum": 0,
+      "title": "Bytes Received",
+      "type": "integer"
+    },
+    "execution_status": {
+      "const": "collected_owned_lab",
+      "default": "collected_owned_lab",
+      "title": "Execution Status",
+      "type": "string"
+    },
+    "preview_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Preview Id",
+      "type": "string"
+    },
+    "preview_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Preview Sha256",
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "additionalProperties": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": "object"
+      },
+      "maxItems": 6,
+      "title": "Records",
+      "type": "array"
+    },
+    "requests_used": {
+      "maximum": 30,
+      "minimum": 0,
+      "title": "Requests Used",
+      "type": "integer"
+    },
+    "runner_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Runner Manifest Sha256",
+      "type": "string"
+    },
+    "runner_origin": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Runner Origin"
+    },
+    "runtime_verification": {
+      "const": "not_attempted",
+      "default": "not_attempted",
+      "title": "Runtime Verification",
+      "type": "string"
+    },
+    "seconds": {
+      "minimum": 0,
+      "title": "Seconds",
+      "type": "number"
+    },
+    "stop_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Reason"
+    },
+    "stopped": {
+      "title": "Stopped",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "preview_id",
+    "preview_sha256",
+    "runner_manifest_sha256",
+    "requests_used",
+    "seconds",
+    "stopped"
+  ],
+  "title": "ControlledHTTPResult",
+  "type": "object"
+}

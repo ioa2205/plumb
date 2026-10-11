@@ -1,0 +1,136 @@
+{
+  "$defs": {
+    "ChecklistItem": {
+      "additionalProperties": false,
+      "properties": {
+        "account_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Account Ids",
+          "type": "array"
+        },
+        "action": {
+          "const": "read",
+          "default": "read",
+          "title": "Action",
+          "type": "string"
+        },
+        "artifact_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "check_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Check Id",
+          "type": "string"
+        },
+        "expectation_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectation Id"
+        },
+        "instructions": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Instructions",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "object_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Object Ids",
+          "type": "array"
+        },
+        "path": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "status": {
+          "default": "planned",
+          "enum": [
+            "planned",
+            "observations_available",
+            "compared"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "check_id",
+        "path",
+        "account_ids",
+        "object_ids",
+        "instructions"
+      ],
+      "title": "ChecklistItem",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/AssessmentChecklist.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "execution_status": {
+      "const": "plan_only",
+      "default": "plan_only",
+      "title": "Execution Status",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/ChecklistItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "untested_paths": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Untested Paths",
+      "type": "array"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "items",
+    "untested_paths"
+  ],
+  "title": "AssessmentChecklist",
+  "type": "object"
+}

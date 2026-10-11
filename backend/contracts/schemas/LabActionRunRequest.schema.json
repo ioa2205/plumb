@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "ControlledHTTPPermission": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_action_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 9,
+          "minItems": 1,
+          "title": "Approved Action Ids",
+          "type": "array"
+        },
+        "approved_by": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Approved By",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "granted_at": {
+          "format": "date-time",
+          "title": "Granted At",
+          "type": "string"
+        },
+        "preview_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preview Sha256",
+          "type": "string"
+        },
+        "reviewed_preview": {
+          "const": true,
+          "title": "Reviewed Preview",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "preview_sha256",
+        "approved_action_ids",
+        "approved_by",
+        "granted_at",
+        "expires_at",
+        "reviewed_preview"
+      ],
+      "title": "ControlledHTTPPermission",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/LabActionRunRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "permission": {
+      "$ref": "#/$defs/ControlledHTTPPermission"
+    },
+    "preview_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Preview Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "preview_sha256",
+    "permission"
+  ],
+  "title": "LabActionRunRequest",
+  "type": "object"
+}

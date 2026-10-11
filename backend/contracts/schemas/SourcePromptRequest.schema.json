@@ -1,0 +1,31 @@
+{
+  "$id": "https://plumb.local/schemas/SourcePromptRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "inspection_id": {
+      "pattern": "^inspect-[0-9a-f]{32}$",
+      "title": "Inspection Id",
+      "type": "string"
+    },
+    "limit": {
+      "default": 5,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "prompt": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    }
+  },
+  "required": [
+    "inspection_id",
+    "prompt"
+  ],
+  "title": "SourcePromptRequest",
+  "type": "object"
+}

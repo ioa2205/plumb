@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tokens, renderTokens } from "./tokens.mjs";
@@ -32,14 +32,20 @@ test("unrounded text and information-line contrasts meet the unchanged AA gates"
   }
 });
 
-test("tokens preserve the design palette and generated CSS is current", () => {
-  const design = readFileSync(resolve(root, "../design.md"), "utf8");
+const designPath = resolve(root, "../design.md");
+test("tokens preserve the private design palette", {
+  skip: !existsSync(designPath) && "needs private design.md; public copies retain token, CSS and contrast checks",
+}, () => {
+  const design = readFileSync(designPath, "utf8");
   const rows = [...design.matchAll(/^\| `([a-z-]+)`[^|]*\| (#[a-fA-F0-9]{6}) \| (#[a-fA-F0-9]{6}) \|/gm)];
   assert.equal(rows.length, Object.keys(tokens.themes.day).length);
   for (const [, name, day, night] of rows) {
     assert.equal(tokens.themes.day[name], day);
     assert.equal(tokens.themes.night[name], night);
   }
+});
+
+test("generated token CSS is current", () => {
   assert.equal(readFileSync(resolve(root, "app/tokens.css"), "utf8"), renderTokens());
 });
 

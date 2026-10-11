@@ -1,0 +1,225 @@
+{
+  "$defs": {
+    "ModelProfileChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "automatic_eligible": {
+          "title": "Automatic Eligible",
+          "type": "boolean"
+        },
+        "available_vram_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Available Vram Bytes"
+        },
+        "backend": {
+          "enum": [
+            "cpu",
+            "vulkan"
+          ],
+          "title": "Backend",
+          "type": "string"
+        },
+        "conditions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Conditions",
+          "type": "array"
+        },
+        "first_use_check": {
+          "enum": [
+            "not needed",
+            "pending",
+            "passed",
+            "failed"
+          ],
+          "title": "First Use Check",
+          "type": "string"
+        },
+        "hardware_compatible": {
+          "title": "Hardware Compatible",
+          "type": "boolean"
+        },
+        "launch_available": {
+          "title": "Launch Available",
+          "type": "boolean"
+        },
+        "memory_fit": {
+          "title": "Memory Fit",
+          "type": "boolean"
+        },
+        "profile_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "quality_note": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Quality Note",
+          "type": "string"
+        },
+        "quality_records": {
+          "items": {
+            "$ref": "#/$defs/ModelQualityRecord"
+          },
+          "maxItems": 4,
+          "title": "Quality Records",
+          "type": "array"
+        },
+        "quality_state": {
+          "enum": [
+            "recorded_scoped",
+            "untested"
+          ],
+          "title": "Quality State",
+          "type": "string"
+        },
+        "required_ram_bytes": {
+          "minimum": 1,
+          "title": "Required Ram Bytes",
+          "type": "integer"
+        },
+        "required_vram_bytes": {
+          "minimum": 0,
+          "title": "Required Vram Bytes",
+          "type": "integer"
+        },
+        "runtime_compatible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Runtime Compatible"
+        },
+        "runtime_verified": {
+          "title": "Runtime Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "profile_id",
+        "backend",
+        "hardware_compatible",
+        "memory_fit",
+        "required_ram_bytes",
+        "required_vram_bytes",
+        "available_vram_bytes",
+        "runtime_verified",
+        "runtime_compatible",
+        "first_use_check",
+        "launch_available",
+        "automatic_eligible",
+        "quality_state",
+        "quality_records",
+        "quality_note",
+        "conditions"
+      ],
+      "title": "ModelProfileChoice",
+      "type": "object"
+    },
+    "ModelQualityRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "pattern": "^docs/results/[a-zA-Z0-9._/-]+\\.json$",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "title": "ModelQualityRecord",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ModelChoice.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "family": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Family",
+      "type": "string"
+    },
+    "model_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "profiles": {
+      "items": {
+        "$ref": "#/$defs/ModelProfileChoice"
+      },
+      "maxItems": 8,
+      "title": "Profiles",
+      "type": "array"
+    },
+    "quantization": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Quantization",
+      "type": "string"
+    },
+    "requires_download_approval": {
+      "title": "Requires Download Approval",
+      "type": "boolean"
+    },
+    "size_bytes": {
+      "minimum": 1,
+      "title": "Size Bytes",
+      "type": "integer"
+    },
+    "unavailable_reason": {
+      "anyOf": [
+        {
+          "maxLength": 512,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unavailable Reason"
+    },
+    "verified_installed": {
+      "title": "Verified Installed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "model_id",
+    "family",
+    "quantization",
+    "size_bytes",
+    "verified_installed",
+    "requires_download_approval",
+    "profiles"
+  ],
+  "title": "ModelChoice",
+  "type": "object"
+}

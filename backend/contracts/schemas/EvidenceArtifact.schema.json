@@ -1,0 +1,210 @@
+{
+  "$defs": {
+    "AttachmentReview": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed_sanitized": {
+          "const": true,
+          "title": "Confirmed Sanitized",
+          "type": "boolean"
+        },
+        "reviewed_at": {
+          "format": "date-time",
+          "title": "Reviewed At",
+          "type": "string"
+        },
+        "reviewed_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reviewed By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewed_by",
+        "confirmed_sanitized",
+        "reviewed_at"
+      ],
+      "title": "AttachmentReview",
+      "type": "object"
+    },
+    "LabCollectionBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Sha256",
+          "type": "string"
+        },
+        "preview_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preview Sha256",
+          "type": "string"
+        },
+        "runner_origin": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Runner Origin",
+          "type": "string"
+        },
+        "scope_origin": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Scope Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "manifest_sha256",
+        "scope_origin",
+        "runner_origin",
+        "preview_sha256"
+      ],
+      "title": "LabCollectionBinding",
+      "type": "object"
+    },
+    "ObservationContext": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "request_context_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Request Context Id",
+          "type": "string"
+        },
+        "session_context_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Context Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "object_id",
+        "session_context_id",
+        "request_context_id"
+      ],
+      "title": "ObservationContext",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/EvidenceArtifact.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "attachment_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Attachment Path"
+    },
+    "collected_at": {
+      "format": "date-time",
+      "title": "Collected At",
+      "type": "string"
+    },
+    "context": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObservationContext"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "execution_status": {
+      "const": "imported",
+      "default": "imported",
+      "title": "Execution Status",
+      "type": "string"
+    },
+    "fields": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 200,
+      "minProperties": 1,
+      "title": "Fields",
+      "type": "object"
+    },
+    "imported_at": {
+      "format": "date-time",
+      "title": "Imported At",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "request_response",
+        "note",
+        "screenshot"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "provenance": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Provenance",
+      "type": "string"
+    },
+    "review": {
+      "$ref": "#/$defs/AttachmentReview"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "trusted_lab_collection": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LabCollectionBinding"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "artifact_id",
+    "assessment_id",
+    "kind",
+    "sha256",
+    "collected_at",
+    "imported_at",
+    "provenance",
+    "review",
+    "fields"
+  ],
+  "title": "EvidenceArtifact",
+  "type": "object"
+}

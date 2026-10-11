@@ -1,9 +1,11 @@
-import type { InspectionView, SetupReadiness, LaunchRequest, ReviewRun, SourceCheck } from "../generated/contracts";
+import type { InspectionView, SetupReadiness, LaunchRequest, ReviewRun, SourceCheck, SourcePromptRequest, SourcePromptResolution } from "../generated/contracts";
 import inspectionSchema from "../generated/inspection-view.schema.json" with { type: "json" };
 import readinessSchema from "../generated/setup-readiness.schema.json" with { type: "json" };
 import sourceSchema from "../generated/source-check.schema.json" with { type: "json" };
+import promptSchema from "../generated/source-prompt-resolution.schema.json" with { type: "json" };
 import { parseRun, structuralMatches, validRunId } from "./run-metadata.ts";
 import { validateCapabilities } from "./capability-data.ts";
+import { validateModelCatalog, validProfile } from "./model-choices.ts";
 
 export class SetupReadError extends Error {}
 export function validLocalFolder(folder:string):boolean {
@@ -19,6 +21,7 @@ export function parseReadiness(value:unknown):SetupReadiness {
   if(!structuralMatches(value,readinessSchema))throw new SetupReadError("Readiness cannot be read.");
   const p=value as SetupReadiness;
   validateCapabilities(p.capabilities,null);
+  if(p.model_catalog) validateModelCatalog(p.model_catalog);
   // A profile that uses no graphics card requires zero dedicated VRAM.
   const fits=p.available_ram_bytes>=p.required_ram_bytes&&(p.required_vram_bytes===0||p.available_vram_bytes!==null&&p.available_vram_bytes>=p.required_vram_bytes);
   if(p.memory_fit!==fits||p.requires_large_download_approval!==(p.missing_download_bytes>500_000_000)
@@ -56,6 +59,17 @@ export async function inspectFolder(folder:string,authorized:boolean,signal:Abor
   if(!authorized||!validLocalFolder(folder))throw new SetupReadError("Confirm authorization and enter an absolute local project folder.");
   return parseInspection(await read("/api/projects/inspect",signal,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({folder,authorized:true})},request));
 }
+export function parseSourcePrompt(value:unknown,inspection:InspectionView):SourcePromptResolution {
+  if(!structuralMatches(value,promptSchema))throw new SetupReadError("The resolved source task cannot be read.");
+  const task=value as SourcePromptResolution;
+  if(task.target_id!==inspection.inspection_id||task.routes.some(route=>!inspection.entries.some(entry=>entry.route===route)))throw new SetupReadError("The prompt did not resolve to this inspected source and its discovered routes.");
+  return task;
+}
+export async function resolveSourcePrompt(inspection:InspectionView,prompt:string,limit:number,signal:AbortSignal,request:typeof fetch=fetch):Promise<SourcePromptResolution> {
+  if(!inspection.inspection_id||!/^inspect-[0-9a-f]{32}$/.test(inspection.inspection_id)||!prompt.trim()||prompt.length>4096)throw new SetupReadError("Inspect source first, then enter a bounded instruction.");
+  const body:SourcePromptRequest={inspection_id:inspection.inspection_id,prompt:prompt.trim(),limit};
+  return parseSourcePrompt(await read("/api/projects/prompt",signal,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)},request),inspection);
+}
 
 const inspectionId=(value:string)=>/^inspect-[0-9a-f]{32}$/.test(value);
 const post=(body:unknown):RequestInit=>({method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
@@ -67,7 +81,7 @@ function liveRun(value:unknown):ReviewRun {
 }
 export async function launchReview(inspection:InspectionView,body:LaunchRequest,signal:AbortSignal,request:typeof fetch=fetch):Promise<ReviewRun>{
   const allowed=["authorization","injection","path_traversal","nextjs_exposure"];
-  if(!inspection.inspection_id||!inspectionId(body.inspection_id)||body.inspection_id!==inspection.inspection_id||body.authorized!==true||!Number.isInteger(body.limit??5)||(body.limit??5)<1||(body.limit??5)>20
+  if(!inspection.inspection_id||!inspectionId(body.inspection_id)||body.inspection_id!==inspection.inspection_id||body.authorized!==true||!validProfile(body.profile??"auto")||!Number.isInteger(body.limit??5)||(body.limit??5)<1||(body.limit??5)>20
     ||!body.families?.length||new Set(body.families).size!==body.families.length||body.families.some(f=>!allowed.includes(f))
     ||[...(body.resources??[]),...(body.routes??[])].some(s=>!s.length||s.length>256||/[\u0000-\u001f]/u.test(s))
     ||body.resources?.length&&body.families.some(f=>f!=="authorization"))throw new SetupReadError("Inspect an authorized folder and select valid review scope first.");

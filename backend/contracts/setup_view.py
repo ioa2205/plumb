@@ -7,10 +7,12 @@ from pydantic import AwareDatetime, Field, field_validator, model_validator
 from backend.contracts.capabilities import CapabilityTable
 from backend.contracts.code import EntryPoint
 from backend.contracts.common import Contract, Family, Id, Sha256
+from backend.contracts.model_choices import ModelCatalog
 from backend.contracts.runs import Condition
 
 
 class SetupReadiness(Contract):
+    model_catalog: ModelCatalog | None = None
     capabilities: CapabilityTable | None = None
     checked_at: AwareDatetime
     ready: bool
@@ -128,12 +130,14 @@ class InspectionView(Contract):
 
 
 class LaunchRequest(Contract):
+    profile: str = Field(default="auto", pattern=r"^(auto|[a-z][a-z0-9._-]{0,127})$")
     inspection_id: str = Field(pattern=r"^inspect-[0-9a-f]{32}$")
     authorized: Literal[True]
     limit: int = Field(default=5, ge=1, le=20)
     families: list[Family] = Field(default=[Family.AUTHORIZATION], min_length=1, max_length=4)
     resources: list[str] = Field(default=[], max_length=20)
     routes: list[str] = Field(default=[], max_length=20)
+    prompt_task_id: str | None = Field(default=None, pattern=r"^source-task-[0-9a-f]{24}$")
 
     @field_validator("authorized", mode="before")
     @classmethod

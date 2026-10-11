@@ -1,0 +1,292 @@
+{
+  "$defs": {
+    "AssessmentBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_requests": {
+          "default": 3,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 180,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Max Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "AssessmentBudget",
+      "type": "object"
+    },
+    "AssessmentScope": {
+      "additionalProperties": false,
+      "properties": {
+        "accounts": {
+          "items": {
+            "$ref": "#/$defs/TestAccount"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Accounts",
+          "type": "array"
+        },
+        "allowed_actions": {
+          "items": {
+            "enum": [
+              "read",
+              "compare",
+              "plan",
+              "report",
+              "analyze",
+              "collect",
+              "authenticate",
+              "create_synthetic"
+            ],
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "allowed_paths": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Allowed Paths",
+          "type": "array"
+        },
+        "application_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Application Id",
+          "type": "string"
+        },
+        "application_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Application Name",
+          "type": "string"
+        },
+        "assessment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "authority": {
+          "$ref": "#/$defs/ScopeAuthority"
+        },
+        "budget": {
+          "$ref": "#/$defs/AssessmentBudget"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "external_access_enabled": {
+          "const": false,
+          "default": false,
+          "title": "External Access Enabled",
+          "type": "boolean"
+        },
+        "origin": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Origin",
+          "type": "string"
+        },
+        "scope_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "stop_conditions": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Stop Conditions",
+          "type": "array"
+        },
+        "synthetic_objects": {
+          "items": {
+            "$ref": "#/$defs/SyntheticObject"
+          },
+          "maxItems": 100,
+          "title": "Synthetic Objects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "scope_id",
+        "assessment_id",
+        "application_id",
+        "application_name",
+        "origin",
+        "allowed_paths",
+        "allowed_actions",
+        "accounts",
+        "authority",
+        "expires_at",
+        "stop_conditions"
+      ],
+      "title": "AssessmentScope",
+      "type": "object"
+    },
+    "ScopeAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "granted_at": {
+          "format": "date-time",
+          "title": "Granted At",
+          "type": "string"
+        },
+        "granted_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Granted By",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "granted_by",
+        "reference",
+        "granted_at"
+      ],
+      "title": "ScopeAuthority",
+      "type": "object"
+    },
+    "SyntheticObject": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "owner_account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Owner Account Id",
+          "type": "string"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "synthetic_marker": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Synthetic Marker"
+        }
+      },
+      "required": [
+        "object_id",
+        "owner_account_id",
+        "kind"
+      ],
+      "title": "SyntheticObject",
+      "type": "object"
+    },
+    "TestAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "role",
+        "label"
+      ],
+      "title": "TestAccount",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/WebsiteScopeCreate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "confirmed_authority": {
+      "const": true,
+      "title": "Confirmed Authority",
+      "type": "boolean"
+    },
+    "expectation_basis": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Expectation Basis",
+      "type": "string"
+    },
+    "expected_owner_only": {
+      "const": true,
+      "title": "Expected Owner Only",
+      "type": "boolean"
+    },
+    "scope": {
+      "$ref": "#/$defs/AssessmentScope"
+    },
+    "url": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scope",
+    "confirmed_authority",
+    "url",
+    "expected_owner_only",
+    "expectation_basis"
+  ],
+  "title": "WebsiteScopeCreate",
+  "type": "object"
+}

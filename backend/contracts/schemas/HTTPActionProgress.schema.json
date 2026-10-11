@@ -1,0 +1,48 @@
+{
+  "$id": "https://plumb.local/schemas/HTTPActionProgress.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Action Id",
+      "type": "string"
+    },
+    "artifact_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 1,
+      "title": "Artifact Ids",
+      "type": "array"
+    },
+    "attempts": {
+      "default": 0,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "completed": {
+      "default": false,
+      "title": "Completed",
+      "type": "boolean"
+    },
+    "missing_evidence": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Missing Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "action_id"
+  ],
+  "title": "HTTPActionProgress",
+  "type": "object"
+}

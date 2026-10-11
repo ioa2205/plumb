@@ -1,0 +1,321 @@
+{
+  "$defs": {
+    "Access": {
+      "enum": [
+        "allowed",
+        "denied"
+      ],
+      "title": "Access",
+      "type": "string"
+    },
+    "ControlledHTTPAction": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "alice",
+                "bob"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Account Id"
+        },
+        "action_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Action Id",
+          "type": "string"
+        },
+        "body_preview": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body Preview"
+        },
+        "max_attempts": {
+          "default": 1,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "readiness",
+            "authenticate",
+            "create_synthetic",
+            "read"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "state_change": {
+          "title": "State Change",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "action_id",
+        "account_id",
+        "method",
+        "path",
+        "purpose",
+        "state_change"
+      ],
+      "title": "ControlledHTTPAction",
+      "type": "object"
+    },
+    "HTTPProbeRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "capture": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 3,
+          "title": "Capture",
+          "type": "object"
+        },
+        "expected_if_safe": {
+          "$ref": "#/$defs/Access"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "principal": {
+          "pattern": "^[a-z][a-z0-9_]{0,31}$",
+          "title": "Principal",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/StepRole"
+        }
+      },
+      "required": [
+        "role",
+        "principal",
+        "method",
+        "path",
+        "expected_if_safe"
+      ],
+      "title": "HTTPProbeRequest",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ProbeSpec": {
+      "additionalProperties": false,
+      "description": "Data for a trusted transport; never a script or a model-written command.",
+      "properties": {
+        "finding_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "marker": {
+          "pattern": "^[A-Za-z0-9_-]{8,128}$",
+          "title": "Marker",
+          "type": "string"
+        },
+        "requests": {
+          "items": {
+            "$ref": "#/$defs/HTTPProbeRequest"
+          },
+          "maxItems": 8,
+          "minItems": 2,
+          "title": "Requests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "finding_id",
+        "marker",
+        "requests"
+      ],
+      "title": "ProbeSpec",
+      "type": "object"
+    },
+    "StepRole": {
+      "enum": [
+        "setup",
+        "attack",
+        "control"
+      ],
+      "title": "StepRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ControlledHTTPPreview.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actions": {
+      "items": {
+        "$ref": "#/$defs/ControlledHTTPAction"
+      },
+      "maxItems": 9,
+      "minItems": 6,
+      "title": "Actions",
+      "type": "array"
+    },
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "control_spec": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProbeSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+    },
+    "external_access_enabled": {
+      "const": false,
+      "default": false,
+      "title": "External Access Enabled",
+      "type": "boolean"
+    },
+    "max_requests": {
+      "maximum": 30,
+      "minimum": 1,
+      "title": "Max Requests",
+      "type": "integer"
+    },
+    "max_response_bytes": {
+      "default": 65536,
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Max Response Bytes",
+      "type": "integer"
+    },
+    "max_seconds": {
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Max Seconds",
+      "type": "integer"
+    },
+    "max_total_bytes": {
+      "default": 786432,
+      "maximum": 786432,
+      "minimum": 1,
+      "title": "Max Total Bytes",
+      "type": "integer"
+    },
+    "preview_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Preview Id",
+      "type": "string"
+    },
+    "runner": {
+      "const": "hash_pinned_owned_tandir",
+      "default": "hash_pinned_owned_tandir",
+      "title": "Runner",
+      "type": "string"
+    },
+    "runner_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Runner Manifest Sha256",
+      "type": "string"
+    },
+    "scope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Scope Sha256",
+      "type": "string"
+    },
+    "spec": {
+      "$ref": "#/$defs/ProbeSpec"
+    },
+    "synthetic_object_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Synthetic Object Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "preview_id",
+    "assessment_id",
+    "scope_sha256",
+    "runner_manifest_sha256",
+    "synthetic_object_id",
+    "spec",
+    "actions",
+    "created_at",
+    "expires_at",
+    "max_requests",
+    "max_seconds"
+  ],
+  "title": "ControlledHTTPPreview",
+  "type": "object"
+}

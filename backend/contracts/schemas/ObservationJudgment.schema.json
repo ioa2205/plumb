@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    },
+    "ObservationClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "citation": {
+          "$ref": "#/$defs/EvidenceCitation"
+        },
+        "value": {
+          "maxLength": 16384,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "citation",
+        "value"
+      ],
+      "title": "ObservationClaim",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ObservationJudgment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alternative_explanations": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 1,
+      "title": "Alternative Explanations",
+      "type": "array"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/ObservationClaim"
+      },
+      "maxItems": 30,
+      "minItems": 1,
+      "title": "Claims",
+      "type": "array"
+    },
+    "missing_evidence": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 1,
+      "title": "Missing Evidence",
+      "type": "array"
+    },
+    "mitigation": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Mitigation",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "supported",
+        "rejected",
+        "inconclusive"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verdict",
+    "claims",
+    "rationale",
+    "alternative_explanations",
+    "missing_evidence",
+    "mitigation"
+  ],
+  "title": "ObservationJudgment",
+  "type": "object"
+}

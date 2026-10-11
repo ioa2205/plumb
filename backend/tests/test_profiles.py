@@ -70,8 +70,6 @@ def test_inventory_separates_fit_validation_and_quality_and_writes_nothing(ready
     "change",
     [
         {"memory": MemoryStatus(8 * 1024**3, profiles.Profile().host_required_bytes - 1, 0, 0)},
-        {"dedicated_free_bytes": profiles.Profile().device_required_bytes - 1},
-        {"dedicated_free_bytes": None},
         {"os": "Linux"},
         {"architecture": "ARM64"},
     ],

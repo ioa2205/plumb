@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://plumb.local/schemas/AssessmentJob.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "analyze",
+        "collect"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "ended_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ended At"
+    },
+    "job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Result"
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "running",
+        "completed",
+        "canceled",
+        "failed"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "job_id",
+    "assessment_id",
+    "action",
+    "state",
+    "created_at",
+    "message"
+  ],
+  "title": "AssessmentJob",
+  "type": "object"
+}

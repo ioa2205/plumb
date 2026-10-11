@@ -13,6 +13,7 @@ from backend.contracts.common import LinkStatus
 from backend.contracts.runs import Condition, ConditionKind
 from backend.contracts.setup_view import InspectionView, SetupReadiness
 from backend.jobs import WorkerLock
+from backend.model_choices import catalog
 from backend.profiles import chosen
 from backend.redaction import Redactor
 from backend.review import Review
@@ -98,6 +99,9 @@ def readiness(settings: Settings) -> SetupReadiness:
         )
     )
     view = SetupReadiness(
+        model_catalog=catalog(report)
+        if all("model_sha256" in p and "runtime_commit" in p for p in report["profiles"])
+        else None,
         capabilities=table(),
         checked_at=datetime.now(UTC),
         ready=plan["ready"],

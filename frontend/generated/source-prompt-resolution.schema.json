@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "Family": {
+      "description": "Vulnerability families investigated in depth (PROJECT_PLAN \u00a74).",
+      "enum": [
+        "authorization",
+        "injection",
+        "path_traversal",
+        "nextjs_exposure"
+      ],
+      "title": "Family",
+      "type": "string"
+    }
+  },
+  "$id": "https://plumb.local/schemas/SourcePromptResolution.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authorization_granted": {
+      "const": false,
+      "default": false,
+      "title": "Authorization Granted",
+      "type": "boolean"
+    },
+    "clarification": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clarification"
+    },
+    "families": {
+      "items": {
+        "$ref": "#/$defs/Family"
+      },
+      "title": "Families",
+      "type": "array"
+    },
+    "limit": {
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "network_activity": {
+      "const": false,
+      "default": false,
+      "title": "Network Activity",
+      "type": "boolean"
+    },
+    "prompt": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    },
+    "resources": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resources",
+      "type": "array"
+    },
+    "routes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Routes",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "resolved",
+        "clarification_required",
+        "refused"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Target Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_id",
+    "task_id",
+    "prompt",
+    "families",
+    "resources",
+    "routes",
+    "limit",
+    "status"
+  ],
+  "title": "SourcePromptResolution",
+  "type": "object"
+}

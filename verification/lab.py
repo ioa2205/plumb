@@ -10,7 +10,7 @@ import sys
 import tempfile
 import threading
 import time
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Literal
@@ -155,8 +155,16 @@ def admit(spec: ProbeSpec) -> None:
 
 @contextmanager
 def launch(
-    files: dict[str, bytes], settings: Settings, *, variant: Variant = "vulnerable"
+    files: dict[str, bytes],
+    settings: Settings,
+    *,
+    variant: Variant = "vulnerable",
+    readiness_hook: Callable[[httpx.Client, str], None] | None = None,
+    startup_check: Callable[[], None] | None = None,
+    transport_factory: Callable[[str], httpx.BaseTransport] | None = None,
 ) -> Iterator[tuple[str, httpx.Client]]:
+    if startup_check is not None:
+        startup_check()
     for process in psutil.process_iter(["name"]):
         try:
             if (process.info["name"] or "").lower() in {"llama-server.exe", "llama-server"}:
@@ -171,10 +179,14 @@ def launch(
         work = Path(folder).resolve()
         source, data = work / "api", work / "data"
         for path, content in files.items():
+            if startup_check is not None:
+                startup_check()
             target = source / path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(content)
         env = {k: os.environ[k] for k in ("SYSTEMROOT", "WINDIR", "TEMP", "TMP") if k in os.environ}
+        if startup_check is not None:
+            startup_check()
         process = subprocess.Popen(  # noqa: S603 - fixed trusted interpreter/worker; verified source
             [str(python), "-I", str(WORKER), str(source), str(data), variant],
             cwd=work,
@@ -194,25 +206,50 @@ def launch(
         reader.start()
         try:
             try:
-                handshake = json.loads(ready.get(timeout=25))
+                if startup_check is None:
+                    line = ready.get(timeout=25)
+                else:
+                    handshake_deadline = time.monotonic() + 25
+                    while True:
+                        startup_check()
+                        remaining = handshake_deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise queue.Empty
+                        try:
+                            line = ready.get(timeout=min(0.1, remaining))
+                            break
+                        except queue.Empty:
+                            continue
+            except queue.Empty as error:
+                raise LabUnavailable("Verified bundled lab did not become ready") from error
+            try:
+                handshake = json.loads(line)
                 port = handshake["port"]
                 if type(port) is not int or not 1 <= port <= 65535:
                     raise ValueError("invalid readiness port")
-            except (queue.Empty, ValueError, KeyError, TypeError) as error:
+            except (ValueError, KeyError, TypeError) as error:
                 raise LabUnavailable("Verified bundled lab did not become ready") from error
             origin = f"http://127.0.0.1:{port}"
-            with httpx.Client(trust_env=False, follow_redirects=False, timeout=5) as client:
+            transport = transport_factory(origin) if transport_factory is not None else None
+            with httpx.Client(
+                trust_env=False, follow_redirects=False, timeout=5, transport=transport
+            ) as client:
                 # Wait for uvicorn after the child has reserved its exclusive socket.
-                for _ in range(100):
-                    try:
-                        if client.get(origin + "/health", timeout=0.2).status_code == 200:
-                            break
-                    except httpx.HTTPError:
-                        if process.poll() is not None:
-                            raise LabUnavailable("Bundled lab exited before readiness") from None
-                        time.sleep(0.025)
+                if readiness_hook is not None:
+                    readiness_hook(client, origin)
                 else:
-                    raise LabUnavailable("Bundled lab readiness failed")
+                    for _ in range(100):
+                        try:
+                            if client.get(origin + "/health", timeout=0.2).status_code == 200:
+                                break
+                        except httpx.HTTPError:
+                            if process.poll() is not None:
+                                raise LabUnavailable(
+                                    "Bundled lab exited before readiness"
+                                ) from None
+                            time.sleep(0.025)
+                    else:
+                        raise LabUnavailable("Bundled lab readiness failed")
                 yield origin, client
         finally:
             if process.poll() is None:

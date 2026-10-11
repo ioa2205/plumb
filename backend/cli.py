@@ -60,6 +60,11 @@ def main(argv: list[str] | None = None) -> int:
         "calibrate", help="Check the model runner on this computer; loads the model once"
     )
     calibrate.add_argument("--profile", choices=["auto", *REGISTRY], default="auto")
+    calibrate.add_argument("--model", help="Pinned model ID; see plumb models")
+    models = commands.add_parser(
+        "models", help="Read local model choices, quality and hardware fit; no inference"
+    )
+    models.add_argument("--json", action="store_true")
     report_command = commands.add_parser("report", help="Read a saved report without analysis")
     report_command.add_argument("run_id")
     report_command.add_argument("--open", action="store_true", help="Request the default browser")
@@ -72,6 +77,7 @@ def main(argv: list[str] | None = None) -> int:
     inspect.add_argument("folder", type=Path)
     review = commands.add_parser("review", help="Review an authorized local folder")
     review.add_argument("folder", type=Path)
+    review.add_argument("--prompt", help="Resolve a bounded focus against discovered source")
     review.add_argument("--resource", action="append", default=[], help="Narrow to a resource name")
     review.add_argument(
         "--route", action="append", default=[], help="Narrow to an exact discovered route"
@@ -96,6 +102,24 @@ def main(argv: list[str] | None = None) -> int:
     policy.add_argument("--forbid-field", action="append", default=[])
     policy.add_argument("--statement", required=True)
     policy.add_argument("--author", required=True)
+    from backend.assessment_cli import add_assessment_arguments
+
+    add_assessment_arguments(commands)
+    ask = commands.add_parser("ask", help="Read a cited saved finding; no inference")
+    ask.add_argument("run_id")
+    ask.add_argument("prompt")
+    converse = commands.add_parser(
+        "chat", help="Ask a flexible local evidence question; loads the local model"
+    )
+    converse.add_argument("target_id", help="Inspection, review or assessment ID")
+    converse.add_argument("prompt")
+    converse.add_argument(
+        "--kind", choices=["inspection", "review", "assessment"], default="review"
+    )
+    converse.add_argument("--conversation", help="Continue a saved conversation on the same target")
+    converse.add_argument("--profile", default="auto")
+    converse.add_argument("--model", help="Pinned model ID; no automatic download")
+    converse.add_argument("--max-seconds", type=int, default=300)
     for command in (review, resume):
         command.add_argument(
             "--open-report",
@@ -107,6 +131,7 @@ def main(argv: list[str] | None = None) -> int:
             choices=["auto", *REGISTRY],
             help="Review profile (see plumb doctor); resume retains its identity",
         )
+        command.add_argument("--model", help="Pinned model ID; resume retains its original model")
         command.add_argument(
             "--limit",
             type=int,
@@ -130,6 +155,109 @@ def main(argv: list[str] | None = None) -> int:
             "<absolute-external-folder>. Existing preferences were preserved."
         )
         return 1
+    if getattr(args, "model", None):
+        from backend.profiles import requested_model
+
+        try:
+            args.profile = requested_model(settings, args.model, args.profile or "auto")
+        except (ValueError, OSError, RuntimeError):
+            print(
+                "Model choice refused. Use plumb models for recorded and untested choices; "
+                "check setup and calibration. No download started."
+            )
+            return 1
+    if args.command == "assess":
+        from backend.assessment_cli import execute_assessment
+
+        return execute_assessment(settings, args)
+    if args.command == "models":
+        from backend.model_choices import catalog
+
+        try:
+            value = catalog(doctor(settings))
+            if args.json:
+                print(value.model_dump_json(indent=2))
+            else:
+                for model in value.models:
+                    quality = (
+                        "recorded scoped quality"
+                        if any(p.automatic_eligible for p in model.profiles)
+                        else "untested quality"
+                    )
+                    installed = (
+                        "verified installed"
+                        if model.verified_installed
+                        else "missing or unverified"
+                    )
+                    print(f"{model.model_id}: {quality}; {installed}")
+                    for profile in model.profiles:
+                        print(
+                            f"  {profile.profile_id}: "
+                            f"{'ready' if profile.launch_available else 'unavailable now'}; "
+                            f"first-use {profile.first_use_check}"
+                        )
+                    if model.unavailable_reason:
+                        print(f"  {model.unavailable_reason}")
+                print(f"Automatic profile: {value.recommended_profile or 'unavailable'}")
+                print(value.selection_basis)
+                print(
+                    "Use --model <id> to select. Installation, large-download approval "
+                    "and first-use checks remain separate."
+                )
+            return 0
+        except (ValueError, OSError, RuntimeError):
+            print(
+                "Model inventory unavailable. Run plumb doctor --json; "
+                "no model or download started."
+            )
+            return 1
+    if args.command == "chat":
+        import time
+
+        from backend.contracts.conversation import ConversationAsk, ConversationCreate
+        from backend.conversation import Conversations
+
+        worker = Conversations(settings)
+        try:
+            view = (
+                worker.read(args.conversation)
+                if args.conversation
+                else worker.new(ConversationCreate(target_kind=args.kind, target_id=args.target_id))
+            )
+            if view.target_kind != args.kind or view.target_id != args.target_id:
+                raise ValueError("Follow-up target differs from the saved conversation")
+            worker.start(
+                view.conversation_id,
+                ConversationAsk(
+                    prompt=args.prompt, profile=args.profile, max_seconds=args.max_seconds
+                ),
+            )
+            print(f"Local conversation: {view.conversation_id}")
+            while worker.read(view.conversation_id).state == "running":
+                time.sleep(0.1)
+            result = worker.read(view.conversation_id)
+            print(result.model_dump_json(indent=2))
+            return 0 if result.state == "completed" else 1
+        except (ValueError, OSError, RuntimeError):
+            print(
+                "Local question refused. Check the target, profile readiness and bounded question."
+            )
+            return 1
+        except KeyboardInterrupt:
+            worker.close()
+            print("Local question canceled; saved turns are preserved.")
+            return 130
+        finally:
+            worker.close()
+    if args.command == "ask":
+        from backend.prompts import ask_saved
+
+        try:
+            print(json.dumps(ask_saved(settings, args.run_id, args.prompt), indent=2))
+            return 0
+        except (ValueError, OSError):
+            print("Saved answer refused. Name one valid finding and check its saved report.")
+            return 1
     if args.command == "replay":
         from verification.report_replay import attach
 
@@ -348,9 +476,34 @@ def execute_review(
                 )
                 print(Redactor.configured().text(overview_summary(result)), flush=True)
                 if args.command == "inspect":
+                    from backend.source_binding import bind
+
+                    inspection_id = bind(settings, root, snapshot.id)
                     manifest.update({"snapshot_id": snapshot.id, "model_loaded": False})
+                    manifest["inspection_id"] = inspection_id
+                    print(f"Inspection: {inspection_id}", flush=True)
                     print(f"Saved {directory / 'overview.json'}", flush=True)
                     return 0
+                if getattr(args, "prompt", None):
+                    from backend.prompts import resolve_source_prompt
+
+                    task = resolve_source_prompt(
+                        args.prompt,
+                        snapshot.id,
+                        list(result.resources),
+                        [entry.route for entry in result.graph.entries if entry.route],
+                        limit=args.limit,
+                        redactor=Redactor.configured(settings),
+                    )
+                    write_json(directory / "prompt-task.json", task.model_dump(mode="json"))
+                    if task.status != "resolved":
+                        raise ValueError(task.clarification)
+                    if args.resource or args.route or args.family:
+                        raise ValueError("Use either --prompt or explicit source scope filters")
+                    args.resource, args.route = task.resources, task.routes
+                    args.family = [family.value for family in task.families]
+                elif getattr(args, "resolved_prompt", None) is not None:
+                    write_json(directory / "prompt-task.json", args.resolved_prompt)
                 context.freeze_policies()
                 policies_path = directory / "policies.json"
                 write_json(policies_path, context.policies.model_dump(mode="json"))

@@ -16,6 +16,7 @@ from backend import acceptance, cpu_profile, vulkan_profile
 from backend.capabilities import table
 from backend.contracts.runs import ReviewRun
 from backend.memory import MemoryStatus, read_memory
+from backend.model_quality import evidence
 from backend.preflight import GB
 from backend.settings import Settings
 from backend.setup import llama_cpp, opengrep
@@ -108,7 +109,7 @@ def _registry() -> dict[str, Profile]:
 
 # In order of preference: the measured graphics-card profile on its own hardware, then
 # the CPU profile that any 64-bit Windows computer may use, then the same CPU settings
-# with each other pinned model (ADR-0024). "auto" takes the first that fits the host.
+# with each other pinned model. "auto" considers only recorded quality (ADR-0026).
 REGISTRY = _registry()
 
 
@@ -365,6 +366,7 @@ def _judge(
         )
     return {
         **profile.identity(),
+        **evidence(profile.identity()),
         "quantization": model.quantization,
         "compatible_measured_host": compatible_host,
         "pins_match": pins_match,
@@ -387,8 +389,8 @@ def _judge(
             "Historical scoped invoice/receipt development evidence only. "
             "Current engine family evaluation is unrun; broader quality gates remain open."
             if offload
-            else "Same model, investigator and validator as the measured profile. Review "
-            "quality with this profile is not measured; broader quality gates remain open."
+            else "Recorded scoped receipt/invoice source review only. The cross-model "
+            "comparison and broader quality gates remain open."
             if profile.model_id == vulkan_profile.MODEL_ID
             else f"{model.family}: {NOT_COMPARED}. No review has been recorded with this "
             "model; its memory requirement is an estimate."
@@ -435,9 +437,18 @@ def doctor(settings: Settings, host: Host | None = None) -> dict[str, Any]:
                 versions,
             )
         )
-    recommended = next(
-        (p["id"] for p in judged if p["compatible_measured_host"] and p["pins_match"]), None
-    )
+    eligible = [
+        p
+        for p in judged
+        if p["automatic_eligible"] and p["compatible_measured_host"] and p["pins_match"]
+    ]
+    # Preserve an actionable setup choice when none can run, without qualifying it.
+    recommended_choice = next((p for p in eligible if p["ready"]), None)
+    if recommended_choice is None:
+        recommended_choice = next((p for p in eligible if p["estimated_memory_fit"]), None)
+    if recommended_choice is None:
+        recommended_choice = next(iter(eligible), None)
+    recommended = recommended_choice["id"] if recommended_choice is not None else None
     # PLUMB_PROFILE is the user's lasting choice; it goes through the same checks.
     selected = settings.profile if settings.profile != "auto" else recommended
     report: dict[str, Any] = {
@@ -560,6 +571,32 @@ def chosen(report: dict[str, Any], profile_id: str | None = None) -> dict[str, A
     """One judged profile; by default the selected one, or the CPU profile when none is."""
     wanted = profile_id or report["selected_profile"] or CPU_PROFILE_ID
     return next(p for p in report["profiles"] if p["id"] == wanted)
+
+
+def requested_model(settings: Settings, model_id: str, requested_profile: str = "auto") -> str:
+    """Resolve an explicit model choice to a fixed profile; do not launch or install."""
+    try:
+        model = load_model_pins().get(model_id)
+    except KeyError as error:
+        raise ValueError("Unknown pinned model; run plumb models") from error
+    available = [p for p in REGISTRY.values() if p.model_id == model.id]
+    if not available:
+        raise ValueError(
+            "Model has no supported launch profile; memory/runtime qualification is unknown"
+        )
+    override = requested_profile if requested_profile != "auto" else settings.profile
+    if override != "auto":
+        if override not in REGISTRY or REGISTRY[override].model_id != model_id:
+            raise ValueError("Explicit model and profile choices disagree")
+        return override
+    report = doctor(settings)
+    compatible = [
+        p for p in report["profiles"] if p["model_id"] == model_id and p["compatible_measured_host"]
+    ]
+    chosen_profile = next((p for p in compatible if p["ready"]), None)
+    if chosen_profile is None:
+        chosen_profile = next(iter(compatible), None)
+    return chosen_profile["id"] if chosen_profile else available[0].id
 
 
 def select(settings: Settings, requested: str = "auto", *, rechecking: bool = False) -> Profile:

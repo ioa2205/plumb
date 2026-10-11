@@ -8,7 +8,9 @@ from typing import Annotated, Literal
 
 from fastapi import FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi import Path as PathParameter
-from fastapi.responses import StreamingResponse
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from backend.browser_jobs import BrowserJobs, LaunchRefused
 from backend.case_reads import CaseMissing, CaseReads, CaseUnavailable
@@ -80,6 +82,13 @@ def create_app(
     projects = ProjectReads(settings)
     history = RunReads(settings)
     worker = BrowserJobs(settings)
+    from backend.assessment_jobs import AssessmentJobs
+
+    assessment_jobs = AssessmentJobs(settings)
+    from backend.conversation import Conversations
+    from backend.conversation_api import router as conversation_router
+
+    conversations = Conversations(settings)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -91,11 +100,34 @@ def create_app(
             from starlette.concurrency import run_in_threadpool
 
             await run_in_threadpool(worker.close)
+            await run_in_threadpool(assessment_jobs.close)
+            await run_in_threadpool(conversations.close)
 
     app = FastAPI(title="Plumb", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.worker = worker
     app.state.gate = gate
+    from backend.assessment_security import AssessmentInputBounds, private_input
+
+    app.add_middleware(AssessmentInputBounds)
     app.add_middleware(Guarded, gate=gate)
+
+    @app.exception_handler(RequestValidationError)
+    async def safe_validation(request: Request, error: RequestValidationError) -> Response:
+        if private_input(request.url.path):
+            return JSONResponse(
+                {
+                    "detail": "Private input does not match its contract; check the "
+                    "scope, review and bounded fields. Rejected evidence was not stored."
+                },
+                status_code=422,
+            )
+        return await request_validation_exception_handler(request, error)
+
+    from backend.assessment_api import assessment_job_router, assessment_router
+
+    app.include_router(assessment_router(settings, assessment_jobs))
+    app.include_router(assessment_job_router(assessment_jobs))
+    app.include_router(conversation_router(conversations))
     workbench = Workbench(workbench_dir if workbench_dir is not None else DEFAULT_DIRECTORY)
 
     @app.get(BOOTSTRAP_PATH, include_in_schema=False)
@@ -184,6 +216,39 @@ def create_app(
                 status_code=503,
                 detail="This folder cannot be inspected safely. Check its absolute local path, "
                 "separate data storage and plumb setup. No target code was executed.",
+            ) from error
+
+    from backend.contracts.prompts import (
+        SavedAnswerRequest,
+        SavedFindingAnswer,
+        SourcePromptRequest,
+        SourcePromptResolution,
+    )
+
+    @app.post("/api/projects/prompt", response_model=SourcePromptResolution)
+    def source_prompt(request: SourcePromptRequest) -> SourcePromptResolution:
+        from backend.prompts import resolve_inspected
+
+        try:
+            return resolve_inspected(settings, request)
+        except (OSError, ValueError, RuntimeError) as error:
+            raise HTTPException(
+                status_code=409,
+                detail="Prompt cannot resolve against this registered source. Inspect again; "
+                "no review or network activity has started.",
+            ) from error
+
+    @app.post("/api/runs/{run_id}/ask", response_model=SavedFindingAnswer)
+    def saved_answer(run_id: Id, request: SavedAnswerRequest) -> SavedFindingAnswer:
+        from backend.prompts import ask_saved
+
+        try:
+            return SavedFindingAnswer.model_validate(ask_saved(settings, run_id, request.prompt))
+        except (OSError, ValueError) as error:
+            raise HTTPException(
+                status_code=409,
+                detail="Name one saved finding and check its validated report; "
+                "no inference started.",
             ) from error
 
     @app.get("/api/runs", response_model=RunHistory)

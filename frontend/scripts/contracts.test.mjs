@@ -1,12 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readdirSync } from "node:fs";
 import { typeExpression, generateContracts, renderContracts } from "./contracts.mjs";
 
 test("generated API contracts are current and include every known schema", () => {
   generateContracts(true);
   const text = renderContracts();
-  assert.equal((text.match(/export namespace /g)||[]).length,44);
-  for (const name of ["DispositionUpdate","DispositionDecision","ReviewRun","Finding","RunEvent","ApplicationMap","FindingPage","CaseDetail","CitedExcerpt","PeerExcerpt","SnapshotCodePage"]) assert.ok(text.includes(`export type ${name} = ${name}Schema.${name};`));
+  const schemas = readdirSync(new URL("../../backend/contracts/schemas/", import.meta.url)).filter(name => name.endsWith(".schema.json"));
+  assert.equal((text.match(/export namespace /g)||[]).length,schemas.length);
+  for (const file of schemas) {const name = file.replace(".schema.json", ""); assert.ok(text.includes(`export type ${name} = ${name}Schema.${name};`));}
 });
 
 test("compiler preserves references, nullable/default fields, literals, arrays and rejects unsupported constructs", () => {

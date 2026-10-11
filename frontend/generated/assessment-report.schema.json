@@ -1,0 +1,611 @@
+{
+  "$defs": {
+    "AccessExpectation": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_account_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Allowed Account Ids",
+          "type": "array"
+        },
+        "basis": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Basis",
+          "type": "string"
+        },
+        "declared_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Declared By",
+          "type": "string"
+        },
+        "expectation_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Expectation Id",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "statement": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expectation_id",
+        "path",
+        "object_id",
+        "allowed_account_ids",
+        "statement",
+        "declared_by",
+        "basis"
+      ],
+      "title": "AccessExpectation",
+      "type": "object"
+    },
+    "AttachmentReview": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed_sanitized": {
+          "const": true,
+          "title": "Confirmed Sanitized",
+          "type": "boolean"
+        },
+        "reviewed_at": {
+          "format": "date-time",
+          "title": "Reviewed At",
+          "type": "string"
+        },
+        "reviewed_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reviewed By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewed_by",
+        "confirmed_sanitized",
+        "reviewed_at"
+      ],
+      "title": "AttachmentReview",
+      "type": "object"
+    },
+    "ComparisonRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "control_artifact_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Control Artifact Id"
+        },
+        "expectation_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectation Id"
+        },
+        "left_artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Left Artifact Id",
+          "type": "string"
+        },
+        "right_artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Right Artifact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "left_artifact_id",
+        "right_artifact_id"
+      ],
+      "title": "ComparisonRequest",
+      "type": "object"
+    },
+    "EvidenceArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "assessment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "attachment_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Path"
+        },
+        "collected_at": {
+          "format": "date-time",
+          "title": "Collected At",
+          "type": "string"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObservationContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "execution_status": {
+          "const": "imported",
+          "default": "imported",
+          "title": "Execution Status",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 200,
+          "minProperties": 1,
+          "title": "Fields",
+          "type": "object"
+        },
+        "imported_at": {
+          "format": "date-time",
+          "title": "Imported At",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "request_response",
+            "note",
+            "screenshot"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "provenance": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "review": {
+          "$ref": "#/$defs/AttachmentReview"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "trusted_lab_collection": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LabCollectionBinding"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "artifact_id",
+        "assessment_id",
+        "kind",
+        "sha256",
+        "collected_at",
+        "imported_at",
+        "provenance",
+        "review",
+        "fields"
+      ],
+      "title": "EvidenceArtifact",
+      "type": "object"
+    },
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    },
+    "LabCollectionBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Sha256",
+          "type": "string"
+        },
+        "preview_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preview Sha256",
+          "type": "string"
+        },
+        "runner_origin": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Runner Origin",
+          "type": "string"
+        },
+        "scope_origin": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Scope Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "manifest_sha256",
+        "scope_origin",
+        "runner_origin",
+        "preview_sha256"
+      ],
+      "title": "LabCollectionBinding",
+      "type": "object"
+    },
+    "ObservationComparison": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_explanations": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 30,
+          "title": "Alternative Explanations",
+          "type": "array"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/EvidenceCitation"
+          },
+          "maxItems": 100,
+          "title": "Citations",
+          "type": "array"
+        },
+        "comparison_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Comparison Id",
+          "type": "string"
+        },
+        "conclusion": {
+          "enum": [
+            "candidate",
+            "rejected",
+            "inconclusive"
+          ],
+          "title": "Conclusion",
+          "type": "string"
+        },
+        "execution_status": {
+          "const": "imported",
+          "default": "imported",
+          "title": "Execution Status",
+          "type": "string"
+        },
+        "missing_evidence": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 30,
+          "title": "Missing Evidence",
+          "type": "array"
+        },
+        "request": {
+          "$ref": "#/$defs/ComparisonRequest"
+        },
+        "summary": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comparison_id",
+        "request",
+        "conclusion",
+        "summary"
+      ],
+      "title": "ObservationComparison",
+      "type": "object"
+    },
+    "ObservationContext": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "request_context_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Request Context Id",
+          "type": "string"
+        },
+        "session_context_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Context Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "object_id",
+        "session_context_id",
+        "request_context_id"
+      ],
+      "title": "ObservationContext",
+      "type": "object"
+    },
+    "ReportClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/EvidenceCitation"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Citations",
+          "type": "array"
+        },
+        "text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "title": "ReportClaim",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/AssessmentReport.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "affected_endpoints": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Affected Endpoints",
+      "type": "array"
+    },
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/ReportClaim"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "comparisons": {
+      "items": {
+        "$ref": "#/$defs/ObservationComparison"
+      },
+      "title": "Comparisons",
+      "type": "array"
+    },
+    "confidentiality": {
+      "const": "private_local",
+      "default": "private_local",
+      "title": "Confidentiality",
+      "type": "string"
+    },
+    "description": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "dismissed_leads": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Dismissed Leads",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceArtifact"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "expected_behavior": {
+      "items": {
+        "$ref": "#/$defs/AccessExpectation"
+      },
+      "title": "Expected Behavior",
+      "type": "array"
+    },
+    "human_preview_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Preview Required",
+      "type": "boolean"
+    },
+    "impact": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Impact",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "methodology": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Methodology",
+      "type": "array"
+    },
+    "mitigation": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Mitigation",
+      "type": "array"
+    },
+    "runtime_verification": {
+      "const": "not_attempted",
+      "default": "not_attempted",
+      "title": "Runtime Verification",
+      "type": "string"
+    },
+    "safe_reproduction": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Safe Reproduction",
+      "type": "array"
+    },
+    "tested_coverage": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tested Coverage",
+      "type": "array"
+    },
+    "title": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "tools_and_models": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Tools And Models",
+      "type": "array"
+    },
+    "untested_coverage": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Untested Coverage",
+      "type": "array"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "title",
+    "description",
+    "affected_endpoints",
+    "safe_reproduction",
+    "impact",
+    "claims",
+    "evidence",
+    "expected_behavior",
+    "comparisons",
+    "mitigation",
+    "tools_and_models",
+    "methodology",
+    "limitations",
+    "dismissed_leads",
+    "tested_coverage",
+    "untested_coverage"
+  ],
+  "title": "AssessmentReport",
+  "type": "object"
+}

@@ -1,0 +1,30 @@
+{
+  "$id": "https://plumb.local/schemas/EvidenceCitation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "field": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Field",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "field",
+    "sha256"
+  ],
+  "title": "EvidenceCitation",
+  "type": "object"
+}

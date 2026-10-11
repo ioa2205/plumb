@@ -1,0 +1,32 @@
+{
+  "$id": "https://plumb.local/schemas/ConversationAsk.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "max_seconds": {
+      "default": 300,
+      "maximum": 300,
+      "minimum": 1,
+      "title": "Max Seconds",
+      "type": "integer"
+    },
+    "profile": {
+      "default": "auto",
+      "maxLength": 96,
+      "minLength": 1,
+      "title": "Profile",
+      "type": "string"
+    },
+    "prompt": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt"
+  ],
+  "title": "ConversationAsk",
+  "type": "object"
+}

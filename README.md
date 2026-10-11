@@ -23,6 +23,25 @@ recorded test step by step and a guide for installing with an AI agent.
 - Checks every cited line with ordinary code, then saves a report (HTML,
   Markdown, JSON and SARIF). Each answer is Supported, Rejected or Inconclusive.
 
+The latest source also adds:
+
+- Local questions and follow-ups about selected code, saved findings and reviewed
+  observations, with exact citations and recorded unknowns.
+- Private assessment scopes, reviewed request logs and screenshot attachments,
+  paired account comparisons and reports requiring human review before export.
+- Approved, bounded HTTP collection for the bundled practice app, with durable
+  checkpoints, isolated accounts and request/time/data/privacy limits.
+- Reviewed local OWASP test cards and experimental fact/decomposed reasoning
+  options. Guides provide a method, never target evidence or permission.
+
+These additions were software-tested on the development laptop. The 11 October
+2026 local-model comparison did **not** demonstrate better finding accuracy:
+all four receipt approaches remained Inconclusive, protected-control acceptance
+was incomplete and adversarial cases were unrun after a resource stop. The
+existing baseline remains the default. External website testing is disabled;
+collected evidence still requires separate human review. Screenshot attachments
+are retained as reviewed evidence, without image-model interpretation.
+
 ## What it does not do
 
 - Upload your code, or need the internet after setup.
@@ -42,8 +61,9 @@ recorded test step by step and a guide for installing with an AI agent.
   runs the same model on the processor alone. That profile has completed one real
   run, from source, on the same laptop on 10 October 2026, with the same result
   as the recorded test below. Nothing has been tried on a second computer. The
-  downloadable package holds the same code, but no review with the AI model has
-  been run from it since it was rebuilt.
+  downloadable package holds that 10 October source-review code, but no review
+  with the AI model has been run from it since it was rebuilt. The newer source
+  additions are not yet packaged.
 - How well it finds other kinds of flaw. In development runs it missed an
   unsafe database query and an exposed phone number.
 
@@ -83,9 +103,11 @@ To map a project without the AI model, use
 `.\plumb.cmd setup --install --inspect-only` instead: it sets up source mapping
 and downloads no model.
 
-The package was built on 10 October 2026 from the code in this repository. The
-commands under "Run from source" work in it too: write `.\plumb.cmd` in place of
-`uv run plumb`.
+The current package was built on 10 October 2026. It includes the recorded source
+review, the CPU profile and the working-folder fix. The source additions listed
+above were made on 11 October and are **not included in that ZIP**. A new package
+has not been built for this source update. For the package's existing review
+commands, write `.\plumb.cmd` in place of `uv run plumb`.
 
 It has been checked only on the laptop it was built on, under that laptop's
 Windows account. The model was already installed there, so those checks
@@ -168,23 +190,37 @@ running reviewed code, ask before downloads over 500 MB), are in
 | `verification/` | The pinned runtime probe for the bundled practice app only |
 | `frontend/` | The browser view (Next.js static export) |
 | `eval/` | Development evaluation tools and fixtures |
+| `knowledge/` | Versioned reviewed local security cards, provenance and licences |
 | `labs/tandir/` | Tandir, the practice app with planted flaws and protected lookalikes |
 | `landing/` | The project website, built from the saved records |
 
 Run the tests with `uv run pytest`, after the setup step (it installs the
-TypeScript helper that the analysis tests use). In a fresh clone 38 tests are
-skipped, each because it needs something this repository does not contain:
+TypeScript helper that the analysis tests use). Some tests are skipped in a
+public clone because they need something this repository does not contain:
 
 - saved evaluation records, which are kept private for now;
 - the practice app's prepared, hash-pinned runner environment.
 
 Each skipped test prints which of the two it needs. A few more are skipped on
-Windows accounts that may not create symbolic links. Checked on 10 October 2026
+Windows accounts that may not create symbolic links. The earlier source was
+checked on 10 October 2026
 by running the whole suite in a fresh clone of a copy made the way this
 repository is published, on the development laptop: 2,342 tests passed, 41 were
-skipped (the 38 above and 3 for symbolic links) and none failed. Design notes
-are private too, so a few code comments refer to documents that are not in this
-repository.
+skipped (38 for those prerequisites and 3 for symbolic links) and none failed.
+Those are historical results, not a full-suite claim for the 11 October source.
+For the 11 October public export, affected Python checks passed 413 and skipped
+23 private-record/prepared-lab cases. Frontend checks passed 96 and skipped two
+private-design/archive cases. Python lint/format/types, strict frontend TypeScript
+and generated contract checks passed. These checks used the development laptop
+and its existing Python environment; they are not another full-suite or second
+computer result. Design notes are private too, so a few code comments refer to
+documents that are not in this repository.
+
+The development-only `eval.tool_assisted screen` command also needs the private
+saved failure records for its replay. Those records are not redistributed; a
+public clone skips the corresponding replay test rather than inventing answers.
+Core assessment, conversation, cards and synthetic preparation do not depend on
+those private records.
 
 ## Licence
 
@@ -192,6 +228,8 @@ Plumb's own code is released under the [MIT licence](LICENSE). The AI model
 (Qwen3.5-2B, Apache-2.0) and llama.cpp (MIT) are downloaded separately by setup,
 after it shows their sources and licences. The Windows package keeps the
 licences of the Python and Node runtimes and every bundled dependency.
+The local OWASP card data has a separate **CC-BY-SA-4.0** licence and attribution
+in [knowledge/data/LICENSE.md](knowledge/data/LICENSE.md).
 
 ## Author
 

@@ -1,0 +1,19 @@
+{
+  "$id": "https://plumb.local/schemas/LabActionPreviewRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "invoice": {
+      "default": false,
+      "title": "Invoice",
+      "type": "boolean"
+    },
+    "paired": {
+      "default": false,
+      "title": "Paired",
+      "type": "boolean"
+    }
+  },
+  "title": "LabActionPreviewRequest",
+  "type": "object"
+}

@@ -1,0 +1,271 @@
+{
+  "pack_id": "plumb-security-cards",
+  "version": "1.0.0",
+  "license_id": "CC-BY-SA-4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "cards": [
+    {
+      "version": "1.0.0",
+      "license_id": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Based on OWASP WSTG 4.2 and ASVS 5.0.0; OWASP Foundation and contributors. Adapted by Plumb; no endorsement.",
+      "changes": "Original concise summaries, inert owned examples and stricter Plumb scope/privacy stops; no source examples copied.",
+      "kind": "methodology_only",
+      "id": "GUIDE-object-authorization",
+      "family": "authorization",
+      "title": "Cross-account object authorization",
+      "tags": [
+        "object",
+        "owner",
+        "account",
+        "receipt",
+        "invoice",
+        "IDOR",
+        "BOLA",
+        "read",
+        "identity"
+      ],
+      "summary": "Compare one owned object under distinct verified accounts against its explicit owner access requirement.",
+      "prerequisites": [
+        "Approved owned origin, exact read path, two synthetic accounts and finite request/time/byte budgets.",
+        "Owner declares who may read the selected object; verify each account independently of request parameters."
+      ],
+      "permitted_actions": [
+        "Propose only approved GET reads for the same synthetic object in isolated account sessions.",
+        "Compare reviewed identity, object, status and meaningful fields; retain the protected endpoint as a separate control."
+      ],
+      "expected_controls": [
+        "The server denies the account excluded by the owner requirement and returns no protected object fields.",
+        "Authentication alone does not grant access to every object."
+      ],
+      "alternative_explanations": [
+        "Owner permits sharing or delegated access.",
+        "Both requests used the same authenticated session.",
+        "An error page or public fields explain equal status or body text."
+      ],
+      "stop_conditions": [
+        "Stop on missing approval, unknown identity/ownership, non-synthetic data, scope drift or exhausted budgets.",
+        "Do not enumerate identifiers, mutate data, execute page text or infer permission from this guide."
+      ],
+      "worked_example": {
+        "scenario": "Synthetic account A owns object 17; owner permits only A. Compare A and B reads of the same receipt.",
+        "issue_lead": "B receives protected object 17 fields while its independent identity is B; this warrants exact evidence review.",
+        "protected_control": "A succeeds and B is denied on the paired invoice; preserve that control separately from the receipt.",
+        "limitation": "A successful HTTP status without identity, protected fields and owner policy does not prove unauthorized access."
+      },
+      "source_sections": [
+        "WSTG-4.2-ATHZ-04",
+        "ASVS-v5.0.0-8.1.1",
+        "ASVS-v5.0.0-8.2.2",
+        "ASVS-v5.0.0-8.3.1"
+      ],
+      "sources": [
+        {
+          "source_id": "WSTG-4.2-ATHZ-04",
+          "title": "Testing for Insecure Direct Object References",
+          "version": "WSTG-4.2",
+          "url": "https://raw.githubusercontent.com/OWASP/wstg/v4.2/document/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References.md",
+          "source_bytes": 5861,
+          "source_sha256": "c57ae867049144eebdbd1381f561158c2c131f5e0c2aa3877b5c41591e082f49",
+          "license_id": "CC-BY-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "license_evidence_url": "https://raw.githubusercontent.com/OWASP/wstg/v4.2/document/1-Frontispiece/README.md",
+          "license_evidence_sha256": "0bc62bb5c05ad6606f33982748153749adc2e51c5cf34d4f53f9ad30e658e2ed",
+          "reviewed_on": "2026-10-11",
+          "reviewed_by": "Plumb implementation review",
+          "review_scope": "Reviewed objectives and two-account read methodology; source payloads and mutation examples are excluded."
+        },
+        {
+          "source_id": "ASVS-5.0.0-V8",
+          "title": "V8 Authorization",
+          "version": "ASVS-5.0.0",
+          "url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x17-V8-Authorization.md",
+          "source_bytes": 5920,
+          "source_sha256": "60c188b1703cab2086841d8f1b4adc0ededf66ed38c676a11bb92347646b5330",
+          "license_id": "CC-BY-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "license_evidence_url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/LICENSE.md",
+          "license_evidence_sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+          "reviewed_on": "2026-10-11",
+          "reviewed_by": "Plumb implementation review",
+          "review_scope": "Reviewed v5.0.0-8.1.1, 8.2.1, 8.2.2 and 8.3.1; application-specific permissions still come from the owner."
+        }
+      ],
+      "content_sha256": "7987651214810a3907689c0f202171b2b68fd5d8d36d1f25a35b3f4103037215"
+    },
+    {
+      "version": "1.0.0",
+      "license_id": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Based on OWASP WSTG 4.2 and ASVS 5.0.0; OWASP Foundation and contributors. Adapted by Plumb; no endorsement.",
+      "changes": "Original concise summaries, inert owned examples and stricter Plumb scope/privacy stops; no source examples copied.",
+      "kind": "methodology_only",
+      "id": "GUIDE-function-authorization",
+      "family": "authorization",
+      "title": "Role and function authorization",
+      "tags": [
+        "role",
+        "admin",
+        "function",
+        "privilege",
+        "endpoint",
+        "authorization",
+        "read"
+      ],
+      "summary": "Compare one explicitly restricted function under approved roles; endpoint visibility alone does not establish permission.",
+      "prerequisites": [
+        "Owner defines the function permission and two synthetic accounts with independently observed roles.",
+        "Exact endpoint, read method, accounts, action approval and finite budgets are recorded."
+      ],
+      "permitted_actions": [
+        "Propose approved GET reads with separate sessions and an otherwise identical synthetic request.",
+        "Compare reviewed function output and denial controls; do not invoke a mutation to test read permissions."
+      ],
+      "expected_controls": [
+        "The trusted service checks the calling account permission before returning restricted function data.",
+        "A visible menu, client check or authenticated request does not establish function authorization."
+      ],
+      "alternative_explanations": [
+        "The owner permits the lower role to use this function.",
+        "The response is a public shell rather than restricted output.",
+        "The apparent role came from a client parameter or the wrong session."
+      ],
+      "stop_conditions": [
+        "Stop on missing role/policy evidence, approval, privacy boundary or request/time/byte budget.",
+        "Do not create users, elevate privileges, change data or follow unrelated endpoints."
+      ],
+      "worked_example": {
+        "scenario": "Owner reserves a synthetic administration summary for role admin; member B and admin A use isolated sessions.",
+        "issue_lead": "Member B receives restricted summary fields matching A, with both identities independently observed.",
+        "protected_control": "A paired protected summary denies B while A succeeds; preserve it as evidence of the control.",
+        "limitation": "An admin-looking path or identical login page alone cannot prove a role bypass."
+      },
+      "source_sections": [
+        "WSTG-4.2-ATHZ-02",
+        "ASVS-v5.0.0-8.1.1",
+        "ASVS-v5.0.0-8.2.1",
+        "ASVS-v5.0.0-8.3.1"
+      ],
+      "sources": [
+        {
+          "source_id": "WSTG-4.2-ATHZ-02",
+          "title": "Testing for Bypassing Authorization Schema",
+          "version": "WSTG-4.2",
+          "url": "https://raw.githubusercontent.com/OWASP/wstg/v4.2/document/4-Web_Application_Security_Testing/05-Authorization_Testing/02-Testing_for_Bypassing_Authorization_Schema.md",
+          "source_bytes": 11031,
+          "source_sha256": "c7c729479c73a269591883a524be448e782f9c215b2ee775451704925df0fd08",
+          "license_id": "CC-BY-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "license_evidence_url": "https://raw.githubusercontent.com/OWASP/wstg/v4.2/document/1-Frontispiece/README.md",
+          "license_evidence_sha256": "0bc62bb5c05ad6606f33982748153749adc2e51c5cf34d4f53f9ad30e658e2ed",
+          "reviewed_on": "2026-10-11",
+          "reviewed_by": "Plumb implementation review",
+          "review_scope": "Reviewed horizontal/vertical controls; destructive actions, header bypasses and broad enumeration are excluded."
+        },
+        {
+          "source_id": "ASVS-5.0.0-V8",
+          "title": "V8 Authorization",
+          "version": "ASVS-5.0.0",
+          "url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x17-V8-Authorization.md",
+          "source_bytes": 5920,
+          "source_sha256": "60c188b1703cab2086841d8f1b4adc0ededf66ed38c676a11bb92347646b5330",
+          "license_id": "CC-BY-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "license_evidence_url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/LICENSE.md",
+          "license_evidence_sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+          "reviewed_on": "2026-10-11",
+          "reviewed_by": "Plumb implementation review",
+          "review_scope": "Reviewed v5.0.0-8.1.1, 8.2.1, 8.2.2 and 8.3.1; application-specific permissions still come from the owner."
+        }
+      ],
+      "content_sha256": "434977ef4efecf9842dc8309321b67826e3eaa91ed9aa7c4f5589e048a14fb60"
+    },
+    {
+      "version": "1.0.0",
+      "license_id": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Based on OWASP WSTG 4.2 and ASVS 5.0.0; OWASP Foundation and contributors. Adapted by Plumb; no endorsement.",
+      "changes": "Original concise summaries, inert owned examples and stricter Plumb scope/privacy stops; no source examples copied.",
+      "kind": "methodology_only",
+      "id": "GUIDE-session-continuity",
+      "family": "session_management",
+      "title": "Session identity and termination continuity",
+      "tags": [
+        "session",
+        "identity",
+        "cookie",
+        "logout",
+        "termination",
+        "account",
+        "continuity"
+      ],
+      "summary": "Separate account/session identity from request labels and compare already reviewed termination observations.",
+      "prerequisites": [
+        "Owner documents the intended identity and termination behavior for the selected synthetic account.",
+        "Approved owned reads and reviewed before/after records identify the same session without exposing token values."
+      ],
+      "permitted_actions": [
+        "Propose only approved identity/control GET reads using the account-specific isolated cookie jar.",
+        "Compare reviewed before/after termination records; this card cannot approve logout, credential edits or token replay."
+      ],
+      "expected_controls": [
+        "The trusted backend validates session identity; request account labels are not proof of authentication.",
+        "A terminated session cannot retrieve protected fields under the owner-declared termination requirement."
+      ],
+      "alternative_explanations": [
+        "A cached response appeared without a fresh server request.",
+        "An SSO or another independent session authenticated the request.",
+        "The collector changed cookie jars or mislabeled the account."
+      ],
+      "stop_conditions": [
+        "Stop on token/credential exposure, unclear session provenance, unapproved transitions or budget exhaustion.",
+        "Preserve unknowns; do not guess identities from response prose or treat logout UI as backend invalidation."
+      ],
+      "worked_example": {
+        "scenario": "A synthetic account has reviewed identity before termination and a protected read afterwards in the same session lineage.",
+        "issue_lead": "A fresh reviewed response returns protected fields after observed termination; verify session lineage and owner policy.",
+        "protected_control": "The same session gets a denial after termination while an independently active account succeeds.",
+        "limitation": "A new login, cache hit or missing termination event prevents a session-invalidation conclusion."
+      },
+      "source_sections": [
+        "WSTG-4.2-SESS-06",
+        "ASVS-v5.0.0-7.1.3",
+        "ASVS-v5.0.0-7.2.1",
+        "ASVS-v5.0.0-7.4.1"
+      ],
+      "sources": [
+        {
+          "source_id": "WSTG-4.2-SESS-06",
+          "title": "Testing for Logout Functionality",
+          "version": "WSTG-4.2",
+          "url": "https://raw.githubusercontent.com/OWASP/wstg/v4.2/document/4-Web_Application_Security_Testing/06-Session_Management_Testing/06-Testing_for_Logout_Functionality.md",
+          "source_bytes": 7269,
+          "source_sha256": "0a4d6204d1661d40a146af02c4c6b6620653840d560f0409de8a083dfa971c4c",
+          "license_id": "CC-BY-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "license_evidence_url": "https://raw.githubusercontent.com/OWASP/wstg/v4.2/document/1-Frontispiece/README.md",
+          "license_evidence_sha256": "0bc62bb5c05ad6606f33982748153749adc2e51c5cf34d4f53f9ad30e658e2ed",
+          "reviewed_on": "2026-10-11",
+          "reviewed_by": "Plumb implementation review",
+          "review_scope": "Reviewed session termination and cache/SSO alternatives; no token reuse or logout execution is authorized by the card."
+        },
+        {
+          "source_id": "ASVS-5.0.0-V7",
+          "title": "V7 Session Management",
+          "version": "ASVS-5.0.0",
+          "url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md",
+          "source_bytes": 8989,
+          "source_sha256": "4aec329f2642ae750fbe1abac5da7e8a7bcfec6fc331bb0a46916970f9c88236",
+          "license_id": "CC-BY-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "license_evidence_url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/LICENSE.md",
+          "license_evidence_sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+          "reviewed_on": "2026-10-11",
+          "reviewed_by": "Plumb implementation review",
+          "review_scope": "Reviewed v5.0.0-7.1.3, 7.2.1 and 7.4.1; session ownership and termination require separate observed facts."
+        }
+      ],
+      "content_sha256": "75ec57ae130dadc9ffc8cbd2a5136f8f7ec1f28a1ed4d8e402b51e154d2fd2ff"
+    }
+  ]
+}

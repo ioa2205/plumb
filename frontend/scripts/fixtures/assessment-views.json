@@ -1,0 +1,1274 @@
+{
+  "label": "Synthetic Tandir UI fixture; no model or live test evidence",
+  "view": {
+    "scope": {
+      "scope_id": "scope-ui-synthetic",
+      "assessment_id": "assess-ui-synthetic",
+      "application_id": "owned-tandir",
+      "application_name": "Tandir lab · synthetic UI fixture",
+      "origin": "http://127.0.0.1:8701",
+      "allowed_paths": [
+        "/health",
+        "/auth/login",
+        "/orders"
+      ],
+      "allowed_actions": [
+        "read",
+        "compare",
+        "plan",
+        "report",
+        "analyze",
+        "collect",
+        "authenticate",
+        "create_synthetic"
+      ],
+      "accounts": [
+        {
+          "account_id": "alice",
+          "role": "customer",
+          "label": "Synthetic owner"
+        },
+        {
+          "account_id": "bob",
+          "role": "customer",
+          "label": "Synthetic second customer"
+        }
+      ],
+      "synthetic_objects": [
+        {
+          "object_id": "order-1042",
+          "owner_account_id": "alice",
+          "kind": "Order",
+          "synthetic": true,
+          "synthetic_marker": "TANDIR-FAKE-1042"
+        }
+      ],
+      "authority": {
+        "granted_by": "Owned fixture author",
+        "reference": "Synthetic UI development; no live test authority",
+        "granted_at": "2026-10-10T00:00:00Z"
+      },
+      "expires_at": "2030-01-01T00:00:00Z",
+      "budget": {
+        "max_requests": 30,
+        "max_seconds": 600
+      },
+      "stop_conditions": [
+        "Unexpected sensitive data",
+        "Budget exhausted"
+      ],
+      "external_access_enabled": false
+    },
+    "artifacts": [
+      {
+        "artifact_id": "E-owner",
+        "assessment_id": "assess-ui-synthetic",
+        "kind": "request_response",
+        "sha256": "59a0141e1644eb2d3c63c03730d83f3e2a8fb9186d259635718437315c8aa844",
+        "collected_at": "2026-10-10T00:00:01Z",
+        "imported_at": "2026-10-10T19:03:52.270016Z",
+        "provenance": "Synthetic Tandir UI fixture; imported, not an executed test",
+        "review": {
+          "reviewed_by": "Synthetic fixture generator",
+          "confirmed_sanitized": true,
+          "reviewed_at": "2026-10-10T19:03:52.268019Z"
+        },
+        "fields": {
+          "request.method": "GET",
+          "request.url": "http://127.0.0.1:8701/orders/1042/receipt",
+          "response.status": "200",
+          "request.body": "",
+          "response.body": "TANDIR-FAKE-1042"
+        },
+        "context": {
+          "account_id": "alice",
+          "object_id": "order-1042",
+          "session_context_id": "alice-session",
+          "request_context_id": "order-context"
+        },
+        "execution_status": "imported",
+        "attachment_path": null,
+        "trusted_lab_collection": null
+      },
+      {
+        "artifact_id": "E-other",
+        "assessment_id": "assess-ui-synthetic",
+        "kind": "request_response",
+        "sha256": "d600e86a8524785c055c7b79b87e98f69725af03f1ce9f4de6b8d5b03a47b143",
+        "collected_at": "2026-10-10T00:00:01Z",
+        "imported_at": "2026-10-10T19:03:52.270016Z",
+        "provenance": "Synthetic Tandir UI fixture; imported, not an executed test",
+        "review": {
+          "reviewed_by": "Synthetic fixture generator",
+          "confirmed_sanitized": true,
+          "reviewed_at": "2026-10-10T19:03:52.268019Z"
+        },
+        "fields": {
+          "request.method": "GET",
+          "request.url": "http://127.0.0.1:8701/orders/1042/receipt",
+          "response.status": "200",
+          "request.body": "",
+          "response.body": "TANDIR-FAKE-1042"
+        },
+        "context": {
+          "account_id": "bob",
+          "object_id": "order-1042",
+          "session_context_id": "bob-session",
+          "request_context_id": "order-context"
+        },
+        "execution_status": "imported",
+        "attachment_path": null,
+        "trusted_lab_collection": null
+      },
+      {
+        "artifact_id": "E-control",
+        "assessment_id": "assess-ui-synthetic",
+        "kind": "request_response",
+        "sha256": "8df00b1252c0a249e43958dd597dca0d06aecad2d367a177ec7fb712447b11bc",
+        "collected_at": "2026-10-10T00:00:01Z",
+        "imported_at": "2026-10-10T19:03:52.271016Z",
+        "provenance": "Synthetic Tandir UI fixture; imported, not an executed test",
+        "review": {
+          "reviewed_by": "Synthetic fixture generator",
+          "confirmed_sanitized": true,
+          "reviewed_at": "2026-10-10T19:03:52.268019Z"
+        },
+        "fields": {
+          "request.method": "GET",
+          "request.url": "http://127.0.0.1:8701/orders/1042/invoice",
+          "response.status": "404",
+          "request.body": "",
+          "response.body": "Denied"
+        },
+        "context": {
+          "account_id": "bob",
+          "object_id": "order-1042",
+          "session_context_id": "bob-session",
+          "request_context_id": "order-context"
+        },
+        "execution_status": "imported",
+        "attachment_path": null,
+        "trusted_lab_collection": null
+      }
+    ],
+    "expectations": [
+      {
+        "expectation_id": "EX-owner",
+        "path": "/orders/1042/receipt",
+        "object_id": "order-1042",
+        "allowed_account_ids": [
+          "alice"
+        ],
+        "statement": "Only the synthetic owner may access this order.",
+        "declared_by": "Fixture author",
+        "basis": "Synthetic declared policy; no company evidence"
+      }
+    ],
+    "comparisons": [
+      {
+        "comparison_id": "CP-090eb9ab8a28f87e",
+        "request": {
+          "left_artifact_id": "E-owner",
+          "right_artifact_id": "E-other",
+          "control_artifact_id": "E-control",
+          "expectation_id": "EX-owner"
+        },
+        "conclusion": "candidate",
+        "summary": "Imported observations contain the same declared synthetic object in the other-account response; local analysis and provenance review remain necessary.",
+        "citations": [
+          {
+            "artifact_id": "E-owner",
+            "field": "request.method",
+            "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+          },
+          {
+            "artifact_id": "E-owner",
+            "field": "request.url",
+            "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+          },
+          {
+            "artifact_id": "E-owner",
+            "field": "request.body",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "artifact_id": "E-owner",
+            "field": "response.status",
+            "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+          },
+          {
+            "artifact_id": "E-owner",
+            "field": "response.body",
+            "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "request.method",
+            "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "request.url",
+            "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "request.body",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "response.status",
+            "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "response.body",
+            "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+          },
+          {
+            "artifact_id": "E-control",
+            "field": "request.method",
+            "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+          },
+          {
+            "artifact_id": "E-control",
+            "field": "request.url",
+            "sha256": "98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1"
+          },
+          {
+            "artifact_id": "E-control",
+            "field": "request.body",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "artifact_id": "E-control",
+            "field": "response.status",
+            "sha256": "6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b"
+          },
+          {
+            "artifact_id": "E-control",
+            "field": "response.body",
+            "sha256": "da404deb110f7cc92a5b2c85c8e8ab103bd48837cf300f8387d13d54f3adea65"
+          }
+        ],
+        "missing_evidence": [],
+        "alternative_explanations": [
+          "Session identity and collection provenance are supplied by the importer and have not been independently verified.",
+          "Different authorization context, public synthetic data or stale collection could explain an apparent discrepancy."
+        ],
+        "execution_status": "imported"
+      }
+    ],
+    "answers": [
+      {
+        "answer_id": "A-6f33a34f53f1abbe",
+        "task": {
+          "task_id": "T-15fdd39be084321f",
+          "target_id": "assess-ui-synthetic",
+          "action": "explain",
+          "prompt": "Explain E-owner and E-other",
+          "evidence_ids": [
+            "E-owner",
+            "E-other"
+          ],
+          "focus": "ownership",
+          "budget": {
+            "max_requests": 3,
+            "max_seconds": 180
+          },
+          "status": "resolved",
+          "clarification": null,
+          "authorization_granted": false,
+          "network_activity": false
+        },
+        "text": "E-owner: imported GET observation with response status 200. E-other: imported GET observation with response status 200.",
+        "citations": [
+          {
+            "artifact_id": "E-owner",
+            "field": "request.method",
+            "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+          },
+          {
+            "artifact_id": "E-owner",
+            "field": "request.url",
+            "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+          },
+          {
+            "artifact_id": "E-owner",
+            "field": "response.status",
+            "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "request.method",
+            "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "request.url",
+            "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "response.status",
+            "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+          }
+        ],
+        "unknowns": [
+          "Imported observations do not establish trusted runtime reproduction or application-wide security."
+        ],
+        "generated_by": "deterministic"
+      }
+    ],
+    "analyses": [],
+    "stopped": false,
+    "stop_reason": null,
+    "spent_requests": 0,
+    "spent_seconds": 0.0
+  },
+  "answer": {
+    "answer_id": "A-6f33a34f53f1abbe",
+    "task": {
+      "task_id": "T-15fdd39be084321f",
+      "target_id": "assess-ui-synthetic",
+      "action": "explain",
+      "prompt": "Explain E-owner and E-other",
+      "evidence_ids": [
+        "E-owner",
+        "E-other"
+      ],
+      "focus": "ownership",
+      "budget": {
+        "max_requests": 3,
+        "max_seconds": 180
+      },
+      "status": "resolved",
+      "clarification": null,
+      "authorization_granted": false,
+      "network_activity": false
+    },
+    "text": "E-owner: imported GET observation with response status 200. E-other: imported GET observation with response status 200.",
+    "citations": [
+      {
+        "artifact_id": "E-owner",
+        "field": "request.method",
+        "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+      },
+      {
+        "artifact_id": "E-owner",
+        "field": "request.url",
+        "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+      },
+      {
+        "artifact_id": "E-owner",
+        "field": "response.status",
+        "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "request.method",
+        "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "request.url",
+        "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "response.status",
+        "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+      }
+    ],
+    "unknowns": [
+      "Imported observations do not establish trusted runtime reproduction or application-wide security."
+    ],
+    "generated_by": "deterministic"
+  },
+  "map": {
+    "assessment_id": "assess-ui-synthetic",
+    "endpoints": [
+      {
+        "endpoint_id": "EP-0bc3305ec631",
+        "method": "GET",
+        "path": "/orders/1042/invoice",
+        "account_ids": [
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "artifact_ids": [
+          "E-control"
+        ],
+        "citations": [
+          {
+            "artifact_id": "E-control",
+            "field": "request.url",
+            "sha256": "98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1"
+          }
+        ],
+        "coverage": "observed_import"
+      },
+      {
+        "endpoint_id": "EP-8a58e8f5b698",
+        "method": "GET",
+        "path": "/orders/1042/receipt",
+        "account_ids": [
+          "alice",
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "artifact_ids": [
+          "E-owner",
+          "E-other"
+        ],
+        "citations": [
+          {
+            "artifact_id": "E-owner",
+            "field": "request.url",
+            "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+          },
+          {
+            "artifact_id": "E-other",
+            "field": "request.url",
+            "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+          }
+        ],
+        "coverage": "observed_import"
+      }
+    ],
+    "declared_roles": [
+      {
+        "account_id": "alice",
+        "role": "customer",
+        "label": "Synthetic owner"
+      },
+      {
+        "account_id": "bob",
+        "role": "customer",
+        "label": "Synthetic second customer"
+      }
+    ],
+    "unknowns": [
+      "Only imported endpoints are mapped; undiscovered endpoints and application-wide security are unknown.",
+      "Declared roles and objects are human statements, not verified authentication or policy behavior."
+    ],
+    "collection_performed": false
+  },
+  "checklist": {
+    "assessment_id": "assess-ui-synthetic",
+    "items": [
+      {
+        "check_id": "CK-0a0795774070",
+        "path": "/auth/login",
+        "action": "read",
+        "account_ids": [
+          "alice",
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "expectation_id": null,
+        "status": "planned",
+        "instructions": "Plan a legitimate owner observation, a designated other-account observation and a protected control using only the declared synthetic object and identical request context.",
+        "artifact_ids": [],
+        "limitations": [
+          "This checklist is a plan; imported observations are not trusted executed tests."
+        ]
+      },
+      {
+        "check_id": "CK-0587c50e302c",
+        "path": "/health",
+        "action": "read",
+        "account_ids": [
+          "alice",
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "expectation_id": null,
+        "status": "planned",
+        "instructions": "Plan a legitimate owner observation, a designated other-account observation and a protected control using only the declared synthetic object and identical request context.",
+        "artifact_ids": [],
+        "limitations": [
+          "This checklist is a plan; imported observations are not trusted executed tests."
+        ]
+      },
+      {
+        "check_id": "CK-fc7d055239d9",
+        "path": "/orders",
+        "action": "read",
+        "account_ids": [
+          "alice",
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "expectation_id": null,
+        "status": "planned",
+        "instructions": "Plan a legitimate owner observation, a designated other-account observation and a protected control using only the declared synthetic object and identical request context.",
+        "artifact_ids": [],
+        "limitations": [
+          "This checklist is a plan; imported observations are not trusted executed tests."
+        ]
+      },
+      {
+        "check_id": "CK-b0644f2e0117",
+        "path": "/orders/1042/invoice",
+        "action": "read",
+        "account_ids": [
+          "alice",
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "expectation_id": null,
+        "status": "observations_available",
+        "instructions": "Plan a legitimate owner observation, a designated other-account observation and a protected control using only the declared synthetic object and identical request context.",
+        "artifact_ids": [
+          "E-control"
+        ],
+        "limitations": [
+          "This checklist is a plan; imported observations are not trusted executed tests."
+        ]
+      },
+      {
+        "check_id": "CK-0297b4ec2afc",
+        "path": "/orders/1042/receipt",
+        "action": "read",
+        "account_ids": [
+          "alice",
+          "bob"
+        ],
+        "object_ids": [
+          "order-1042"
+        ],
+        "expectation_id": "EX-owner",
+        "status": "compared",
+        "instructions": "Plan a legitimate owner observation, a designated other-account observation and a protected control using only the declared synthetic object and identical request context.",
+        "artifact_ids": [
+          "E-other",
+          "E-owner"
+        ],
+        "limitations": [
+          "This checklist is a plan; imported observations are not trusted executed tests."
+        ]
+      }
+    ],
+    "untested_paths": [
+      "/auth/login",
+      "/health",
+      "/orders"
+    ],
+    "execution_status": "plan_only"
+  },
+  "comparison": {
+    "comparison_id": "CP-090eb9ab8a28f87e",
+    "request": {
+      "left_artifact_id": "E-owner",
+      "right_artifact_id": "E-other",
+      "control_artifact_id": "E-control",
+      "expectation_id": "EX-owner"
+    },
+    "conclusion": "candidate",
+    "summary": "Imported observations contain the same declared synthetic object in the other-account response; local analysis and provenance review remain necessary.",
+    "citations": [
+      {
+        "artifact_id": "E-owner",
+        "field": "request.method",
+        "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+      },
+      {
+        "artifact_id": "E-owner",
+        "field": "request.url",
+        "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+      },
+      {
+        "artifact_id": "E-owner",
+        "field": "request.body",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "artifact_id": "E-owner",
+        "field": "response.status",
+        "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+      },
+      {
+        "artifact_id": "E-owner",
+        "field": "response.body",
+        "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "request.method",
+        "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "request.url",
+        "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "request.body",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "response.status",
+        "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+      },
+      {
+        "artifact_id": "E-other",
+        "field": "response.body",
+        "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+      },
+      {
+        "artifact_id": "E-control",
+        "field": "request.method",
+        "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+      },
+      {
+        "artifact_id": "E-control",
+        "field": "request.url",
+        "sha256": "98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1"
+      },
+      {
+        "artifact_id": "E-control",
+        "field": "request.body",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "artifact_id": "E-control",
+        "field": "response.status",
+        "sha256": "6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b"
+      },
+      {
+        "artifact_id": "E-control",
+        "field": "response.body",
+        "sha256": "da404deb110f7cc92a5b2c85c8e8ab103bd48837cf300f8387d13d54f3adea65"
+      }
+    ],
+    "missing_evidence": [],
+    "alternative_explanations": [
+      "Session identity and collection provenance are supplied by the importer and have not been independently verified.",
+      "Different authorization context, public synthetic data or stale collection could explain an apparent discrepancy."
+    ],
+    "execution_status": "imported"
+  },
+  "preview": {
+    "report": {
+      "assessment_id": "assess-ui-synthetic",
+      "title": "Private assessment draft: Tandir lab · synthetic UI fixture",
+      "description": "Source-free assessment of human-reviewed imported observations within the declared scope.",
+      "affected_endpoints": [
+        "/orders/1042/invoice",
+        "/orders/1042/receipt"
+      ],
+      "safe_reproduction": [
+        "Proposed manual procedure only: use the designated accounts and synthetic objects within the explicit scope.",
+        "Record a legitimate owner response, the same object/request under the other account, and a protected denial control; stop on unexpected sensitive information."
+      ],
+      "impact": "Potential impact is unestablished until the declared access rule, matching contexts and relevant synthetic-object evidence support it.",
+      "claims": [
+        {
+          "text": "E-owner: imported GET http://127.0.0.1:8701/orders/1042/receipt, response status 200.",
+          "citations": [
+            {
+              "artifact_id": "E-owner",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "request.url",
+              "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "response.status",
+              "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+            }
+          ]
+        },
+        {
+          "text": "E-other: imported GET http://127.0.0.1:8701/orders/1042/receipt, response status 200.",
+          "citations": [
+            {
+              "artifact_id": "E-other",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.url",
+              "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "response.status",
+              "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+            }
+          ]
+        },
+        {
+          "text": "E-control: imported GET http://127.0.0.1:8701/orders/1042/invoice, response status 404.",
+          "citations": [
+            {
+              "artifact_id": "E-control",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.url",
+              "sha256": "98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "response.status",
+              "sha256": "6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b"
+            }
+          ]
+        },
+        {
+          "text": "Imported observations contain the same declared synthetic object in the other-account response; local analysis and provenance review remain necessary.",
+          "citations": [
+            {
+              "artifact_id": "E-owner",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "request.url",
+              "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "request.body",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "response.status",
+              "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "response.body",
+              "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.url",
+              "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.body",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "response.status",
+              "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "response.body",
+              "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.url",
+              "sha256": "98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.body",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "response.status",
+              "sha256": "6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "response.body",
+              "sha256": "da404deb110f7cc92a5b2c85c8e8ab103bd48837cf300f8387d13d54f3adea65"
+            }
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "artifact_id": "E-owner",
+          "assessment_id": "assess-ui-synthetic",
+          "kind": "request_response",
+          "sha256": "59a0141e1644eb2d3c63c03730d83f3e2a8fb9186d259635718437315c8aa844",
+          "collected_at": "2026-10-10T00:00:01Z",
+          "imported_at": "2026-10-10T19:03:52.270016Z",
+          "provenance": "Synthetic Tandir UI fixture; imported, not an executed test",
+          "review": {
+            "reviewed_by": "Synthetic fixture generator",
+            "confirmed_sanitized": true,
+            "reviewed_at": "2026-10-10T19:03:52.268019Z"
+          },
+          "fields": {
+            "request.method": "GET",
+            "request.url": "http://127.0.0.1:8701/orders/1042/receipt",
+            "response.status": "200",
+            "request.body": "",
+            "response.body": "TANDIR-FAKE-1042"
+          },
+          "context": {
+            "account_id": "alice",
+            "object_id": "order-1042",
+            "session_context_id": "alice-session",
+            "request_context_id": "order-context"
+          },
+          "execution_status": "imported",
+          "attachment_path": null,
+          "trusted_lab_collection": null
+        },
+        {
+          "artifact_id": "E-other",
+          "assessment_id": "assess-ui-synthetic",
+          "kind": "request_response",
+          "sha256": "d600e86a8524785c055c7b79b87e98f69725af03f1ce9f4de6b8d5b03a47b143",
+          "collected_at": "2026-10-10T00:00:01Z",
+          "imported_at": "2026-10-10T19:03:52.270016Z",
+          "provenance": "Synthetic Tandir UI fixture; imported, not an executed test",
+          "review": {
+            "reviewed_by": "Synthetic fixture generator",
+            "confirmed_sanitized": true,
+            "reviewed_at": "2026-10-10T19:03:52.268019Z"
+          },
+          "fields": {
+            "request.method": "GET",
+            "request.url": "http://127.0.0.1:8701/orders/1042/receipt",
+            "response.status": "200",
+            "request.body": "",
+            "response.body": "TANDIR-FAKE-1042"
+          },
+          "context": {
+            "account_id": "bob",
+            "object_id": "order-1042",
+            "session_context_id": "bob-session",
+            "request_context_id": "order-context"
+          },
+          "execution_status": "imported",
+          "attachment_path": null,
+          "trusted_lab_collection": null
+        },
+        {
+          "artifact_id": "E-control",
+          "assessment_id": "assess-ui-synthetic",
+          "kind": "request_response",
+          "sha256": "8df00b1252c0a249e43958dd597dca0d06aecad2d367a177ec7fb712447b11bc",
+          "collected_at": "2026-10-10T00:00:01Z",
+          "imported_at": "2026-10-10T19:03:52.271016Z",
+          "provenance": "Synthetic Tandir UI fixture; imported, not an executed test",
+          "review": {
+            "reviewed_by": "Synthetic fixture generator",
+            "confirmed_sanitized": true,
+            "reviewed_at": "2026-10-10T19:03:52.268019Z"
+          },
+          "fields": {
+            "request.method": "GET",
+            "request.url": "http://127.0.0.1:8701/orders/1042/invoice",
+            "response.status": "404",
+            "request.body": "",
+            "response.body": "Denied"
+          },
+          "context": {
+            "account_id": "bob",
+            "object_id": "order-1042",
+            "session_context_id": "bob-session",
+            "request_context_id": "order-context"
+          },
+          "execution_status": "imported",
+          "attachment_path": null,
+          "trusted_lab_collection": null
+        }
+      ],
+      "expected_behavior": [
+        {
+          "expectation_id": "EX-owner",
+          "path": "/orders/1042/receipt",
+          "object_id": "order-1042",
+          "allowed_account_ids": [
+            "alice"
+          ],
+          "statement": "Only the synthetic owner may access this order.",
+          "declared_by": "Fixture author",
+          "basis": "Synthetic declared policy; no company evidence"
+        }
+      ],
+      "comparisons": [
+        {
+          "comparison_id": "CP-090eb9ab8a28f87e",
+          "request": {
+            "left_artifact_id": "E-owner",
+            "right_artifact_id": "E-other",
+            "control_artifact_id": "E-control",
+            "expectation_id": "EX-owner"
+          },
+          "conclusion": "candidate",
+          "summary": "Imported observations contain the same declared synthetic object in the other-account response; local analysis and provenance review remain necessary.",
+          "citations": [
+            {
+              "artifact_id": "E-owner",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "request.url",
+              "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "request.body",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "response.status",
+              "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+            },
+            {
+              "artifact_id": "E-owner",
+              "field": "response.body",
+              "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.url",
+              "sha256": "247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "request.body",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "response.status",
+              "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+            },
+            {
+              "artifact_id": "E-other",
+              "field": "response.body",
+              "sha256": "b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.method",
+              "sha256": "14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.url",
+              "sha256": "98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "request.body",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "response.status",
+              "sha256": "6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b"
+            },
+            {
+              "artifact_id": "E-control",
+              "field": "response.body",
+              "sha256": "da404deb110f7cc92a5b2c85c8e8ab103bd48837cf300f8387d13d54f3adea65"
+            }
+          ],
+          "missing_evidence": [],
+          "alternative_explanations": [
+            "Session identity and collection provenance are supplied by the importer and have not been independently verified.",
+            "Different authorization context, public synthetic data or stale collection could explain an apparent discrepancy."
+          ],
+          "execution_status": "imported"
+        }
+      ],
+      "mitigation": [
+        "If the hypothesis is confirmed, enforce the declared access rule at the affected endpoint and repeat the same owner and denial controls."
+      ],
+      "tools_and_models": [
+        "Plumb deterministic inert-data importer, exact-field citation validator, observed map and manual comparison planner.",
+        "No model inference was performed by this report export; recorded local-analysis details are included as recorded interpretations."
+      ],
+      "methodology": [
+        "Human attachment review precedes local storage; credentials are removed and unexpected personal information stops assessment activity.",
+        "Observations, human expectations, comparison hypotheses, counterevidence and executed-run records remain separate.",
+        "Every observation claim resolves to its artifact and exact sanitized field hash."
+      ],
+      "limitations": [
+        "Imports are user-collected observations, not independently verified runtime reproduction.",
+        "A successful HTTP response or missing header alone proves no unauthorized access.",
+        "Screenshots are reviewed attachments; image understanding is unavailable.",
+        "Undiscovered endpoints, untested roles and application-wide security remain unknown."
+      ],
+      "dismissed_leads": [],
+      "tested_coverage": [
+        "Imported observations: GET /orders/1042/invoice",
+        "Imported observations: GET /orders/1042/receipt"
+      ],
+      "untested_coverage": [
+        "/auth/login",
+        "/health",
+        "/orders"
+      ],
+      "confidentiality": "private_local",
+      "runtime_verification": "not_attempted",
+      "human_preview_required": true
+    },
+    "markdown": "# Private assessment draft: Tandir lab · synthetic UI fixture\n\nPrivate local draft. Human review required before export.\n\nSource-free assessment of human-reviewed imported observations within the declared scope.\n\n## Affected endpoints\n\n- /orders/1042/invoice\n- /orders/1042/receipt\n\n## Proposed safe reproduction\n\n- Proposed manual procedure only: use the designated accounts and synthetic objects within the explicit scope.\n- Record a legitimate owner response, the same object/request under the other account, and a protected denial control; stop on unexpected sensitive information.\n\n## Impact\n\n- Potential impact is unestablished until the declared access rule, matching contexts and relevant synthetic-object evidence support it.\n\n## Mitigation\n\n- If the hypothesis is confirmed, enforce the declared access rule at the affected endpoint and repeat the same owner and denial controls.\n\n## Tools and models\n\n- Plumb deterministic inert-data importer, exact-field citation validator, observed map and manual comparison planner.\n- No model inference was performed by this report export; recorded local-analysis details are included as recorded interpretations.\n\n## Methodology\n\n- Human attachment review precedes local storage; credentials are removed and unexpected personal information stops assessment activity.\n- Observations, human expectations, comparison hypotheses, counterevidence and executed-run records remain separate.\n- Every observation claim resolves to its artifact and exact sanitized field hash.\n\n## Limitations\n\n- Imports are user-collected observations, not independently verified runtime reproduction.\n- A successful HTTP response or missing header alone proves no unauthorized access.\n- Screenshots are reviewed attachments; image understanding is unavailable.\n- Undiscovered endpoints, untested roles and application-wide security remain unknown.\n\n## Imported coverage\n\n- Imported observations: GET /orders/1042/invoice\n- Imported observations: GET /orders/1042/receipt\n\n## Untested scope\n\n- /auth/login\n- /health\n- /orders\n\n## Dismissed leads\n\n\n## Sanitized evidence\n\nE-owner: imported GET http://127.0.0.1:8701/orders/1042/receipt, response status 200.\n\nCitation: E-owner / request.method / SHA-256 14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8; E-owner / request.url / SHA-256 247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790; E-owner / response.status / SHA-256 27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf\n\nE-other: imported GET http://127.0.0.1:8701/orders/1042/receipt, response status 200.\n\nCitation: E-other / request.method / SHA-256 14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8; E-other / request.url / SHA-256 247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790; E-other / response.status / SHA-256 27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf\n\nE-control: imported GET http://127.0.0.1:8701/orders/1042/invoice, response status 404.\n\nCitation: E-control / request.method / SHA-256 14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8; E-control / request.url / SHA-256 98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1; E-control / response.status / SHA-256 6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b\n\nImported observations contain the same declared synthetic object in the other-account response; local analysis and provenance review remain necessary.\n\nCitation: E-owner / request.method / SHA-256 14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8; E-owner / request.url / SHA-256 247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790; E-owner / request.body / SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; E-owner / response.status / SHA-256 27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf; E-owner / response.body / SHA-256 b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566; E-other / request.method / SHA-256 14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8; E-other / request.url / SHA-256 247d5136b7d341a9f3a32daa496ef4b7ea4b0c66a36fa35465d2c38d8ca8c790; E-other / request.body / SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; E-other / response.status / SHA-256 27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf; E-other / response.body / SHA-256 b48e00aed70ea3ea077d98dba7e09ad96c07079d7e8f87981ffdd1bad0e5c566; E-control / request.method / SHA-256 14e30cd163c732912e048c4c837e15c4e90c062ebb795ab947d57706e2d10dd8; E-control / request.url / SHA-256 98d088a372df6b349496f856d1db16ecaea35fbf6c81add0835d500bbc54b3a1; E-control / request.body / SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; E-control / response.status / SHA-256 6b3c238ebcf1f3c07cf0e556faa82c6b8fe96840ff4b6b7e9962a2d855843a0b; E-control / response.body / SHA-256 da404deb110f7cc92a5b2c85c8e8ab103bd48837cf300f8387d13d54f3adea65\n\n### E-owner\n\nSynthetic Tandir UI fixture; imported, not an executed test\n\nField: request.method\n\nGET\n\nField: request.url\n\nhttp://127.0.0.1:8701/orders/1042/receipt\n\nField: response.status\n\n200\n\nField: request.body\n\n\n\nField: response.body\n\nTANDIR-FAKE-1042\n\n### E-other\n\nSynthetic Tandir UI fixture; imported, not an executed test\n\nField: request.method\n\nGET\n\nField: request.url\n\nhttp://127.0.0.1:8701/orders/1042/receipt\n\nField: response.status\n\n200\n\nField: request.body\n\n\n\nField: response.body\n\nTANDIR-FAKE-1042\n\n### E-control\n\nSynthetic Tandir UI fixture; imported, not an executed test\n\nField: request.method\n\nGET\n\nField: request.url\n\nhttp://127.0.0.1:8701/orders/1042/invoice\n\nField: response.status\n\n404\n\nField: request.body\n\n\n\nField: response.body\n\nDenied\n\n## Declared expected behavior\n\nOnly the synthetic owner may access this order.\n\nDeclared by: Fixture author. Basis: Synthetic declared policy; no company evidence.\n",
+    "preview_sha256": "7a0fc39f20ee703cb78a5f667808c01937fb8a4c0e621e973276b4aaa99ec741",
+    "export_path": null,
+    "submitted": false
+  },
+  "lab_preview": {
+    "preview": {
+      "preview_id": "http-preview:86264aa8c9b94dcf815b5c4c0e7b20b6",
+      "assessment_id": "assess-ui-synthetic",
+      "scope_sha256": "bd1f0efb0d9cbf274d94deb43e1d9f5c49664638c0ea24295b9373574465c8a3",
+      "runner_manifest_sha256": "98f819e90eb1b48bea92465c211f3ff211395c79deed120943fa5047b57a8984",
+      "synthetic_object_id": "order-1042",
+      "spec": {
+        "id": "probe:lab-receipt",
+        "finding_id": "finding:lab-receipt",
+        "marker": "TANDIR-FAKE-1042",
+        "requests": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "method": "POST",
+            "path": "/orders",
+            "body": {
+              "branch_id": 1,
+              "delivery_address": "{marker}",
+              "items": [
+                {
+                  "menu_item_id": 1,
+                  "quantity": 1
+                }
+              ]
+            },
+            "capture": {
+              "order_id": "id"
+            },
+            "expected_if_safe": "allowed"
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "method": "GET",
+            "path": "/orders/{order_id}/receipt",
+            "body": null,
+            "capture": {},
+            "expected_if_safe": "denied"
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "method": "GET",
+            "path": "/orders/{order_id}/receipt",
+            "body": null,
+            "capture": {},
+            "expected_if_safe": "allowed"
+          }
+        ]
+      },
+      "control_spec": {
+        "id": "probe:lab-invoice",
+        "finding_id": "finding:lab-receipt",
+        "marker": "TANDIR-FAKE-1042",
+        "requests": [
+          {
+            "role": "setup",
+            "principal": "alice",
+            "method": "POST",
+            "path": "/orders",
+            "body": {
+              "branch_id": 1,
+              "delivery_address": "{marker}",
+              "items": [
+                {
+                  "menu_item_id": 1,
+                  "quantity": 1
+                }
+              ]
+            },
+            "capture": {
+              "order_id": "id"
+            },
+            "expected_if_safe": "allowed"
+          },
+          {
+            "role": "attack",
+            "principal": "bob",
+            "method": "GET",
+            "path": "/orders/{order_id}/invoice",
+            "body": null,
+            "capture": {},
+            "expected_if_safe": "denied"
+          },
+          {
+            "role": "control",
+            "principal": "alice",
+            "method": "GET",
+            "path": "/orders/{order_id}/invoice",
+            "body": null,
+            "capture": {},
+            "expected_if_safe": "allowed"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_id": "readiness:health",
+          "account_id": null,
+          "method": "GET",
+          "path": "/health",
+          "purpose": "readiness",
+          "max_attempts": 4,
+          "body_preview": null,
+          "state_change": false
+        },
+        {
+          "action_id": "authenticate:alice",
+          "account_id": "alice",
+          "method": "POST",
+          "path": "/auth/login",
+          "purpose": "authenticate",
+          "max_attempts": 1,
+          "body_preview": {
+            "username": "alice",
+            "credential_source": "pinned synthetic fixture; kept outside evidence"
+          },
+          "state_change": true
+        },
+        {
+          "action_id": "authenticate:bob",
+          "account_id": "bob",
+          "method": "POST",
+          "path": "/auth/login",
+          "purpose": "authenticate",
+          "max_attempts": 1,
+          "body_preview": {
+            "username": "bob",
+            "credential_source": "pinned synthetic fixture; kept outside evidence"
+          },
+          "state_change": true
+        },
+        {
+          "action_id": "probe:0",
+          "account_id": "alice",
+          "method": "POST",
+          "path": "/orders",
+          "purpose": "create_synthetic",
+          "max_attempts": 1,
+          "body_preview": {
+            "branch_id": 1,
+            "delivery_address": "{marker}",
+            "items": [
+              {
+                "menu_item_id": 1,
+                "quantity": 1
+              }
+            ]
+          },
+          "state_change": true
+        },
+        {
+          "action_id": "probe:1",
+          "account_id": "bob",
+          "method": "GET",
+          "path": "/orders/{order_id}/receipt",
+          "purpose": "read",
+          "max_attempts": 1,
+          "body_preview": null,
+          "state_change": false
+        },
+        {
+          "action_id": "probe:2",
+          "account_id": "alice",
+          "method": "GET",
+          "path": "/orders/{order_id}/receipt",
+          "purpose": "read",
+          "max_attempts": 1,
+          "body_preview": null,
+          "state_change": false
+        },
+        {
+          "action_id": "probe:3",
+          "account_id": "bob",
+          "method": "GET",
+          "path": "/orders/{order_id}/invoice",
+          "purpose": "read",
+          "max_attempts": 1,
+          "body_preview": null,
+          "state_change": false
+        },
+        {
+          "action_id": "probe:4",
+          "account_id": "alice",
+          "method": "GET",
+          "path": "/orders/{order_id}/invoice",
+          "purpose": "read",
+          "max_attempts": 1,
+          "body_preview": null,
+          "state_change": false
+        },
+        {
+          "action_id": "probe:5",
+          "account_id": "bob",
+          "method": "GET",
+          "path": "/orders/{order_id}/invoice",
+          "purpose": "read",
+          "max_attempts": 1,
+          "body_preview": null,
+          "state_change": false
+        }
+      ],
+      "created_at": "2026-10-10T19:24:51.872708Z",
+      "expires_at": "2030-01-01T00:00:00Z",
+      "max_requests": 12,
+      "max_seconds": 600,
+      "runner": "hash_pinned_owned_tandir",
+      "external_access_enabled": false
+    },
+    "preview_sha256": "3a4da384b129db2ac3113955e094a184ab381a1c9e79187e769751a1ff5f0c94"
+  }
+}

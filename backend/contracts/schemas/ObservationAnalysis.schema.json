@@ -1,0 +1,294 @@
+{
+  "$defs": {
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    },
+    "ObservationClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "citation": {
+          "$ref": "#/$defs/EvidenceCitation"
+        },
+        "value": {
+          "maxLength": 16384,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "citation",
+        "value"
+      ],
+      "title": "ObservationClaim",
+      "type": "object"
+    },
+    "ObservationJudgment": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_explanations": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Alternative Explanations",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/ObservationClaim"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Claims",
+          "type": "array"
+        },
+        "missing_evidence": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Missing Evidence",
+          "type": "array"
+        },
+        "mitigation": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Mitigation",
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "supported",
+            "rejected",
+            "inconclusive"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict",
+        "claims",
+        "rationale",
+        "alternative_explanations",
+        "missing_evidence",
+        "mitigation"
+      ],
+      "title": "ObservationJudgment",
+      "type": "object"
+    },
+    "ValidatedObservationJudgment": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObservationJudgment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "evidence_order": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Evidence Order",
+          "type": "array"
+        },
+        "raw_answer": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Answer"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "violations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Violations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "seed",
+        "evidence_order"
+      ],
+      "title": "ValidatedObservationJudgment",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ObservationAnalysis.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alternative_explanations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Alternative Explanations",
+      "type": "array"
+    },
+    "citations": {
+      "items": {
+        "$ref": "#/$defs/EvidenceCitation"
+      },
+      "title": "Citations",
+      "type": "array"
+    },
+    "comparison_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "conclusion": {
+      "enum": [
+        "supported",
+        "rejected",
+        "inconclusive"
+      ],
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "generated_by": {
+      "const": "local_model",
+      "default": "local_model",
+      "title": "Generated By",
+      "type": "string"
+    },
+    "judgments": {
+      "items": {
+        "$ref": "#/$defs/ValidatedObservationJudgment"
+      },
+      "title": "Judgments",
+      "type": "array"
+    },
+    "missing_evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Evidence",
+      "type": "array"
+    },
+    "model_provenance": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Model Provenance",
+      "type": "array"
+    },
+    "packet_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Packet Sha256",
+      "type": "string"
+    },
+    "requests_used": {
+      "maximum": 30,
+      "minimum": 0,
+      "title": "Requests Used",
+      "type": "integer"
+    },
+    "runtime_verification": {
+      "const": "not_attempted",
+      "default": "not_attempted",
+      "title": "Runtime Verification",
+      "type": "string"
+    },
+    "seconds": {
+      "minimum": 0,
+      "title": "Seconds",
+      "type": "number"
+    },
+    "stop_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Reason"
+    }
+  },
+  "required": [
+    "comparison_id",
+    "conclusion",
+    "judgments",
+    "citations",
+    "alternative_explanations",
+    "missing_evidence",
+    "requests_used",
+    "seconds",
+    "packet_sha256"
+  ],
+  "title": "ObservationAnalysis",
+  "type": "object"
+}

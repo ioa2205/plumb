@@ -1,0 +1,28 @@
+{
+  "$id": "https://plumb.local/schemas/ConversationCreate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "target_id": {
+      "maxLength": 96,
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    },
+    "target_kind": {
+      "enum": [
+        "inspection",
+        "review",
+        "assessment"
+      ],
+      "title": "Target Kind",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_kind",
+    "target_id"
+  ],
+  "title": "ConversationCreate",
+  "type": "object"
+}

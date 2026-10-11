@@ -1,0 +1,149 @@
+{
+  "$defs": {
+    "ComparisonRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "control_artifact_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Control Artifact Id"
+        },
+        "expectation_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectation Id"
+        },
+        "left_artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Left Artifact Id",
+          "type": "string"
+        },
+        "right_artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Right Artifact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "left_artifact_id",
+        "right_artifact_id"
+      ],
+      "title": "ComparisonRequest",
+      "type": "object"
+    },
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ObservationComparison.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alternative_explanations": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 30,
+      "title": "Alternative Explanations",
+      "type": "array"
+    },
+    "citations": {
+      "items": {
+        "$ref": "#/$defs/EvidenceCitation"
+      },
+      "maxItems": 100,
+      "title": "Citations",
+      "type": "array"
+    },
+    "comparison_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "conclusion": {
+      "enum": [
+        "candidate",
+        "rejected",
+        "inconclusive"
+      ],
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "execution_status": {
+      "const": "imported",
+      "default": "imported",
+      "title": "Execution Status",
+      "type": "string"
+    },
+    "missing_evidence": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 30,
+      "title": "Missing Evidence",
+      "type": "array"
+    },
+    "request": {
+      "$ref": "#/$defs/ComparisonRequest"
+    },
+    "summary": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparison_id",
+    "request",
+    "conclusion",
+    "summary"
+  ],
+  "title": "ObservationComparison",
+  "type": "object"
+}

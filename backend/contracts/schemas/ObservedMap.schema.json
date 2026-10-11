@@ -1,0 +1,178 @@
+{
+  "$defs": {
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    },
+    "ObservedEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "account_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Account Ids",
+          "type": "array"
+        },
+        "artifact_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/EvidenceCitation"
+          },
+          "title": "Citations",
+          "type": "array"
+        },
+        "coverage": {
+          "const": "observed_import",
+          "default": "observed_import",
+          "title": "Coverage",
+          "type": "string"
+        },
+        "endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Endpoint Id",
+          "type": "string"
+        },
+        "method": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        },
+        "object_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Object Ids",
+          "type": "array"
+        },
+        "path": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "method",
+        "path",
+        "account_ids",
+        "object_ids",
+        "artifact_ids",
+        "citations"
+      ],
+      "title": "ObservedEndpoint",
+      "type": "object"
+    },
+    "TestAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "role",
+        "label"
+      ],
+      "title": "TestAccount",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ObservedMap.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "collection_performed": {
+      "const": false,
+      "default": false,
+      "title": "Collection Performed",
+      "type": "boolean"
+    },
+    "declared_roles": {
+      "items": {
+        "$ref": "#/$defs/TestAccount"
+      },
+      "title": "Declared Roles",
+      "type": "array"
+    },
+    "endpoints": {
+      "items": {
+        "$ref": "#/$defs/ObservedEndpoint"
+      },
+      "maxItems": 100,
+      "title": "Endpoints",
+      "type": "array"
+    },
+    "unknowns": {
+      "items": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "declared_roles",
+    "unknowns"
+  ],
+  "title": "ObservedMap",
+  "type": "object"
+}

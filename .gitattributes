@@ -15,3 +15,8 @@
 *.woff binary
 *.woff2 binary
 *.gguf binary
+
+# Preserve the exact captured bytes bound by this development result inventory.
+docs/results/2026-10-11-fa-local-model/*.log -text
+# These exact Windows captures intentionally retain CRLF in their hashed bytes.
+docs/results/2026-10-11-tool-assisted/raw/*.log -text whitespace=cr-at-eol

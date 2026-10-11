@@ -28,6 +28,27 @@ class BrowserJobs:
 
     def launch(self, request: LaunchRequest) -> ReviewRun:
         root, snapshot = inspection(self.settings, request.inspection_id)
+        resolved_prompt = None
+        if request.prompt_task_id is not None:
+            from backend.contracts.prompts import SourcePromptResolution
+            from backend.source_binding import read_json
+
+            resolved = SourcePromptResolution.model_validate(
+                read_json(
+                    self.settings.cache_dir / "prompt-tasks" / f"{request.prompt_task_id}.json"
+                )
+            )
+            if (
+                resolved.task_id != request.prompt_task_id
+                or resolved.target_id != request.inspection_id
+                or resolved.status != "resolved"
+                or resolved.families != request.families
+                or resolved.resources != request.resources
+                or resolved.routes != request.routes
+                or resolved.limit != request.limit
+            ):
+                raise LaunchRefused("Resolved prompt differs from the reviewed source scope")
+            resolved_prompt = resolved.model_dump(mode="json")
         args = argparse.Namespace(
             command="review",
             folder=root,
@@ -35,9 +56,10 @@ class BrowserJobs:
             route=request.routes,
             family=[f.value for f in request.families],
             guard_cache=None,
-            profile="auto",
+            profile=request.profile,
             limit=request.limit,
             open_report=False,
+            resolved_prompt=resolved_prompt,
         )
         return self._start(args, "review-" + uuid4().hex, snapshot, association(root))
 

@@ -1,0 +1,49 @@
+{
+  "$id": "https://plumb.local/schemas/ComparisonRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "control_artifact_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Control Artifact Id"
+    },
+    "expectation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expectation Id"
+    },
+    "left_artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Left Artifact Id",
+      "type": "string"
+    },
+    "right_artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Right Artifact Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "left_artifact_id",
+    "right_artifact_id"
+  ],
+  "title": "ComparisonRequest",
+  "type": "object"
+}

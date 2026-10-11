@@ -1,0 +1,5 @@
+.choices { margin-top: var(--space-xl); max-width: 64ch; }
+.choices label { display: block; margin-bottom: var(--space-sm); font: var(--ui); }
+.choices select { width: 100%; min-height: var(--target-size); color: var(--ink); background: var(--well); padding: var(--space-md); border: 0; border-bottom: 1.5px solid var(--control-rule); border-radius: var(--radius-control); font: var(--ui); }
+.details { margin: var(--space-xl) 0; }
+.meta { font: var(--metadata); color: var(--pencil); overflow-wrap: anywhere; }

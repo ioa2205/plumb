@@ -15,6 +15,7 @@ const destinations = [
   { name: "Review", path: "/review/" },
   { name: "Findings", path: "/findings/" },
   { name: "Runs", path: "/runs/" },
+  { name: "Assessments", path: "/assess/" },
 ] as const;
 
 export type Destination = typeof destinations[number]["name"];
@@ -55,7 +56,7 @@ export function Workbench({ current, children }: { current: Destination; childre
     <aside className={styles.rail} aria-label="Workbench">
       <a href="/" className={styles.wordmark} aria-label="Plumb project"><Glyph name="plumb" />plumb</a>
       <nav aria-label="Main navigation" className={styles.nav}>
-        {destinations.map(item => <a key={item.name} href={runDestination(item.path,id)} aria-current={item.name === current ? "page" : undefined}>{item.name}</a>)}
+        {destinations.map(item => <a key={item.name} href={item.name === "Assessments" ? item.path : runDestination(item.path,id)} aria-current={item.name === current ? "page" : undefined}>{item.name}</a>)}
       </nav>
       <dl className={styles.capabilities}>
         <div><dt>Recorded model</dt><dd>{run?.model?.id || "Not recorded"}</dd></div>
