@@ -1,0 +1,73 @@
+{
+  "$id": "https://plumb.local/schemas/HumanAuthInput.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Only a person supplies these events; text is never saved or reported.",
+  "properties": {
+    "kind": {
+      "enum": [
+        "pointer",
+        "text",
+        "submit",
+        "completed",
+        "pause",
+        "refresh"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "maxLength": 1024,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text"
+    },
+    "view_id": {
+      "pattern": "^[0-9a-f]{32}$",
+      "title": "View Id",
+      "type": "string"
+    },
+    "x": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1280,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "X"
+    },
+    "y": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 900,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Y"
+    }
+  },
+  "required": [
+    "view_id",
+    "kind"
+  ],
+  "title": "HumanAuthInput",
+  "type": "object"
+}

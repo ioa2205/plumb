@@ -1,10 +1,11 @@
 # Plumb
 
-Plumb finds the places where a web app shows people data that isn't theirs.
+Plumb is a local security assistant for source review and bounded tests of websites you are authorized to test.
 
-It reads the app's source code on your own computer, with a small AI model that
-works offline, and points to the exact lines behind every answer. Your code is
-never uploaded and never run.
+It reads source code on your computer with a small offline model and exact line
+citations. It also accepts ordinary questions and can test an approved website
+through a scoped HTTP/browser adapter without reading its code. Your source code
+is never uploaded or executed.
 
 It is a **working prototype for Windows**. It has been shown working on one
 practice app and one laptop, and its limits are listed below.
@@ -23,7 +24,15 @@ recorded test step by step and a guide for installing with an AI agent.
 - Checks every cited line with ordinary code, then saves a report (HTML,
   Markdown, JSON and SARIF). Each answer is Supported, Rejected or Inconclusive.
 
-The latest source also adds:
+The latest source and 12 October package also add:
+
+- Plain-language Ask and terminal chat, including short conversational context.
+- Website setup through ordinary fields, explicit plan approval, bounded page
+  mapping, designated test-account sign-in/sign-up and cross-account comparisons.
+- One network broker for HTTP and pinned Chromium; finite approved form grants,
+  separate account contexts and exact synthetic identity/evidence controls.
+- Protected human OTP/CAPTCHA completion and same-account resume, without
+  replaying an uncertain original submission; coherent private reports.
 
 - Local questions and follow-ups about selected code, saved findings and reviewed
   observations, with exact citations and recorded unknowns.
@@ -38,15 +47,19 @@ These additions were software-tested on the development laptop. The 11 October
 2026 local-model comparison did **not** demonstrate better finding accuracy:
 all four receipt approaches remained Inconclusive, protected-control acceptance
 was incomplete and adversarial cases were unrun after a resource stop. The
-existing baseline remains the default. External website testing is disabled;
-collected evidence still requires separate human review. Screenshot attachments
+existing baseline remains the default. The legacy Tandir collector remains
+limited to its pinned runner. The generic website adapter requires a passing
+network qualification on your computer, an unexpired confirmed scope and an
+approved plan before any external test. No external website was tested in the
+recorded acceptance. Collected assessment evidence still requires human review. Screenshot attachments
 are retained as reviewed evidence, without image-model interpretation.
 
 ## What it does not do
 
-- Upload your code, or need the internet after setup.
-- Run your project. Approved HTTP collection is restricted to the separate,
-  pinned practice-app runner; external website testing remains disabled.
+- Upload your code or use cloud inference. Source review works offline; approved
+  website testing needs network access to the scoped website.
+- Execute the source project you ask it to analyze, or visit a website from a
+  chat message alone. Website scope, approval and running are separate steps.
 - Fix the code for you. Suggested fixes are not reliable yet.
 - Promise that an app is safe. An empty report means nothing was found in what
   was checked.
@@ -85,7 +98,7 @@ code; that run sent no request to the app.
 
 The easiest way in: a ZIP with Python, Node and the browser view inside, so
 nothing else has to be installed first. Get it from
-[the current Windows ZIP](https://github.com/ioa2205/plumb/releases/download/prototype-2026-10-11/plumb-0.0.0-prototype-20261011-j.zip).
+[the current Windows ZIP](https://github.com/ioa2205/plumb/releases/download/prototype-2026-10-12/plumb-0.0.0-prototype-20261012-web.zip).
 
 1. Extract the ZIP anywhere. Folder names with spaces are fine.
 2. Double-click **Start Plumb.cmd** for the browser view, or open PowerShell in
@@ -104,12 +117,28 @@ To map a project without the AI model, use
 `.\plumb.cmd setup --install --inspect-only` instead: it sets up source mapping
 and downloads no model.
 
-The current package was built on 11 October 2026. It includes local conversations,
-private assessments, bounded collection tools, reviewed local security cards and
-experimental fact/decomposed reasoning, alongside the CPU profile and working-folder
-fix. The baseline remains the default. Website-start previews and collection need
-the separate pinned practice-app runner, which this ZIP does not include; they
-refuse until it is available. Write `.\plumb.cmd` in place of `uv run plumb`.
+The current package was built on 12 October 2026 from clean source. It includes
+Playwright, the owned Chorsu JavaScript practice site, plain chat, human website
+setup and authentication resume. Chromium and the AI model remain separate
+explicit installs. The ZIP is 136,626,473 bytes with 3,407 inventoried files;
+SHA-256: `5bbea48aa7a74cd5ca5c61b87f8353bf9bec5bb4ceaf59fecb1802602c43d49d`.
+
+For the practice website, from the extracted folder:
+
+```powershell
+.\plumb.cmd browser check
+.\plumb.cmd browser install                 # explicit pinned Chromium install, about 0.3 GB
+.\plumb.cmd website fixture --no-model     # approve the displayed practice plan
+```
+
+For your own authorized website, run `.\plumb.cmd website qualify`, then open
+**Website** in the workbench, describe its exact scope and review its plan.
+Saving or approving visits nothing; starting the approved test is separate.
+The legacy Tandir collector still needs its separately pinned runner.
+
+The local model remains weak: no closed planning type passed its qualification,
+and a rewrite received its prior poem but repeated it. Code and explicit human
+choices carry the practical workflow. This is not a security accuracy claim.
 
 It has been checked only on the laptop it was built on, under that laptop's
 Windows account. The model was already installed there, so those checks

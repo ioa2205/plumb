@@ -1,14 +1,27 @@
 # Plumb landing site
 
 A static site that explains Plumb to readers who are new to AI and security.
-The overview opens with a picture of the flaw Plumb looks for (one customer
-changes a number in the address and sees another customer's receipt), then says
-what Plumb does, what it does not do and what nobody knows yet, how it works,
-what using it looks like (the recorded terminal output and the saved report),
-and whether you can use it today. Other pages cover the recorded run, strengths
-and limits, installation, installation by an AI coding agent, and contact. It
-is written in English and Uzbek. It is separate from the workbench in
-`frontend/` and shares only its design tokens and typefaces.
+
+The front page is short on purpose: it shows more than it says, and a check
+keeps it under 600 words. It opens with a walk-through in four chapters (one
+customer changes a digit and sees another customer's receipt, Plumb finds the
+one place with no check, it tries to clear the suspect, and a report comes
+out), then gives one picture each to why ordinary tests miss this, why the
+code stays on the reader's laptop, how far the claims go, and the real saved
+report. Detail lives behind it:
+
+| Page | What it holds |
+| --- | --- |
+| `/how-it-works` | The two ways Plumb looks at an app, the four steps, the real test and the glossary |
+| `/what-it-does` | What it does and does not do, the terminal, the workbench, questions, every command, and whether it can be used today |
+| `/recorded-run`, `/web-assessment` | The two recorded cases, under one menu entry ("See it work"), each linking to the other |
+| `/evidence` | Strengths and limits |
+| `/install`, `/install/agent` | Installation, by hand or by an AI coding agent |
+| `/contact` | The message form |
+
+Each deeper page opens with three lines "in short". The site is written in
+English and Uzbek. It is separate from the workbench in `frontend/` and shares
+only its design tokens and typefaces.
 
 There are no dependencies and no framework. Pages are plain modules that turn
 one extracted record into HTML. Node.js 22 or later is enough.
@@ -29,7 +42,7 @@ one extracted record into HTML. Node.js 22 or later is enough.
   `holds(...)`, so a changed record stops the build instead of leaving stale prose.
 - Source conclusions and runtime observations come from different records and
   are never merged. The recorded run's runtime label is "not attempted".
-- The terminal output on the overview is the review's console, line by line.
+- The terminal output on `/what-it-does` is the review's console, line by line.
   The laptop's data folder is replaced by a labelled placeholder; repeated lines
   are shown once with a count, and three long stretches are cut with a note
   saying how many lines went.
@@ -46,7 +59,29 @@ one extracted record into HTML. Node.js 22 or later is enough.
   `backend/profiles.py` and shown as recorded. The models have not been
   compared, so no page may rank them; a check refuses wording that does.
 
-On the page, the monospaced face marks text copied from a record.
+- The web-assessment page is built from the one saved collection
+  (`docs/results/2026-10-11-tool-assisted/collection.json`): every planned
+  request, the account it was sent as and what came back. Extraction refuses it
+  unless it stayed on the loopback address, was approved for exactly the plan
+  that ran, kept inside its limits and is still waiting for human review. The
+  run's port number is left out. Sign-in replies are not kept by Plumb, so those
+  rows carry no answer.
+- The comparison of four ways of presenting that evidence comes from the saved
+  run and its accounting. Extraction refuses it unless every condition ended
+  Inconclusive with nothing counted as correct, and planned, run and unrun
+  conditions add up. The pages may not say the model reached a verdict; a check
+  fails if they do, and another fails if a page that describes sending requests
+  stops saying other websites are switched off.
+- Web observations are a third kind of evidence. They are never shown as a
+  source finding or as a runtime check.
+- What `plumb models` and `plumb ask` print is shown from a record made with
+  `scripts/console-records.mjs`, which runs the two read-only commands and
+  saves their output under `docs/results/`. Neither loads the model.
+
+On the page, the monospaced face marks text copied from a record. The marks
+in front of a line (a filled dot, a half, a ring) say how far that part has
+been checked: shown working with a saved record, built but not settled, or
+absent.
 
 ## Commands
 
@@ -60,6 +95,8 @@ node scripts/build.mjs --release    # also require contact details and the publi
 node --test scripts/*.test.mjs      # record, privacy, policy, language, link and message checks
 node scripts/serve.mjs              # preview on http://127.0.0.1:4173 with deployment headers
 node scripts/report-images.mjs      # pictures of the saved report (needs the preview and Chrome)
+node scripts/workbench-images.mjs   # pictures of the workbench, cut from its own view captures
+node scripts/console-records.mjs <new-file>   # save what two read-only Plumb commands print
 ```
 
 Extraction needs the whole repository. Building, testing and serving need only
@@ -136,8 +173,8 @@ the general patterns alone when it is not.
 
 ## The download
 
-When `site.json` has a `download` link, the install page leads with it and the
-overview says Plumb can be downloaded. The size, file count and SHA-256 shown
+When `site.json` has a `download` link, the install page leads with it and
+`/what-it-does` says Plumb can be downloaded. The size, file count and SHA-256 shown
 come from the saved package checks (`docs/results/2026-10-11-m7.9i-package-*`),
 which extraction refuses unless the archive checks passed, the source was
 clean, the commands and the browser view passed, and the recorded run's report
@@ -172,7 +209,7 @@ checks loaded no model, so it has not run a review; they downloaded and
 installed nothing, because the model was already on the laptop; and it has only
 been tried on the laptop it was built on, under the account that built it. The
 recorded test used an earlier package, and the `cpu-8k` run was done from
-source. A check fails when the overview, the install page or the limits page
+source. A check fails when `/what-it-does`, the install page or the limits page
 stops saying so, when a page still describes the earlier package, or when
 `site.json` links a package other than the one the records describe.
 
@@ -198,6 +235,65 @@ steps the same.
 both themes, taken by `scripts/report-images.mjs`. They are pictures of the
 published file, never mock-ups. Take them again whenever the saved report
 changes.
+
+## Pictures of the workbench
+
+`public/shots/workbench-*.webp` are regions of the captures that
+`frontend/scripts/assessment-ui-images.mjs` makes of the workbench's screens
+(in `tmp/improvements-ui-shots/`, which Git ignores). `scripts/workbench-images.mjs`
+cuts them and first compares each capture's size with the saved check
+(`docs/results/2026-10-11-improvements-ui-checks.json`). Those captures load
+display fixtures: a saved run replayed, example values in forms, and stand-in
+conversation answers that the screens label as synthetic. The captions say so,
+and a check keeps them saying so. Take the pictures again after the workbench's
+screens change:
+
+```text
+pnpm --dir frontend build
+node frontend/scripts/assessment-ui-images.mjs
+node landing/scripts/workbench-images.mjs
+```
+
+## Motion
+
+Three things move, and none when the reader asks for less motion:
+
+- the plumb bob in the wordmark swings and settles when a page opens;
+- the walk-through on the front page plays its four chapters like a short
+  film;
+- a list of recorded requests arrives row by row when it scrolls into view
+  (`data-tape` in `src/components/trace.mjs`, played by `site.js`), with a
+  "Play again" button.
+
+Without scripts the lists are simply there. Bars are SVG rectangles sized by
+attributes, because the page policy allows no inline style.
+
+### The walk-through
+
+`src/components/film.mjs` draws four scenes from the record: the practice
+app's sample customers, the compared places, the cited code line, the three
+judgments and the finding. Its `holds(...)` lines stop the build if the record
+stops saying what a scene shows.
+
+- **One markup, two presentations.** Without scripts, or with reduced motion,
+  the chapters are four panels, each with its drawing in its final state and
+  all its captions. With scripts (`can-play` on `<html>`) the same markup
+  becomes one stage beside a chapter list. Never add a caption or a drawing
+  that exists only in one of the two.
+- **Beats.** An element with `data-from="2"` appears at the chapter's second
+  beat; one with `data-to="2"` leaves after it. The script only sets
+  `data-beat` on the stage and the classes `on` and `was`; every movement
+  is a CSS transition in `site.css`. There is one caption per beat.
+- **Scale.** A stage is 25em by 23em and takes its type size from its own
+  width (`4cqw`), so it scales as a picture would. Keep text inside a stage
+  at 0.85em or larger, or it becomes unreadable on a phone.
+- **Playing.** It starts when it scrolls into view, waits while it is out of
+  view or the tab is hidden, and stops at the end. Chapter titles jump to a
+  chapter; there are Pause and Play again buttons. The bob beside the chapter
+  list marks how far it has run.
+- **No library.** The page policy allows scripts and styles from this site
+  only, so the film is plain JavaScript and CSS. Positions set from script go
+  through `style.setProperty`, which the policy permits.
 
 ## Looking at pages before calling UI work done
 

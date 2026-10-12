@@ -1,0 +1,37 @@
+{
+  "$id": "https://plumb.local/schemas/JourneyRun.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "answers": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 20,
+      "title": "Answers",
+      "type": "object"
+    },
+    "profile": {
+      "default": "auto",
+      "maxLength": 96,
+      "minLength": 1,
+      "title": "Profile",
+      "type": "string"
+    },
+    "secrets": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 12,
+      "title": "Secrets",
+      "type": "object"
+    },
+    "use_model": {
+      "default": true,
+      "title": "Use Model",
+      "type": "boolean"
+    }
+  },
+  "title": "JourneyRun",
+  "type": "object"
+}

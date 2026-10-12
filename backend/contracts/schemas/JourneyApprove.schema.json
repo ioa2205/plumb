@@ -1,0 +1,47 @@
+{
+  "$id": "https://plumb.local/schemas/JourneyApprove.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approved_by": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Approved By",
+      "type": "string"
+    },
+    "plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Sha256",
+      "type": "string"
+    },
+    "reviewed_plan": {
+      "const": true,
+      "title": "Reviewed Plan",
+      "type": "boolean"
+    },
+    "step_ids": {
+      "anyOf": [
+        {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 60,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Step Ids"
+    }
+  },
+  "required": [
+    "plan_sha256",
+    "approved_by",
+    "reviewed_plan"
+  ],
+  "title": "JourneyApprove",
+  "type": "object"
+}

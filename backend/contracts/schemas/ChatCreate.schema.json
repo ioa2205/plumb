@@ -1,0 +1,42 @@
+{
+  "$id": "https://plumb.local/schemas/ChatCreate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A chat may start with nothing selected; a target is optional.",
+  "properties": {
+    "target_id": {
+      "anyOf": [
+        {
+          "maxLength": 96,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Id"
+    },
+    "target_kind": {
+      "anyOf": [
+        {
+          "enum": [
+            "inspection",
+            "review",
+            "assessment",
+            "website"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Kind"
+    }
+  },
+  "title": "ChatCreate",
+  "type": "object"
+}

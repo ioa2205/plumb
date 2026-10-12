@@ -38,11 +38,6 @@ export const pencilMark = raw(
   '<svg class="pencil" viewBox="0 0 46 30" aria-hidden="true"><path d="M27 4.2C17 2.6 5.4 6.4 4.3 14.6 3.3 22.3 14.2 27 25 25.9c10.4-1 17.2-6.3 16.7-12.6C41.2 6.6 31.7 2.4 20.6 4.1"/></svg>',
 );
 
-/** The same mark drawn around a wider block of text; it stretches to the block it circles. */
-export const pencilWide = raw(
-  '<svg class="pencil-wide" viewBox="0 0 240 60" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M151 6C94 1 17 7 7 28c-7 21 53 29 122 27 70-2 108-12 107-29C235 9 182 3 118 5"/></svg>',
-);
-
 /** Severity gauge: four ticks, `level` of them filled. */
 export function gauge(/** @type {number} */ level) {
   const ticks = [1, 2, 3, 4].map((tick) => (tick <= level ? '<i class="on"></i>' : '<i></i>')).join('');

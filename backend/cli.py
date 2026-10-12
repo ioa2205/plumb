@@ -46,13 +46,20 @@ def main(argv: list[str] | None = None) -> int:
         print(refusal)
         return 1
     parser = argparse.ArgumentParser(description=__doc__)
-    commands = parser.add_subparsers(dest="command", required=True)
+    # With no command, Plumb opens the plain-language chat (ADR-0028).
+    commands = parser.add_subparsers(dest="command", required=False)
     from backend.setup.__main__ import add_arguments, execute
 
     add_arguments(commands.add_parser("setup", help="Preview or install Plumb's own prerequisites"))
     web = commands.add_parser("web", help="Open the local workbench; no model is loaded")
     web.add_argument(
         "--no-open", action="store_true", help="Print the link without opening a browser"
+    )
+    browser = commands.add_parser(
+        "browser", help="Check or explicitly install Plumb's pinned website browser; no model"
+    )
+    browser.add_argument(
+        "action", nargs="?", choices=["status", "check", "install"], default="status"
     )
     diagnostic = commands.add_parser("doctor", help="Read-only hardware, assets and profile checks")
     diagnostic.add_argument("--json", action="store_true", help="Print full diagnostic JSON")
@@ -105,14 +112,21 @@ def main(argv: list[str] | None = None) -> int:
     from backend.assessment_cli import add_assessment_arguments
 
     add_assessment_arguments(commands)
+    from backend.web_cli import add_website_arguments
+
+    add_website_arguments(commands)
     ask = commands.add_parser("ask", help="Read a cited saved finding; no inference")
     ask.add_argument("run_id")
     ask.add_argument("prompt")
     converse = commands.add_parser(
-        "chat", help="Ask a flexible local evidence question; loads the local model"
+        "chat",
+        help="Talk to Plumb in your own words (no arguments), send one message, "
+        "or ask about one saved target by ID; loads the local model when needed",
     )
-    converse.add_argument("target_id", help="Inspection, review or assessment ID")
-    converse.add_argument("prompt")
+    converse.add_argument(
+        "target_id", nargs="?", help="One message in quotes, or a saved target ID with a prompt"
+    )
+    converse.add_argument("prompt", nargs="?")
     converse.add_argument(
         "--kind", choices=["inspection", "review", "assessment"], default="review"
     )
@@ -147,6 +161,10 @@ def main(argv: list[str] | None = None) -> int:
         from backend.serve import main as serve
 
         return serve(open_browser=not args.no_open)
+    if args.command == "browser":
+        from backend.setup.browser import main as browser_setup
+
+        return browser_setup([args.action])
     try:
         settings = Settings()
     except (OSError, ValueError):
@@ -166,10 +184,29 @@ def main(argv: list[str] | None = None) -> int:
                 "check setup and calibration. No download started."
             )
             return 1
+    if args.command is None or (args.command == "chat" and args.prompt is None):
+        from backend.chat_cli import run_repl
+
+        message = getattr(args, "target_id", None)
+        try:
+            return run_repl(
+                settings,
+                first_message=message,
+                once=message is not None,
+                profile=getattr(args, "profile", None) or "auto",
+                max_seconds=getattr(args, "max_seconds", 300),
+            )
+        except (ValueError, OSError, RuntimeError):
+            print("The chat could not start. Check plumb setup and PLUMB_DATA_DIR.")
+            return 1
     if args.command == "assess":
         from backend.assessment_cli import execute_assessment
 
         return execute_assessment(settings, args)
+    if args.command == "website":
+        from backend.web_cli import execute_website
+
+        return execute_website(settings, args)
     if args.command == "models":
         from backend.model_choices import catalog
 

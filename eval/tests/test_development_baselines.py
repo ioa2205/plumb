@@ -15,7 +15,7 @@ from eval.mutation.extended_fixtures import FIXTURES
 
 
 @pytest.fixture(scope="module")
-def prepared() -> base.Preparation:
+def prepared(current_development_manifest: Path) -> base.Preparation:
     t = next(t for t in corpus.development_templates() if t.name == "order_receipt")
     cases = [
         corpus.Case(
@@ -38,6 +38,25 @@ def prepared() -> base.Preparation:
 
 def digest(p: base.Preparation) -> str:
     return corpus.sha(corpus.canonical(p.model_dump(mode="json")))
+
+
+def test_generator_drift_still_refuses_current_software_preparation(
+    current_development_manifest: Path,
+) -> None:
+    original = current_development_manifest.read_bytes()
+    manifest = json.loads(original)
+    manifest["implementation"]["uv.lock"] = "0" * 64
+    try:
+        current_development_manifest.write_text(json.dumps(manifest), encoding="utf-8")
+        with pytest.raises(ValueError, match="generator/base source drift"):
+            base.prepare(
+                corpus.make_cases()[:2],
+                hypothesis="Negative software pin check; no inference",
+                max_attempts=2,
+                max_seconds=60,
+            )
+    finally:
+        current_development_manifest.write_bytes(original)
 
 
 def result(p: base.Preparation, *, method: base.Method = "one_shot") -> base.SavedRun:

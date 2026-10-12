@@ -5,6 +5,7 @@
 .form { display: grid; gap: var(--space-lg); min-width: 0; margin-top: var(--space-lg); }
 .form label { display: grid; gap: var(--space-sm); }
 .form fieldset { border: 0; margin: 0; padding: 0; }
+.setupGroup { display: grid; gap: var(--space-lg); }
 .form legend { margin-bottom: var(--space-md); }
 .form .check { display: flex; align-items: center; gap: var(--space-md); min-height: var(--target-size); }
 .form input:not([type="checkbox"]), .form textarea, .form select { width: 100%; min-width: 0; min-height: var(--target-size); padding: var(--space-md); font: var(--code); color: var(--ink); background: var(--well); border: 0; border-bottom: 1.5px solid var(--control-rule); border-radius: var(--radius-tag); }
@@ -37,6 +38,10 @@
 .report { white-space: pre-wrap; overflow-wrap: anywhere; font: var(--prose); background: var(--cite); padding: var(--space-xl); border-radius: var(--radius-control); }
 .section summary { min-height: var(--target-size); cursor: pointer; font: var(--ui); }
 .artifact { scroll-margin-block: var(--space-lg); }
+.humanSurface { display: block; width: 100%; padding: 0; overflow: hidden; }
+.humanSurface img { display: block; width: 100%; height: auto; }
+.humanSurface:disabled::after { content: none; }
+.humanActions { margin-top: var(--space-lg); }
 @media (max-width: 779px) {
   .facts div { grid-template-columns: 1fr; gap: var(--space-xs); }
   .table { font: var(--metadata); }

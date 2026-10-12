@@ -1,12 +1,14 @@
 // @ts-check
+import { glyph } from '../components/glyphs.mjs';
 import { band, page } from '../components/layout.mjs';
-import { command, fact, factWhole, reportShot } from '../components/parts.mjs';
-import { reviewConsole } from '../components/terminal.mjs';
+import { command, fact, factWhole, inShort, reportShot } from '../components/parts.mjs';
+import { reviewConsole, terminal } from '../components/terminal.mjs';
 import { day, gb, int, longDay, mb, shortHash } from '../lib/format.mjs';
 import { guide, refusals } from '../lib/guide.mjs';
 import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
 import { t } from '../lib/lang.mjs';
+import { websiteLimits } from '../lib/website-limits.mjs';
 
 export const path = '/install';
 
@@ -46,8 +48,9 @@ export function render(context) {
     download.features.included_modules_import && download.features.security_card_count === 3 &&
       download.features.security_card_license_present && download.features.baseline_default_preserved &&
       download.features.website_missing_runner_refused && download.features.external_testing_enabled === false &&
+      download.features.external_scope_and_qualification_required &&
       record.observation_comparison.acceptance_met === false && record.observation_comparison.completed_analyses_inconclusive,
-    'the new local observation features remain experimental, baseline selected and external testing disabled',
+    'local observation quality remains experimental; external requests need qualification and scope',
   );
 
   const head = html`<header class="page-head">
@@ -62,6 +65,11 @@ export function render(context) {
           'Plumb is a program you run on your own Windows computer. This page says why there is no download button yet, what you need, every command in order, and what you will see.',
           'Plumb o‘z Windows kompyuteringizda ishlaydigan dastur. Bu sahifada hozircha nega yuklab olish tugmasi yo‘qligi, nima kerakligi, barcha buyruqlar tartib bilan va natijada nimani ko‘rishingiz aytilgan.',
         )}</p>
+    ${inShort([
+      t('You need a 64-bit Windows 10 or 11 computer.', 'Sizga 64 bitli Windows 10 yoki 11 o‘rnatilgan kompyuter kerak.'),
+      t('Setup downloads the AI model once. Local source reviews then work offline.', 'O‘rnatish paytida SI modeli bir marta yuklab olinadi. Keyin mahalliy manba kodini internetsiz tekshirish mumkin.'),
+      t('It has run on one laptop so far. Other computers have not been tested.', 'U hozircha bitta noutbukda ishlagan. Boshqa kompyuterlarda sinab ko‘rilmagan.'),
+    ])}
   </div>
 </header>`;
 
@@ -104,15 +112,15 @@ export function render(context) {
           html`<li><strong>This package has not yet run a review with the AI model.</strong> Its checks loaded no model. The recorded test of ${longDay(run.started_at)} used an earlier package, and the one review with ${factWhole(cpu.id)} was run from source.</li>
         <li><strong>It holds the same code as the source.</strong> It was built on ${longDay(download.built_on)}. ${fact(int(download.source_files_checked))} of its files were compared with the source code, and all of them matched. So it has the second profile, ${factWhole(cpu.id)}, the <span class="fact whole">calibrate</span> command, the <span class="fact whole">--model</span> option, the part of <span class="fact whole">doctor</span> that says which AI models fit in your free memory, and a setup that also installs the pattern scanner. It also has the fix that keeps Plumb from starting a program hidden in the folder being reviewed under the name of a Windows tool.</li>
         <li><strong>Its investigator has changed since the earlier model reviews.</strong> The investigator is the part of Plumb that carries out a review. Its ${fact(download.investigator_files)} files differ from the code that completed the ${factWhole(cpu.id)} review on ${longDay(cpu.recorded_on)}. Compared with the package used in the recorded test, ${fact(since.same)} of them are the same, ${fact(since.changed.length)} have changed and ${fact(since.added.length)} are new. Those earlier answers do not establish the quality of the current code.</li>
-        <li><strong>The new observation features remain experimental.</strong> Private observation drafts, local conversations and ${fact(download.features.security_card_count)} offline security methodology cards are included. The later comparison of methods on the same reviewed observations ended Inconclusive with unfinished conditions, so its quality acceptance remains unmet and the baseline stays selected. Website collection still requires the separate approved lab runner; external testing is disabled. The card data has its own CC BY-SA 4.0 licence.</li>
-        <li><strong>It has only been tried on the laptop it was built on.</strong> There, under the Windows account that built it and with developer tools removed from the path, it mapped the practice app, opened the recorded report and served its browser view. The AI model and the program that runs it were already on that laptop, so these checks downloaded and installed nothing. A fresh Windows account and other computers have not been tested.</li>
+        <li><strong>The new observation features remain experimental.</strong> Private observation drafts, local conversations and ${fact(download.features.security_card_count)} offline security methodology cards are included. The later comparison of methods on the same reviewed observations ended Inconclusive with unfinished conditions, so its quality acceptance remains unmet and the baseline stays selected. The older Tandir collector still needs its separate lab runner. The pinned browser runtime and Chorsu practice site are included; Chromium is installed explicitly with plumb.cmd browser install. ${websiteLimits(download)} The card data has its own CC BY-SA 4.0 licence.</li>
+        <li><strong>It has only been tried on the laptop it was built on.</strong> There, under the Windows account that built it and with developer tools removed from the path, it mapped the practice app and served its browser view.${download.recorded_report_opened ? t(" It also opened the recorded report.", " Yozib olingan hisobotni ham ochdi.") : ""} The AI model and the program that runs it were already on that laptop, so these checks downloaded and installed nothing. A fresh Windows account and other computers have not been tested.</li>
         <li><strong>The AI model is not inside.</strong> Setup downloads it (${fact(gb(model.size))}) from Hugging Face after showing you its size, source and licence.</li>
         <li><strong>Plumb is not a web service.</strong> It runs on your computer on purpose, so that your code stays with you.</li>`,
           html`<li><strong>Bu to‘plam SI modeli bilan hali birorta ham tekshiruv o‘tkazmagan.</strong> Uni sinashda model ishga tushirilmagan. ${longDay(run.started_at)} kungi yozib olingan sinov avvalgi to‘plamda o‘tkazilgan, ${factWhole(cpu.id)} profilidagi yagona tekshiruv esa manba kodidan ishga tushirilgan.</li>
         <li><strong>Undagi kod manba kodi bilan bir xil.</strong> U ${longDay(download.built_on)} kuni yig‘ilgan. Ichidagi ${fact(int(download.source_files_checked))} ta fayl manba kodi bilan solishtirilgan, hammasi mos kelgan. Demak, unda ikkinchi profil (${factWhole(cpu.id)}), <span class="fact whole">calibrate</span> buyrug‘i, <span class="fact whole">--model</span> parametri, <span class="fact whole">doctor</span> buyrug‘ining qaysi SI modellari bo‘sh xotirangizga sig‘ishini aytadigan qismi va andoza skanerini ham o‘rnatadigan o‘rnatuvchi bor. Tekshirilayotgan papkaga Windows vositasi nomi bilan yashirib qo‘yilgan dastur ishga tushib ketishiga yo‘l qo‘ymaydigan tuzatish ham unda bor.</li>
         <li><strong>Uning tekshiruvchisi avvalgi model tekshiruvlaridan keyin o‘zgargan.</strong> Tekshiruvchi — Plumbning tekshiruvni bajaradigan qismi. Uning ${fact(download.investigator_files)} ta fayli ${longDay(cpu.recorded_on)} kuni ${factWhole(cpu.id)} profilidagi tekshiruvni bajargan koddan farq qiladi. Yozib olingan sinovda ishlatilgan to‘plam bilan solishtirganda ularning ${fact(since.same)} tasi o‘zgarmagan, ${fact(since.changed.length)} tasi o‘zgargan, ${fact(since.added.length)} tasi yangi. Avvalgi javoblar hozirgi kod sifatini tasdiqlamaydi.</li>
-        <li><strong>Yangi kuzatuv imkoniyatlari hozircha tajriba holatida.</strong> Shaxsiy kuzatuv qoralamalari, mahalliy suhbatlar va ${fact(download.features.security_card_count)} ta internet talab qilmaydigan xavfsizlik uslubiyati kartasi bor. Keyingi bir xil ko‘rib chiqilgan kuzatuvlar asosidagi usullar taqqoslashida natijalar Inconclusive bo‘lib, ayrim sharoitlar sinalmay qolgan. Shu sababli sifat talabi bajarilmagan va asosiy usul tanlanganicha qoladi. Saytdan dalil yig‘ish uchun alohida tasdiqlangan sinov ilovasi ishga tushiruvchisi kerak; tashqi sinovlar o‘chirilgan. Kartalar ma’lumoti alohida CC BY-SA 4.0 litsenziyasi ostida.</li>
-        <li><strong>U faqat yig‘ilgan noutbukda sinab ko‘rilgan.</strong> U yerda, o‘zi yig‘ilgan Windows hisobida va dasturchi vositalari olib tashlangan holda, sinov ilovasining xaritasini tuzdi, yozib olingan hisobotni ochdi va brauzerdagi interfeysini ishga tushirdi. SI modeli va uni ishga tushiradigan dastur o‘sha noutbukda oldindan bor edi, shuning uchun bu sinovlarda hech narsa yuklab olinmagan va o‘rnatilmagan. Yangi Windows hisobi va boshqa kompyuterlarda sinab ko‘rilmagan.</li>
+        <li><strong>Yangi kuzatuv imkoniyatlari hozircha tajriba holatida.</strong> Shaxsiy kuzatuv qoralamalari, mahalliy suhbatlar va ${fact(download.features.security_card_count)} ta internet talab qilmaydigan xavfsizlik uslubiyati kartasi bor. Keyingi bir xil ko‘rib chiqilgan kuzatuvlar asosidagi usullar taqqoslashida natijalar Inconclusive bo‘lib, ayrim sharoitlar sinalmay qolgan. Shu sababli sifat talabi bajarilmagan va asosiy usul tanlanganicha qoladi. Avvalgi Tandir yig‘uvchisi uchun alohida sinov ilovasi ishga tushiruvchisi kerak. Pinlangan brauzer muhiti va Chorsu sinov sayti to‘plamga kiradi; Chromium plumb.cmd browser install orqali alohida o‘rnatiladi. ${websiteLimits(download)} Kartalar ma’lumoti alohida CC BY-SA 4.0 litsenziyasi ostida.</li>
+        <li><strong>U faqat yig‘ilgan noutbukda sinab ko‘rilgan.</strong> U yerda, o‘zi yig‘ilgan Windows hisobida va dasturchi vositalari olib tashlangan holda, sinov ilovasining xaritasini tuzdi va brauzerdagi interfeysini ishga tushirdi.${download.recorded_report_opened ? t(" It also opened the recorded report.", " Yozib olingan hisobotni ham ochdi.") : ""} SI modeli va uni ishga tushiradigan dastur o‘sha noutbukda oldindan bor edi, shuning uchun bu sinovlarda hech narsa yuklab olinmagan va o‘rnatilmagan. Yangi Windows hisobi va boshqa kompyuterlarda sinab ko‘rilmagan.</li>
         <li><strong>SI modeli to‘plam ichida emas.</strong> O‘rnatuvchi uni (${fact(gb(model.size))}) hajmi, manbasi va litsenziyasini ko‘rsatgandan keyin Hugging Face’dan yuklab oladi.</li>
         <li><strong>Plumb veb-xizmat emas.</strong> U ataylab sizning kompyuteringizda ishlaydi, shunda kodingiz o‘zingizda qoladi.</li>`,
         )}
@@ -203,6 +211,83 @@ export function render(context) {
           html`Xotira yetarli bo‘lsa, ${factWhole(cpu.id)} profili orqali shu sahifadagi hamma narsa. Bu tayyor to‘plamga ham, manba kodiga ham birdek tegishli. Plumb u yerda shunday ishlaydigan qilib qurilgan, lekin bu ikki yo‘lning hech biri ikkinchi kompyuterda hali sinab ko‘rilmagan.`,
         )}</dd></div>
     </dl>`,
+  });
+
+  // The model list, as Plumb printed it for this site, and the same list drawn against the laptop's memory.
+  const { models: listed } = record.console_records;
+  const total = run.machine.total_memory_bytes;
+  const rows = listed.list.flatMap((/** @type {any} */ entry) =>
+    entry.profiles.length > 0
+      ? entry.profiles.map((/** @type {any} */ profile, /** @type {number} */ index) => ({ entry, profile, first: index === 0 }))
+      : [{ entry, profile: null, first: true }],
+  );
+  holds(listed.list[0].id === model.id && listed.list[0].quality === 'recorded_scoped', 'the default model is the one with a recorded result');
+  holds(listed.list.slice(1).every((/** @type {any} */ entry) => entry.quality === 'untested' && !entry.installed), 'the other models are untested and not installed');
+  holds(rows.every((/** @type {any} */ row) => !row.profile || (row.profile.memory_fit === false && row.profile.launch_available === false)), 'when the list was printed, no profile had enough free memory');
+  holds(listed.selected_profile === run.profile, 'Plumb would pick the measured profile on this laptop');
+  holds(listed.list.filter((/** @type {any} */ entry) => entry.profiles.length === 0).length === 1, 'one listed model has no way to start yet');
+  const memoryBar = (/** @type {number} */ needed, /** @type {string} */ label) =>
+    html`<svg class="timebar membar" viewBox="0 0 1000 8" preserveAspectRatio="none" role="img" aria-label="${label}"><rect class="timebar-track" width="1000" height="8"/><rect class="timebar-fill" width="${((needed / total) * 1000).toFixed(0)}" height="8"/><rect class="membar-free" x="${((listed.available_ram_bytes / total) * 1000).toFixed(0)}" width="12" height="8"/></svg>`;
+  const needsWords = t('Free memory it needs', 'Kerakli bo‘sh xotira');
+  const standingWords = t('What is known about its answers', 'Javoblari haqida nima ma’lum');
+  const modelsBand = band({
+    id: 'models',
+    heading: t('Which AI model.', 'Qaysi SI modeli.'),
+    intro: html`<div class="stack-gap">
+      <p>${t(
+        html`${factWhole('plumb models')} lists the models Plumb knows, without loading any of them. This is what it printed on the development laptop on ${day(record.console_records.recorded_at)}.`,
+        html`${factWhole('plumb models')} buyrug‘i Plumb biladigan modellarni birortasini ham yuklamasdan sanab beradi. Quyida u ${day(record.console_records.recorded_at)} kuni ishlab chiqish noutbukida chiqargan ro‘yxat berilgan.`,
+      )}</p>
+      <p>${t(
+        html`Every line says <span class="fact" lang="en">unavailable now</span> because other programs were using the laptop’s memory at that moment: ${fact(gb(listed.available_ram_bytes))} was free. Plumb says so and does not start.`,
+        html`Har bir qatorda <span class="fact" lang="en">unavailable now</span> («hozir ishga tushirib bo‘lmaydi») deyilgan, chunki o‘sha paytda noutbuk xotirasini boshqa dasturlar band qilib turgan edi: atigi ${fact(gb(listed.available_ram_bytes))} bo‘sh edi. Plumb shuni aytadi va ishni boshlamaydi.`,
+      )}</p>
+    </div>`,
+    body: html`<div class="stack-gap">
+      ${terminal({
+        title: t(`PowerShell · recorded on ${day(record.console_records.recorded_at)}`, `PowerShell · ${day(record.console_records.recorded_at)} kuni yozib olingan`),
+        command: listed.command,
+        lines: listed.lines,
+      })}
+      <table class="plain stack model-table">
+        <caption class="sr-only">${t('The listed models, the memory each needs and what is known about each', 'Ro‘yxatdagi modellar, har biriga kerakli xotira va har biri haqida nima ma’lumligi')}</caption>
+        <thead><tr><th scope="col">${t('Model', 'Model')}</th><th scope="col">${needsWords}</th><th scope="col">${standingWords}</th></tr></thead>
+        <tbody>
+          ${rows.map((/** @type {any} */ row) => {
+            const { entry, profile } = row;
+            const need = profile
+              ? profile.required_vram_bytes > 0
+                ? t(html`${fact(gb(profile.required_ram_bytes))} and ${fact(gb(profile.required_vram_bytes))} of graphics memory`, html`${fact(gb(profile.required_ram_bytes))} va ${fact(gb(profile.required_vram_bytes))} videoxotira`)
+                : fact(gb(profile.required_ram_bytes))
+              : t('not measured', 'o‘lchanmagan');
+            const known = !profile
+              ? html`${glyph('ring')} ${t('Cannot be started yet: how much memory it needs has not been measured.', 'Hozircha ishga tushirib bo‘lmaydi: unga qancha xotira kerakligi o‘lchanmagan.')}`
+              : entry.quality === 'recorded_scoped'
+                ? html`${glyph('dot')} ${t('One recorded result on the practice app: receipt Supported, invoice Rejected.', 'Sinov ilovasida qayd etilgan bitta natija: chek «Tasdiqlandi», hisob-faktura «Rad etildi».')}`
+                : html`${glyph('half')} <span lang="en">${fact(record.other_models_label)}</span>`;
+            return html`<tr>
+            <th scope="row">${row.first ? html`<span class="model-name" lang="en">${entry.family}</span><span class="small">${t(html`a ${fact(gb(entry.size_bytes))} file`, html`${fact(gb(entry.size_bytes))} hajmli fayl`)}${entry.installed ? t(', installed', ', o‘rnatilgan') : ''}</span>` : html`<span class="sr-only" lang="en">${entry.family}</span>`}${profile ? html`<span class="model-profile fact" lang="en">${profile.id}</span>` : ''}</th>
+            <td data-label="${needsWords}">${need}${profile ? memoryBar(profile.required_ram_bytes, t(`${gb(profile.required_ram_bytes)} of the laptop’s ${gb(total)}`, `Noutbukdagi ${gb(total)} xotiradan ${gb(profile.required_ram_bytes)}`)) : ''}</td>
+            <td data-label="${standingWords}" class="model-known">${known}</td>
+          </tr>`;
+          })}
+        </tbody>
+      </table>
+      <p class="small">${t(
+        html`Each bar is drawn against the ${fact(gb(total))} of memory in the development laptop. The gap in a bar marks the memory that was free when the list was printed. For models other than the default the figure is Plumb’s estimate: none of them has been downloaded or run.`,
+        html`Har bir chiziq ishlab chiqish noutbukidagi ${fact(gb(total))} xotiraga nisbatan chizilgan. Chiziqdagi uzilish ro‘yxat chiqarilgan paytda bo‘sh turgan xotirani ko‘rsatadi. Asosiy modeldan boshqa modellar uchun bu raqam Plumbning taxmini: ularning birortasi yuklab olinmagan va ishga tushirilmagan.`,
+      )}</p>
+      <ul class="limits">
+        ${t(
+          html`<li><strong>Plumb picks for you.</strong> Left alone, it uses the model with a recorded result on the profile that fits your computer. A model is never chosen just because it is bigger or because it fits.</li>
+        <li><strong>You can choose another one.</strong> ${factWhole('--model <id>')} selects it. It still has to be installed, pass its first-use check and fit in memory.</li>
+        <li><strong>Size is not quality.</strong> The models have not been compared on the same cases, so nothing here says which one judges best.</li>`,
+          html`<li><strong>Plumb o‘zi tanlaydi.</strong> Hech narsa ko‘rsatmasangiz, u qayd etilgan natijasi bor modelni kompyuteringizga mos profilda ishlatadi. Model shunchaki kattaroq bo‘lgani yoki xotiraga sig‘gani uchun tanlanmaydi.</li>
+        <li><strong>Boshqasini tanlashingiz mumkin.</strong> Buning uchun ${factWhole('--model <id>')} yoziladi. U baribir o‘rnatilgan bo‘lishi, birinchi ishga tushirish sinovidan o‘tishi va xotiraga sig‘ishi kerak.</li>
+        <li><strong>Hajm sifat degani emas.</strong> Modellar bir xil holatlarda solishtirilmagan, shuning uchun bu yerda qaysi biri yaxshiroq baholashi haqida hech narsa aytilmagan.</li>`,
+        )}
+      </ul>
+    </div>`,
   });
 
   const recordedReview = html`<details class="more-detail">
@@ -356,8 +441,8 @@ export function render(context) {
           'Plumbni nega hozircha yuklab olib bo‘lmasligi, unga nima kerakligi, uni manba kodidan qadam-baqadam yoki Windows to‘plamidan qanday o‘rnatish, o‘z loyihangizni qanday tekshirish va u nimani rad etishi.',
         ),
     body: site.download
-      ? html`${head}${downloadBand}${needs}${packageBand}${source}${own}${refusalsBand}`
-      : html`${head}${today}${needs}${source}${packageBand}${own}${refusalsBand}`,
+      ? html`${head}${downloadBand}${needs}${modelsBand}${packageBand}${source}${own}${refusalsBand}`
+      : html`${head}${today}${needs}${modelsBand}${source}${packageBand}${own}${refusalsBand}`,
     context,
   });
 }

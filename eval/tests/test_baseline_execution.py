@@ -21,7 +21,7 @@ from eval.mutation.corpus import build
 
 
 @pytest.fixture(scope="module")
-def prepared() -> base.Preparation:
+def prepared(current_development_manifest: Path) -> base.Preparation:
     template = next(t for t in corpus.development_templates() if t.name == "order_receipt")
     cases = [
         corpus.Case(

@@ -89,6 +89,14 @@ def create_app(
     from backend.conversation_api import router as conversation_router
 
     conversations = Conversations(settings)
+    from backend.chat import Chats
+    from backend.chat_api import router as chat_router
+
+    chats = Chats(settings)
+    from backend.web_api import WebsiteJobs
+    from backend.web_api import router as website_router
+
+    websites = WebsiteJobs(settings)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -102,6 +110,8 @@ def create_app(
             await run_in_threadpool(worker.close)
             await run_in_threadpool(assessment_jobs.close)
             await run_in_threadpool(conversations.close)
+            await run_in_threadpool(chats.close)
+            await run_in_threadpool(websites.close)
 
     app = FastAPI(title="Plumb", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.worker = worker
@@ -128,6 +138,8 @@ def create_app(
     app.include_router(assessment_router(settings, assessment_jobs))
     app.include_router(assessment_job_router(assessment_jobs))
     app.include_router(conversation_router(conversations))
+    app.include_router(chat_router(chats))
+    app.include_router(website_router(websites))
     workbench = Workbench(workbench_dir if workbench_dir is not None else DEFAULT_DIRECTORY)
 
     @app.get(BOOTSTRAP_PATH, include_in_schema=False)

@@ -11,11 +11,13 @@ import { SourceCheckPanel } from "./SourceCheckPanel";
 import styles from "./Workbench.module.css";
 
 const destinations = [
+  { name: "Ask", path: "/ask/" },
   { name: "Project", path: "/" },
   { name: "Review", path: "/review/" },
   { name: "Findings", path: "/findings/" },
   { name: "Runs", path: "/runs/" },
   { name: "Assessments", path: "/assess/" },
+  { name: "Website", path: "/website/" },
 ] as const;
 
 export type Destination = typeof destinations[number]["name"];
@@ -54,9 +56,9 @@ export function Workbench({ current, children }: { current: Destination; childre
   return <div className={styles.app}>
     <a className="skip-link" href="#main">Skip to content</a>
     <aside className={styles.rail} aria-label="Workbench">
-      <a href="/" className={styles.wordmark} aria-label="Plumb project"><Glyph name="plumb" />plumb</a>
+      <a href="/ask/" className={styles.wordmark} aria-label="Plumb, ask"><Glyph name="plumb" />plumb</a>
       <nav aria-label="Main navigation" className={styles.nav}>
-        {destinations.map(item => <a key={item.name} href={item.name === "Assessments" ? item.path : runDestination(item.path,id)} aria-current={item.name === current ? "page" : undefined}>{item.name}</a>)}
+        {destinations.map(item => <a key={item.name} href={["Ask","Assessments","Website"].includes(item.name) ? item.path : runDestination(item.path,id)} aria-current={item.name === current ? "page" : undefined}>{item.name}</a>)}
       </nav>
       <dl className={styles.capabilities}>
         <div><dt>Recorded model</dt><dd>{run?.model?.id || "Not recorded"}</dd></div>

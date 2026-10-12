@@ -54,6 +54,7 @@ from backend.contracts.cases import (
     PeerExcerpt,
     SnapshotCodePage,
 )
+from backend.contracts.chat import ChatAsk, ChatCreate, ChatSelect, ChatView, SavedResults
 from backend.contracts.code import (
     AccessSite,
     EntryPoint,
@@ -95,6 +96,17 @@ from backend.contracts.setup_view import (
 )
 from backend.contracts.signals import SignalSet
 from backend.contracts.verification import FixProposal, ProbeRun, ProbeSpec, SuggestedChange
+from backend.contracts.web_journey import (
+    FixtureCreate,
+    HumanAuthInput,
+    HumanAuthView,
+    JourneyApprove,
+    JourneyCreate,
+    JourneyList,
+    JourneyRun,
+    JourneyView,
+    WebsiteReadiness,
+)
 from backend.contracts.website import WebsiteScopeCreate
 
 CONTRACTS: tuple[type[Contract], ...] = (
@@ -119,6 +131,20 @@ CONTRACTS: tuple[type[Contract], ...] = (
 
 # Transport projections are generated alongside entities, but are not persisted entities.
 READ_CONTRACTS: tuple[type[Contract], ...] = (
+    ChatAsk,
+    ChatCreate,
+    ChatSelect,
+    ChatView,
+    SavedResults,
+    FixtureCreate,
+    JourneyApprove,
+    JourneyCreate,
+    JourneyList,
+    JourneyRun,
+    HumanAuthInput,
+    HumanAuthView,
+    JourneyView,
+    WebsiteReadiness,
     ConversationAsk,
     ConversationCreate,
     ConversationView,

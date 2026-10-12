@@ -19,7 +19,7 @@ from eval.mutation import development as corpus
 
 
 @pytest.fixture(scope="module")
-def prepared() -> base.Preparation:
+def prepared(current_development_manifest: Path) -> base.Preparation:
     ids = {"v2_command_arguments/original", "v2_command_arguments/shell_input"}
     return base.prepare(
         [c for c in corpus.make_cases() if c.id in ids],
@@ -344,7 +344,9 @@ def test_refused_paths_do_not_become_safe_or_positive(
     assert not list((tmp_path / "data/cache").glob("plumb-packet-*"))
 
 
-def test_unrepresentable_client_allow_policy_remains_explicit_abstention(tmp_path: Path) -> None:
+def test_unrepresentable_client_allow_policy_remains_explicit_abstention(
+    tmp_path: Path, current_development_manifest: Path
+) -> None:
     cases = [
         c
         for c in corpus.make_cases()

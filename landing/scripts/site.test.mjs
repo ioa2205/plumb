@@ -18,6 +18,8 @@ import { AGENT_RULES, AGENT_RULES_FOR_FILE, guide } from '../src/lib/guide.mjs';
 import { localPath, setLang, t } from '../src/lib/lang.mjs';
 import { tone } from '../src/lib/tone.mjs';
 import { render as installPage } from '../src/pages/install.mjs';
+import { render as assessmentPage } from '../src/pages/web-assessment.mjs';
+import { render as homePage } from '../src/pages/index.mjs';
 import { build } from './build.mjs';
 import { PRIVATE_PATTERNS, PRIVATE_WORDS_LOADED } from './private.mjs';
 
@@ -129,6 +131,11 @@ test('the download is the package its saved checks describe, and is not said to 
   assert.equal(download.features.baseline_default_preserved, true);
   assert.equal(download.features.website_missing_runner_refused, true);
   assert.equal(download.features.external_testing_enabled, false);
+  assert.equal(download.features.external_scope_and_qualification_required, true);
+  assert.equal(download.pinned_browser_checked, true);
+  assert.equal(download.owned_website_completed, true);
+  assert.equal(download.external_website_tested, false);
+  assert.equal(download.model_planning_qualified, false);
   assert.equal(record.observation_comparison.acceptance_met, false);
   assert.equal(record.observation_comparison.completed_analyses_inconclusive, true);
   // It is no longer the investigator of the recorded test, file for file, and the pages must not say so.
@@ -139,10 +146,10 @@ test('the download is the package its saved checks describe, and is not said to 
   const text = (/** @type {string} */ path) => readFileSync(path, 'utf8').replace(/<[^>]+>/g, '');
   // Near the download, in both languages: no review with the model yet, and tried on one laptop only.
   for (const [page, noReview, oneLaptop] of [
-    ['index.html', /has not yet run a review with the AI model/, /only been tried on the laptop it was built on/],
+    ['what-it-does/index.html', /has not yet run a review with the AI model/, /only been tried on the laptop it was built on/],
     ['install/index.html', /has not yet run a review with the AI model/, /A fresh Windows account and other computers have not been tested/],
     ['evidence/index.html', /this package has not run a review/, /A clean account and a second computer are untested/],
-    ['uz/index.html', /SI modeli bilan hali birorta ham tekshiruv o‘tkazmagan/, /faqat o‘zi yig‘ilgan noutbukda sinab ko‘rilgan/],
+    ['uz/what-it-does/index.html', /SI modeli bilan hali birorta ham tekshiruv o‘tkazmagan/, /faqat o‘zi yig‘ilgan noutbukda sinab ko‘rilgan/],
     ['uz/install/index.html', /SI modeli bilan hali birorta ham tekshiruv o‘tkazmagan/, /Yangi Windows hisobi va boshqa kompyuterlarda sinab ko‘rilmagan/],
     ['uz/evidence/index.html', /bu to‘plam hali birorta ham tekshiruv o‘tkazmagan/, /Yangi hisobda va ikkinchi kompyuterda sinab ko‘rilmagan/],
   ]) {
@@ -201,12 +208,169 @@ test('the package page refuses changed safety defaults and inherited model accep
   const external = context();
   external.record.download.features.external_testing_enabled = true;
   assert.throws(() => installPage(external), /saved records do not/);
+  const noBoundary = context();
+  noBoundary.record.download.features.external_scope_and_qualification_required = false;
+  assert.throws(() => installPage(noBoundary), /saved records do not/);
   const historical = context();
   historical.record.download.same_investigator_as_cpu_profile_run = true;
   assert.throws(() => installPage(historical), /saved records do not/);
   const claimed = context();
   claimed.record.observation_comparison.acceptance_met = true;
   assert.throws(() => installPage(claimed), /saved records do not/);
+});
+
+test('recorded local collection stays distinct from qualified and approved website tests', () => {
+  const { collection, observation_comparison: comparison } = record;
+  // What the records say.
+  assert.equal(collection.external_access, false);
+  assert.equal(collection.loopback_only, true);
+  assert.equal(collection.human_review, 'pending');
+  assert.equal(collection.imported, false);
+  assert.equal(collection.model_loaded, false);
+  assert.equal(collection.runtime_verification, 'not_attempted');
+  assert.equal(collection.actions.length, collection.requests);
+  assert.equal(comparison.acceptance_met, false);
+  for (const condition of comparison.conditions) {
+    assert.equal(condition.conclusion, 'inconclusive', `${condition.case} / ${condition.approach}`);
+    assert.equal(condition.correct, false);
+  }
+  assert.equal(comparison.conditions.length + comparison.unrun, comparison.planned);
+
+  const text = (/** @type {string} */ path) => readFileSync(join(DIST, path), 'utf8').replace(/<[^>]+>/g, '');
+  // The older collection is local; the separate adapter still needs qualification and permission.
+  for (const page of ['index.html', 'how-it-works/index.html', 'web-assessment/index.html', 'evidence/index.html']) {
+    assert.match(text(page), /Testing another website requires a network boundary check on this computer and your approved scope and plan/, `${page}: qualification and scope are required`);
+    assert.match(text(page), /No external website has been tested/, `${page}: no external acceptance claimed`);
+    assert.match(text(`uz/${page}`), /Boshqa saytni sinash uchun shu kompyuterda tarmoq chegarasi tekshiruvi hamda siz tasdiqlagan qamrov va reja kerak/, `uz/${page}: qualification and scope are required`);
+    assert.match(text(`uz/${page}`), /Tashqi sayt sinab ko‘rilmagan/, `uz/${page}: no external acceptance claimed`);
+  }
+  // The model's standing on this evidence is stated where the feature is introduced.
+  assert.match(text('index.html'), /its AI model has not settled a case yet/);
+  assert.match(text('uz/index.html'), /hali birorta holat bo‘yicha aniq xulosaga kelmagan/);
+  assert.match(text('web-assessment/index.html'), /the AI model has not reached a verdict yet/);
+  assert.match(text('uz/web-assessment/index.html'), /SI modeli hali aniq xulosaga kelmagan/);
+  // An observation is never dressed as a source finding or a runtime check.
+  for (const page of ['web-assessment/index.html', 'uz/web-assessment/index.html']) {
+    assert.doesNotMatch(text(page), /Runtime check: reproduced|Jonli sinov: takrorlandi|from the source\b/i, `${page}: observation shown as another kind of evidence`);
+  }
+
+  // The request list is the recorded one: every row, in order, with the recorded status.
+  const tidy = (/** @type {string} */ markup) => markup.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const page = readFileSync(join(DIST, 'web-assessment/index.html'), 'utf8');
+  const rows = [...page.matchAll(/<li class="tr is-\w+">([\s\S]*?)<\/li>/g)].map((match) => tidy(match[1]));
+  assert.equal(rows.length, collection.actions.length, 'one row per recorded request');
+  collection.actions.forEach((/** @type {any} */ action, /** @type {number} */ index) => {
+    assert.ok(rows[index].includes(`${action.method} ${action.path}`), `row ${index + 1}: ${action.method} ${action.path}`);
+    if (action.status) assert.ok(rows[index].includes(String(action.status)), `row ${index + 1}: status ${action.status}`);
+  });
+  const explained = readFileSync(join(DIST, 'how-it-works/index.html'), 'utf8');
+  assert.equal([...explained.matchAll(/<li class="tr is-\w+">/g)].length, 3, 'the page on how it works shows three of the recorded rows');
+});
+
+test('the web-assessment page refuses a record that says more than was recorded', () => {
+  const context = () => ({
+    record: structuredClone(record), site,
+    assets: { css: '/assets/site.css', js: '/assets/site.js' },
+    themeColor: { day: '', night: '' },
+  });
+  assert.doesNotThrow(() => assessmentPage(context()));
+  const external = context();
+  external.record.collection.external_access = true;
+  assert.throws(() => assessmentPage(external), /saved records do not/);
+  const verdict = context();
+  verdict.record.observation_comparison.conditions[1].conclusion = 'supported';
+  assert.throws(() => assessmentPage(verdict), /saved records do not/);
+  const reviewed = context();
+  reviewed.record.collection.human_review = 'reviewed';
+  assert.throws(() => assessmentPage(reviewed), /saved records do not/);
+  const exported = context();
+  exported.record.report_drafts.published = true;
+  assert.throws(() => assessmentPage(exported), /saved records do not/);
+});
+
+test('the model list and the workbench pictures are shown as recorded', () => {
+  const { console_records: consoles, workbench_views: views } = record;
+  const text = (/** @type {string} */ path) =>
+    readFileSync(join(DIST, path), 'utf8').replace(/<[^>]+>/g, '').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  for (const page of ['install/index.html', 'uz/install/index.html']) {
+    for (const line of consoles.models.lines) assert.ok(text(page).includes(line.trim()), `${page}: ${line.trim().slice(0, 50)}`);
+  }
+  // Only the default model has a recorded result; the others are untested and not installed.
+  assert.equal(consoles.models.list[0].quality, 'recorded_scoped');
+  for (const entry of consoles.models.list.slice(1)) {
+    assert.equal(entry.quality, 'untested', entry.id);
+    assert.equal(entry.installed, false, entry.id);
+  }
+  // The pictures are cut from captures made with stand-in content, and the pages say so.
+  assert.equal(views.fresh_model_acceptance, false);
+  assert.equal(views.signed_in_acceptance, false);
+  for (const name of ['case', 'ask', 'assess']) {
+    for (const theme of ['day', 'night']) assert.ok(existsSync(join(DIST, `shots/workbench-${name}-${theme}.webp`)), `workbench-${name}-${theme}.webp`);
+  }
+  assert.match(text('what-it-does/index.html'), /The answer text in this picture is a stand-in/);
+  assert.match(text('uz/what-it-does/index.html'), /Bu rasmdagi javob matni namuna/);
+  assert.match(text('what-it-does/index.html'), /a full walk-through in a signed-in browser has not been completed/);
+});
+
+test('the walk-through on the front page is drawn from the record and complete without scripts', () => {
+  const { run, excerpts, sample } = record;
+  const handler = excerpts.receipt_handler;
+  for (const path of ['index.html', 'uz/index.html']) {
+    const page = readFileSync(join(DIST, path), 'utf8');
+    const chapters = [...page.matchAll(/<li class="chapter" data-chapter>([\s\S]*?)<\/li>\s*(?=<li class="chapter"|<\/ol>\s*<div class="film-rail")/g)].map((match) => match[1]);
+    assert.equal(chapters.length, 4, `${path}: four chapters`);
+    for (const chapter of chapters) {
+      // Every caption is in the page itself, so the story is whole before any script runs.
+      assert.equal([...chapter.matchAll(/<li>[^<]/g)].length, 3, `${path}: three captions per chapter`);
+      assert.match(chapter, /<button type="button" class="chapter-go" data-film-go disabled>/, `${path}: chapter buttons wait for the script`);
+      assert.match(chapter, /<div class="stage-box" aria-hidden="true">/, `${path}: the drawing is not read out twice`);
+    }
+    // The drawings carry recorded values, not typed ones.
+    assert.equal([...page.matchAll(/<g class="s-judged"[\s\S]*?<\/g>/g)][0][0].match(/<circle/g)?.length, run.peer.compared, `${path}: one mark per compared place`);
+    assert.equal([...page.matchAll(/<circle class="is-gap"/g)].length, 1, `${path}: one place stands out`);
+    assert.ok(page.includes(`<span class="s-n">${handler.access.start}</span><code>${handler.lines[handler.access.start - handler.start].trim()}</code>`), `${path}: the cited line as recorded`);
+    assert.ok(page.includes(sample.victim.customer.name) && page.includes(sample.victim.address), `${path}: the practice app’s own sample customer`);
+    assert.ok(page.includes(`${handler.path}:${handler.access.start}`), `${path}: the report names the file and line`);
+  }
+  // The film refuses a record that no longer says what its drawings show.
+  const context = () => ({
+    record: structuredClone(record), site,
+    assets: { css: '/assets/site.css', js: '/assets/site.js' },
+    themeColor: { day: '', night: '' },
+  });
+  assert.doesNotThrow(() => homePage(context()));
+  const guessed = context();
+  guessed.record.run.findings[0].judgments[1].interpretation = 'scoped_elsewhere';
+  assert.throws(() => homePage(guessed), /saved records do not/);
+  const harmless = context();
+  harmless.record.runtime.receipt.outcome = 'not_reproduced';
+  assert.throws(() => homePage(harmless), /saved records do not/);
+  const tested = context();
+  tested.record.run.findings[0].runtime_verification = 'reproduced';
+  assert.throws(() => homePage(tested), /saved records do not/);
+});
+
+test('the front page stays short, and what it used to carry lives on the deeper pages', () => {
+  const words = (/** @type {string} */ path) => {
+    const page = readFileSync(join(DIST, path), 'utf8');
+    const main = page.slice(page.indexOf('<main'), page.indexOf('</main>'));
+    // The drawings are pictures; what counts is what a visitor has to read.
+    return main.replace(/<div class="stage-box"[\s\S]*?<\/div>\s*<\/li>/g, ' ').replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  };
+  // A newcomer reads the front page in about three minutes. Detail belongs behind it.
+  assert.ok(words('index.html') <= 600, `the front page has ${words('index.html')} words`);
+  assert.ok(words('uz/index.html') <= 600, `the Uzbek front page has ${words('uz/index.html')} words`);
+  const text = (/** @type {string} */ path) => readFileSync(join(DIST, path), 'utf8').replace(/<[^>]+>/g, '');
+  assert.match(text('how-it-works/index.html'), /How reading the code works, in four steps/);
+  assert.match(text('how-it-works/index.html'), /Words used on this site/);
+  assert.match(text('what-it-does/index.html'), /Everything Plumb can do today/);
+  assert.match(text('what-it-does/index.html'), /Can I use it today\?/);
+  // Each deeper page opens with its three-line summary, and the two recorded cases point at each other.
+  for (const path of ['how-it-works', 'what-it-does', 'recorded-run', 'web-assessment', 'evidence', 'install']) {
+    assert.equal([...readFileSync(join(DIST, path, 'index.html'), 'utf8').matchAll(/<div class="in-short">[\s\S]*?<\/ul>/g)].map((match) => match[0].match(/<li>/g)?.length)[0], 3, `${path}: three lines in short`);
+  }
+  assert.match(readFileSync(join(DIST, 'recorded-run/index.html'), 'utf8'), /<a href="\/web-assessment"/);
+  assert.match(readFileSync(join(DIST, 'web-assessment/index.html'), 'utf8'), /<a href="\/recorded-run"/);
 });
 
 test('nothing private is published', () => {

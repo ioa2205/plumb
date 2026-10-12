@@ -5,9 +5,11 @@ import { bob, sprite } from './glyphs.mjs';
 
 /** Paths are written once, in their English form; Uzbek pages get the /uz prefix on the way out. */
 export const NAV = [
-  { href: '/', en: 'Overview', uz: 'Bosh sahifa' },
-  { href: '/recorded-run', en: 'Test run', uz: 'Sinov natijasi' },
-  { href: '/evidence', en: 'Strengths and limits', uz: 'Imkoniyat va cheklovlar' },
+  { href: '/how-it-works', en: 'How it works', uz: 'Qanday ishlaydi' },
+  { href: '/what-it-does', en: 'What it can do', uz: 'Imkoniyatlar' },
+  // The two recorded cases share one entry; each page links to the other at its top.
+  { href: '/recorded-run', en: 'See it work', uz: 'Amalda ko‘rish', also: ['/web-assessment'] },
+  { href: '/evidence', en: 'Limits', uz: 'Cheklovlar' },
   { href: '/install', en: 'Get Plumb', uz: 'O‘rnatish' },
   { href: '/contact', en: 'Contact', uz: 'Aloqa' },
 ];
@@ -30,7 +32,7 @@ const themeIcon = raw(
 const sunHint = raw('<svg class="ts-hint ts-hint-day" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="2.3"/><path d="M6 .9v1.3M6 9.8v1.3M.9 6h1.3M9.8 6h1.3M2.4 2.4l.9.9M8.7 8.7l.9.9M2.4 9.6l.9-.9M8.7 3.3l.9-.9"/></svg>');
 const moonHint = raw('<svg class="ts-hint ts-hint-night" viewBox="0 0 12 12" aria-hidden="true"><path d="M9.9 7.6A4.3 4.3 0 0 1 4.4 2.1a4.3 4.3 0 1 0 5.5 5.5z"/></svg>');
 
-const PAGE_ROOTS = new Set(NAV.map((item) => item.href.slice(1)));
+const PAGE_ROOTS = new Set(['', ...NAV.flatMap((item) => [item.href, ...(item.also ?? [])]).map((href) => href.slice(1))]);
 
 const PRELOADED_FONTS = [
   'atkinson-hyperlegible-next-latin-400-normal.woff2',
@@ -73,7 +75,8 @@ export function page({ path, title, description, body, context, index = true }) 
   const own = path === '/404' ? '/' : path;
   const absolute = (/** @type {import('../lib/lang.mjs').Lang} */ language) =>
     `${site.url}${localPath(own, language) === '/' ? '' : localPath(own, language)}`;
-  const current = (/** @type {string} */ href) => (href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`));
+  const under = (/** @type {string} */ href) => path === href || path.startsWith(`${href}/`);
+  const current = (/** @type {{ href: string, also?: string[] }} */ item) => under(item.href) || (item.also ?? []).some(under);
 
   const head = site.url && index
     ? html`<meta property="og:url" content="${absolute(lang())}"><link rel="canonical" href="${absolute(lang())}">
@@ -109,11 +112,11 @@ ${sprite}
 <a class="skip" href="#main">${t('Skip to content', 'Asosiy matnga o‘tish')}</a>
 <header class="top">
   <div class="wrap top-row">
-    <a class="wordmark" href="/" aria-label="${t('Plumb, overview', 'Plumb, bosh sahifa')}">${bob}plumb</a>
+    <a class="wordmark is-live" href="/" aria-label="${t('Plumb, overview', 'Plumb, bosh sahifa')}">${bob}plumb</a>
     <nav class="nav" aria-label="${t('Primary', 'Asosiy menyu')}">
       ${NAV.map(
         (item) =>
-          html`<a href="${item.href}"${current(item.href) ? html` aria-current="page"` : ''}>${t(item.en, item.uz)}</a>`,
+          html`<a href="${item.href}"${current(item) ? html` aria-current="page"` : ''}>${t(item.en, item.uz)}</a>`,
       )}
     </nav>
     <div class="tools">
@@ -138,8 +141,8 @@ ${body}
     <div>
       <a class="wordmark" href="/" aria-label="${t('Plumb, overview', 'Plumb, bosh sahifa')}">${bob}plumb</a>
       <p class="small">${t(
-        'Looks through a web app’s code for places where people can see data that is not theirs. Runs on your own computer. A working prototype.',
-        'Veb-ilova kodidan foydalanuvchiga begona ma’lumot ochilib qoladigan joylarni qidiradi. O‘z kompyuteringizda ishlaydi. Ishlaydigan prototip.',
+        'Looks for places where people can see data that is not theirs, in a web app’s code or in the answers it gives. Runs on your own computer. A working prototype.',
+        'Veb-ilova kodidan yoki u bergan javoblardan foydalanuvchiga begona ma’lumot ochilib qoladigan joylarni qidiradi. O‘z kompyuteringizda ishlaydi. Ishlaydigan prototip.',
       )}</p>
       ${site.author ? html`<p class="small">${t(html`Built by ${site.author}.`, html`Muallif: ${site.author}.`)} <a href="/contact">${t('Write to me', 'Menga yozing')}</a></p>` : ''}
     </div>

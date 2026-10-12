@@ -1,0 +1,22 @@
+# The browser runner for JavaScript pages (ADR-0028). Nothing here is downloaded
+# silently: `python -m backend.setup.browser install` is the only way it arrives.
+#
+# The Chromium build is the one the pinned Playwright release itself selects and
+# downloads from Playwright's own distribution. Its executable is hashed after
+# installation and checked again before every launch.
+
+playwright = "1.63.0"
+playwright_license = "Apache-2.0"
+revision = "1243"
+browser = "Chrome Headless Shell"
+browser_version = "153.0.8010.12"
+browser_license = "BSD-3-Clause and the third-party notices shipped with Chromium"
+source = "https://cdn.playwright.dev/builds/cft/153.0.8010.12/win64/chrome-headless-shell-win64.zip"
+also_downloaded = ["ffmpeg v1011 (LGPL-2.1-or-later build used by Playwright)", "winldd v1007"]
+
+[executables.win32]
+relative_path = "chromium_headless_shell-1243/chrome-headless-shell-win64/chrome-headless-shell.exe"
+# Measured on the reference laptop after the explicit installation of 2026-10-12.
+# The licence text ships beside the executable as LICENSE.headless_shell.
+sha256 = "addfa79abb060e1e514e155ed745d4bf96140bca402735958bb4e223aea0b98c"
+size = 211550720

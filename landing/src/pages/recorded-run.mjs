@@ -1,7 +1,7 @@
 // @ts-check
 import { bobEnd, glyph } from '../components/glyphs.mjs';
 import { band, page } from '../components/layout.mjs';
-import { command, exhibit, fact, probeTable, stamp, verdict } from '../components/parts.mjs';
+import { caseTabs, command, exhibit, fact, inShort, probeTable, stamp, verdict } from '../components/parts.mjs';
 import { peerClaim, peerExclusions, peerTable } from '../components/peer.mjs';
 import { commandLine, day, gb, int, kb, longDay, minutes, seconds, shortHash, time } from '../lib/format.mjs';
 import { holds } from '../lib/holds.mjs';
@@ -102,11 +102,17 @@ export function render(context) {
 
   const head = html`<header class="page-head">
   <div class="wrap">
-    <h1>${t('The recorded test run', 'Yozib olingan sinov')}</h1>
+    ${caseTabs('code')}
+    <h1>${t('Code review: the recorded test run', 'Kod tekshiruvi: yozib olingan sinov')}</h1>
     <p class="lede">${t(
-      html`On ${longDay(run.started_at)} Plumb reviewed two routes of a practice app on an ordinary laptop and saved what it did. This page follows those saved files in order. Nothing here is re-enacted.`,
-      html`${longDay(run.started_at)} kuni Plumb oddiy noutbukda sinov ilovasining ikki manzilini tekshirdi va qilgan ishini saqlab qo‘ydi. Bu sahifa o‘sha saqlangan fayllarni tartib bilan ko‘rsatadi. Hech narsa qaytadan sahnalashtirilmagan.`,
+      html`On ${longDay(run.started_at)} Plumb read the code of a practice app on an ordinary laptop, reviewed two of its addresses and saved what it did. This page follows those saved files in order. Nothing here is re-enacted.`,
+      html`${longDay(run.started_at)} kuni Plumb oddiy noutbukda sinov ilovasining kodini o‘qib, uning ikki manzilini tekshirdi va qilgan ishini saqlab qo‘ydi. Bu sahifa o‘sha saqlangan fayllarni tartib bilan ko‘rsatadi. Hech narsa qaytadan sahnalashtirilmagan.`,
     )}</p>
+    ${inShort([
+      t('Plumb reviewed two addresses of a practice app that look almost the same: a receipt and an invoice.', 'Plumb sinov ilovasining deyarli bir xil ko‘rinadigan ikki manzilini tekshirdi: chek va hisob-faktura.'),
+      t('It reported the receipt as a flaw and cleared the invoice, which a check in another file protects.', 'U chekni xato deb ko‘rsatdi, boshqa fayldagi tekshiruv himoya qiladigan hisob-fakturani esa oqladi.'),
+      t(html`It took ${minutes(run.elapsed_seconds)} on one laptop and ran none of the app’s code.`, html`Bunga bitta noutbukda ${minutes(run.elapsed_seconds)} ketdi, ilova kodi esa ishga tushirilmadi.`),
+    ])}
   </div>
 </header>`;
 
@@ -387,7 +393,7 @@ export function render(context) {
 
   return page({
     path,
-    title: t('The recorded test run', 'Yozib olingan sinov'),
+    title: t('Code review: the recorded test run', 'Kod tekshiruvi: yozib olingan sinov'),
     description: t(
       `A step-by-step walkthrough of a saved Plumb review from ${longDay(run.started_at)}: the receipt route reported, the protected invoice route cleared, and the report files as saved.`,
       `${longDay(run.started_at)} kuni saqlangan Plumb tekshiruvining qadam-baqadam bayoni: chek manzili xato deb topilgan, himoyalangan hisob-faktura manzili oqlangan, hisobot fayllari esa saqlanganidek berilgan.`,

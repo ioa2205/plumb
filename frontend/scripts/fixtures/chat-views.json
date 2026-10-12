@@ -1,0 +1,161 @@
+{
+ "view": {
+  "target_kind": "website",
+  "target_id": "journey-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "chat_id": "chat-cccccccccccccccccccccccccccccccc",
+  "state": "completed",
+  "target_label": "Website test of Chorsu Parcel Lockers (http://127.0.0.1:8711)",
+  "turns": [
+   {
+    "prompt": "What is SQL injection?",
+    "intent": "general_question",
+    "intent_rung": "model",
+    "interpretation": "I read this as a general question.",
+    "parts": [
+     {
+      "kind": "general",
+      "text": "SQL injection is a way of changing a database query by putting query text into a value the application did not expect to be code. It works when the application builds the query by joining strings.",
+      "basis": "General answer from the local model. No website, code or saved result was looked at, and this is not a finding.",
+      "complete": true,
+      "evidence": [],
+      "unknowns": [],
+      "guidance_card": null
+     }
+    ],
+    "task": null,
+    "choices": [],
+    "limits": "Each answer stops at 320 tokens (roughly 240 words) and 300 seconds. One model on this computer answers one message at a time.",
+    "model_requests": 2,
+    "model_seconds": 41.5,
+    "authorization_granted": false,
+    "actions_executed": false,
+    "finding_created": false
+   },
+   {
+    "prompt": "Test https://shop.example.com",
+    "intent": "test_website",
+    "intent_rung": "model",
+    "interpretation": "I read this as a request to test a website.",
+    "parts": [
+     {
+      "kind": "notice",
+      "text": "Set up a bounded test of https://shop.example.com. Nothing is visited until you approve its plan.",
+      "basis": "A proposal only. A message cannot start, approve or widen a test.",
+      "complete": true,
+      "evidence": [],
+      "unknowns": [],
+      "guidance_card": null
+     }
+    ],
+    "task": {
+     "kind": "website_setup",
+     "summary": "Set up a bounded test of https://shop.example.com. Nothing is visited until you approve its plan.",
+     "ready": false,
+     "missing": [
+      "The exact addresses and paths that are approved.",
+      "Who authorized the test and why it is being done."
+     ],
+     "steps": [
+      "You confirm the exact scope and accounts.",
+      "I show one bounded plan."
+     ],
+     "folder": null,
+     "url": "https://shop.example.com",
+     "authorization_granted": false,
+     "started": false
+    },
+    "choices": [],
+    "limits": "Each answer stops at 320 tokens (roughly 240 words) and 300 seconds. One model on this computer answers one message at a time.",
+    "model_requests": 1,
+    "model_seconds": 12.0,
+    "authorization_granted": false,
+    "actions_executed": false,
+    "finding_created": false
+   },
+   {
+    "prompt": "What is broken access control, and what does this test show about it?",
+    "intent": "general_and_result",
+    "intent_rung": "model_reordered",
+    "interpretation": "I read this as a general question plus a question about the selected result.",
+    "parts": [
+     {
+      "kind": "general",
+      "text": "Broken access control means an application lets someone do or see something its own rules reserve for someone else.",
+      "basis": "General answer from the local model. No website, code or saved result was looked at, and this is not a finding.",
+      "complete": true,
+      "evidence": [],
+      "unknowns": [],
+      "guidance_card": null
+     },
+     {
+      "kind": "cited",
+      "text": "This website test is done. Lead (not confirmed): the account rustam asked for /api/parcels/4117/label and received it. [R001]",
+      "basis": "Read from the saved journey record by code; each reference is an exact saved value.",
+      "complete": true,
+      "evidence": [
+       {
+        "reference_id": "R001",
+        "label": "E014 · response.status · rustam",
+        "quote": "200",
+        "source": null,
+        "observation": {
+         "artifact_id": "E014",
+         "field": "response.status",
+         "sha256": "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf"
+        }
+       }
+      ],
+      "unknowns": [],
+      "guidance_card": null
+     }
+    ],
+    "task": null,
+    "choices": [],
+    "limits": "Each answer stops at 320 tokens (roughly 240 words) and 300 seconds. One model on this computer answers one message at a time.",
+    "model_requests": 3,
+    "model_seconds": 58.0,
+    "authorization_granted": false,
+    "actions_executed": false,
+    "finding_created": false
+   },
+   {
+    "prompt": "hmm",
+    "intent": "unclear",
+    "intent_rung": "user",
+    "interpretation": "I could not tell what this message asks for.",
+    "parts": [
+     {
+      "kind": "notice",
+      "text": "I could not tell what this message asks for. Please pick one, or say it another way.",
+      "basis": "No answer was written and nothing was run.",
+      "complete": true,
+      "evidence": [],
+      "unknowns": [],
+      "guidance_card": null
+     }
+    ],
+    "task": null,
+    "choices": [
+     {
+      "intent": "general_question",
+      "label": "Answer a general question"
+     },
+     {
+      "intent": "test_website",
+      "label": "Test an approved website"
+     }
+    ],
+    "limits": "Each answer stops at 320 tokens (roughly 240 words) and 300 seconds. One model on this computer answers one message at a time.",
+    "model_requests": 2,
+    "model_seconds": 20.0,
+    "authorization_granted": false,
+    "actions_executed": false,
+    "finding_created": false
+   }
+  ],
+  "message": "Answered. Nothing was run or approved by this message.",
+  "progress": null,
+  "limits": "Each answer stops at 320 tokens (roughly 240 words) and 300 seconds. One model on this computer answers one message at a time.",
+  "confidentiality": "private_local"
+ }
+}

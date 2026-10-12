@@ -1,0 +1,8 @@
+{
+  "files": {
+    "server.py": "7e8850013dba953d33acb3da995a3c111a522b09824025f79fa5c14f85ce96ad",
+    "static/app.js": "76985664eb7b5fb82c521e6ec0e8dbcceba5067e51ac8b7e3636cd75976341bf",
+    "static/style.css": "74c026b0b2399e65f5a4e675cc7236d71ad722bca51319aa095dc76521b8f0ff"
+  },
+  "fixture": "chorsu"
+}

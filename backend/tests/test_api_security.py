@@ -51,7 +51,7 @@ def test_the_link_is_exchanged_for_a_session_cookie_and_left_behind(app: FastAPI
     secret = token(app)
     client = visitor(app)
     response = client.get(f"{BOOTSTRAP_PATH}?token={secret}")
-    assert (response.status_code, response.headers["location"]) == (303, "/")
+    assert (response.status_code, response.headers["location"]) == (303, "/ask/")
     cookie = response.headers["set-cookie"]
     value = session(client)
     assert cookie.startswith(f"{COOKIE}={value};")
@@ -85,7 +85,7 @@ def test_reopening_the_link_with_a_session_just_goes_home(app: FastAPI) -> None:
     secret = token(app)
     client = signed_in(app)
     again = client.get(f"{BOOTSTRAP_PATH}?token={secret}")
-    assert (again.status_code, again.headers["location"]) == (303, "/")
+    assert (again.status_code, again.headers["location"]) == (303, "/ask/")
     assert "set-cookie" not in again.headers
 
 

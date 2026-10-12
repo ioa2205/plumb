@@ -1,11 +1,17 @@
-// Theme switch, language menu, copy buttons and the message form. The site is complete
-// without this file: the theme follows the device, the language menu opens as a plain
-// disclosure, every command can be selected by hand, and the form posts as an ordinary form.
+// Theme switch, language menu, copy buttons, the message form and the request list that
+// plays itself. The site is complete without this file: the theme follows the device, the
+// language menu opens as a plain disclosure, every command can be selected by hand, the
+// request lists are simply there, and the form posts as an ordinary form.
 (function () {
   'use strict';
   var root = document.documentElement;
   var KEY = 'plumb-theme';
   var dark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  var calm = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : true;
+
+  // Marks the page as scripted before it is drawn, so a list that is going to play itself
+  // starts out empty instead of flashing its rows first.
+  if (!calm && 'IntersectionObserver' in window) root.classList.add('can-play');
 
   // With nothing stored the page follows the device. A stored "day" or "night" overrides it.
   function stored() {
@@ -96,6 +102,197 @@
     if (here && here.parentElement.scrollWidth > here.parentElement.clientWidth) {
       here.parentElement.scrollLeft = here.offsetLeft - here.parentElement.offsetLeft - 16;
     }
+
+    // Recorded request lists arrive row by row the first time they scroll into view, and
+    // again on request.
+    var tapes = document.querySelectorAll('[data-tape]');
+    if (tapes.length && root.classList.contains('can-play')) {
+      var play = function (tape) {
+        tape.classList.remove('is-played');
+        void tape.offsetWidth;
+        tape.classList.add('is-played');
+      };
+      var watcher = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            watcher.unobserve(entry.target);
+            play(entry.target);
+          });
+        },
+        { rootMargin: '0px 0px -18% 0px', threshold: 0.05 }
+      );
+      tapes.forEach(function (tape) {
+        watcher.observe(tape);
+        var again = tape.querySelector('[data-tape-replay]');
+        if (!again) return;
+        again.hidden = false;
+        again.addEventListener('click', function () {
+          play(tape);
+        });
+      });
+    }
+
+    // The walk-through on the front page: four chapters that play in order, a caption per
+    // beat. It starts when it scrolls into view, waits while it is out of view, and stops at
+    // the end. A chapter title jumps to that chapter.
+    (function () {
+    var film = document.querySelector('[data-film]');
+    if (film && root.classList.contains('can-play')) {
+      var chapters = Array.prototype.map.call(film.querySelectorAll('[data-chapter]'), function (node) {
+        return {
+          node: node,
+          go: node.querySelector('[data-film-go]'),
+          text: node.querySelector('.chapter-text'),
+          captions: node.querySelectorAll('.captions > li'),
+          stage: node.querySelector('.stage'),
+          parts: node.querySelectorAll('.stage [data-from], .stage [data-to]'),
+        };
+      });
+      var rail = film.querySelector('.film-rail');
+      var toggleFilm = film.querySelector('[data-film-toggle]');
+      var replay = film.querySelector('[data-film-replay]');
+      var BEAT = 3600;
+      var at = { chapter: -1, beat: 0, elapsed: 0 };
+      var playing = false;
+      var held = false; // paused by the reader, not by scrolling away
+      var ended = false;
+      var seen = false;
+      var last = 0;
+
+      var draw = function (chapter, beat) {
+        chapter.stage.setAttribute('data-beat', String(beat + 1));
+        chapter.parts.forEach(function (part) {
+          var from = Number(part.getAttribute('data-from') || 1);
+          var to = Number(part.getAttribute('data-to') || 99);
+          part.classList.toggle('on', beat + 1 >= from && beat + 1 <= to);
+          part.classList.toggle('was', beat + 1 > to);
+        });
+        chapter.captions.forEach(function (caption, index) {
+          caption.classList.toggle('is-on', index === beat);
+        });
+      };
+
+      var show = function (index, beat) {
+        var chapter = chapters[index];
+        if (index !== at.chapter) {
+          chapters.forEach(function (other, position) {
+            other.node.classList.toggle('is-active', position === index);
+            if (position === index) other.go.setAttribute('aria-current', 'step');
+            else other.go.removeAttribute('aria-current');
+          });
+          // A chapter always opens from its empty state, without animating backwards.
+          chapter.stage.classList.add('is-cut');
+          draw(chapter, -1);
+          void chapter.stage.offsetWidth;
+          chapter.stage.classList.remove('is-cut');
+        }
+        at = { chapter: index, beat: beat, elapsed: 0 };
+        draw(chapter, beat);
+        mark();
+      };
+
+      // Where the bob hangs: beside the current chapter, sliding towards the next one.
+      var mark = function () {
+        var chapter = chapters[at.chapter];
+        if (!chapter) return;
+        var part = Math.min(1, (at.beat + Math.min(1, at.elapsed / BEAT)) / chapter.captions.length);
+        if (ended) part = 1;
+        chapters.forEach(function (other, position) {
+          other.go.style.setProperty('--p', String(position < at.chapter ? 1 : position === at.chapter ? part : 0));
+        });
+        if (!rail || !rail.offsetParent) return;
+        var middle = function (entry) {
+          return entry.go.parentElement.offsetTop + entry.go.parentElement.offsetHeight / 2 - 10;
+        };
+        var from = middle(chapter);
+        var next = chapters[at.chapter + 1];
+        var to = next ? middle(next) : chapter.text.offsetTop + chapter.text.offsetHeight - 26;
+        rail.style.setProperty('--y', Math.round((from + (to - from) * part) * 10) / 10 + 'px');
+      };
+
+      var label = function () {
+        toggleFilm.textContent = toggleFilm.getAttribute(playing ? 'data-pause' : 'data-play');
+        toggleFilm.hidden = ended;
+      };
+
+      var frame = function (now) {
+        if (!playing) return;
+        at.elapsed += Math.min(120, now - last);
+        last = now;
+        if (at.elapsed >= BEAT) {
+          var chapter = chapters[at.chapter];
+          if (at.beat + 1 < chapter.captions.length) show(at.chapter, at.beat + 1);
+          else if (at.chapter + 1 < chapters.length) show(at.chapter + 1, 0);
+          else {
+            ended = true;
+            playing = false;
+            mark();
+            label();
+            return;
+          }
+        }
+        mark();
+        requestAnimationFrame(frame);
+      };
+
+      var run = function () {
+        if (playing || ended || held) return;
+        playing = true;
+        last = performance.now();
+        label();
+        requestAnimationFrame(frame);
+      };
+      var rest = function () {
+        playing = false;
+        label();
+      };
+      var start = function (index) {
+        ended = false;
+        held = false;
+        show(index, 0);
+        run();
+      };
+
+      chapters.forEach(function (chapter, index) {
+        chapter.go.disabled = false;
+        chapter.go.addEventListener('click', function () {
+          start(index);
+        });
+      });
+      toggleFilm.addEventListener('click', function () {
+        held = playing;
+        if (playing) rest();
+        else run();
+      });
+      replay.addEventListener('click', function () {
+        start(0);
+      });
+      film.querySelector('[data-film-controls]').hidden = false;
+      show(0, 0);
+      label();
+
+      var inView = false;
+      new IntersectionObserver(
+        function (entries) {
+          inView = entries[entries.length - 1].isIntersecting;
+          if (inView) {
+            if (!seen) {
+              seen = true;
+              start(0);
+            } else run();
+          } else if (playing) rest();
+        },
+        { threshold: 0.35 }
+      ).observe(film);
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          if (playing) rest();
+        } else if (inView) run();
+      });
+      window.addEventListener('resize', mark);
+    }
+    })();
 
     var form = document.querySelector('[data-message-form]');
     if (form && window.fetch) {

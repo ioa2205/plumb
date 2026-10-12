@@ -1,0 +1,54 @@
+{
+  "$id": "https://plumb.local/schemas/ChatAsk.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "choice": {
+      "anyOf": [
+        {
+          "enum": [
+            "general_question",
+            "creative_writing",
+            "explain_result",
+            "general_and_result",
+            "review_folder",
+            "test_website",
+            "about_plumb",
+            "unclear"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Choice"
+    },
+    "max_seconds": {
+      "default": 300,
+      "maximum": 600,
+      "minimum": 1,
+      "title": "Max Seconds",
+      "type": "integer"
+    },
+    "profile": {
+      "default": "auto",
+      "maxLength": 96,
+      "minLength": 1,
+      "title": "Profile",
+      "type": "string"
+    },
+    "prompt": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt"
+  ],
+  "title": "ChatAsk",
+  "type": "object"
+}

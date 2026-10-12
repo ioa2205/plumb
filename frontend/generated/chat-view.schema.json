@@ -1,0 +1,546 @@
+{
+  "$defs": {
+    "ChatChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "intent": {
+          "enum": [
+            "general_question",
+            "creative_writing",
+            "explain_result",
+            "general_and_result",
+            "review_folder",
+            "test_website",
+            "about_plumb",
+            "unclear"
+          ],
+          "title": "Intent",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "intent",
+        "label"
+      ],
+      "title": "ChatChoice",
+      "type": "object"
+    },
+    "ChatPart": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Basis",
+          "type": "string"
+        },
+        "complete": {
+          "default": true,
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/ConversationEvidence"
+          },
+          "maxItems": 8,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "guidance_card": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guidance Card"
+        },
+        "kind": {
+          "enum": [
+            "general",
+            "guidance",
+            "cited",
+            "notice"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "unknowns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 30,
+          "title": "Unknowns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "text",
+        "basis"
+      ],
+      "title": "ChatPart",
+      "type": "object"
+    },
+    "ChatTask": {
+      "additionalProperties": false,
+      "description": "Something the user asked to have done, as a proposal. Chat never runs it.",
+      "properties": {
+        "authorization_granted": {
+          "const": false,
+          "default": false,
+          "title": "Authorization Granted",
+          "type": "boolean"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder"
+        },
+        "kind": {
+          "enum": [
+            "inspect_folder",
+            "website_setup",
+            "choose_result"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "missing": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Missing",
+          "type": "array"
+        },
+        "ready": {
+          "title": "Ready",
+          "type": "boolean"
+        },
+        "started": {
+          "const": false,
+          "default": false,
+          "title": "Started",
+          "type": "boolean"
+        },
+        "steps": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Steps",
+          "type": "array"
+        },
+        "summary": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "kind",
+        "summary",
+        "ready"
+      ],
+      "title": "ChatTask",
+      "type": "object"
+    },
+    "ChatTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "actions_executed": {
+          "const": false,
+          "default": false,
+          "title": "Actions Executed",
+          "type": "boolean"
+        },
+        "authorization_granted": {
+          "const": false,
+          "default": false,
+          "title": "Authorization Granted",
+          "type": "boolean"
+        },
+        "choices": {
+          "items": {
+            "$ref": "#/$defs/ChatChoice"
+          },
+          "maxItems": 8,
+          "title": "Choices",
+          "type": "array"
+        },
+        "finding_created": {
+          "const": false,
+          "default": false,
+          "title": "Finding Created",
+          "type": "boolean"
+        },
+        "intent": {
+          "enum": [
+            "general_question",
+            "creative_writing",
+            "explain_result",
+            "general_and_result",
+            "review_folder",
+            "test_website",
+            "about_plumb",
+            "unclear"
+          ],
+          "title": "Intent",
+          "type": "string"
+        },
+        "intent_rung": {
+          "enum": [
+            "code",
+            "model",
+            "model_reordered",
+            "user",
+            "stop"
+          ],
+          "title": "Intent Rung",
+          "type": "string"
+        },
+        "interpretation": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "limits": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Limits",
+          "type": "string"
+        },
+        "model_requests": {
+          "default": 0,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Model Requests",
+          "type": "integer"
+        },
+        "model_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Seconds",
+          "type": "number"
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/ChatPart"
+          },
+          "maxItems": 4,
+          "title": "Parts",
+          "type": "array"
+        },
+        "prompt": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "task": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChatTask"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "prompt",
+        "intent",
+        "intent_rung",
+        "interpretation",
+        "limits"
+      ],
+      "title": "ChatTurn",
+      "type": "object"
+    },
+    "ConversationEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "model_quote": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Quote"
+        },
+        "observation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceCitation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "quote": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "reference_id": {
+          "pattern": "^R[0-9]{3}$",
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "reference_id",
+        "label",
+        "quote"
+      ],
+      "title": "ConversationEvidence",
+      "type": "object"
+    },
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "description": "A citation: lines in one file of one snapshot, with the hash of their text.",
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "path",
+        "start_line",
+        "end_line",
+        "content_sha256"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/ChatView.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "chat_id": {
+      "pattern": "^chat-[0-9a-f]{32}$",
+      "title": "Chat Id",
+      "type": "string"
+    },
+    "confidentiality": {
+      "const": "private_local",
+      "default": "private_local",
+      "title": "Confidentiality",
+      "type": "string"
+    },
+    "limits": {
+      "default": "",
+      "maxLength": 256,
+      "title": "Limits",
+      "type": "string"
+    },
+    "message": {
+      "default": "Ask anything in your own words.",
+      "maxLength": 512,
+      "title": "Message",
+      "type": "string"
+    },
+    "progress": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Progress"
+    },
+    "state": {
+      "default": "idle",
+      "enum": [
+        "idle",
+        "running",
+        "completed",
+        "failed",
+        "canceled"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "target_id": {
+      "anyOf": [
+        {
+          "maxLength": 96,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Id"
+    },
+    "target_kind": {
+      "anyOf": [
+        {
+          "enum": [
+            "inspection",
+            "review",
+            "assessment",
+            "website"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Kind"
+    },
+    "target_label": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Label"
+    },
+    "turns": {
+      "items": {
+        "$ref": "#/$defs/ChatTurn"
+      },
+      "maxItems": 40,
+      "title": "Turns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "chat_id"
+  ],
+  "title": "ChatView",
+  "type": "object"
+}

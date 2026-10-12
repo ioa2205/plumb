@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import shutil
 import zipfile
 from pathlib import Path
 
@@ -10,6 +11,18 @@ import pytest
 from backend import distribution
 from backend.distribution import source_files, unpack_zip
 from backend.portable_launch import digest, member, verify
+
+
+def test_portable_dependency_recipe_contains_the_pinned_browser_runtime(tmp_path: Path) -> None:
+    uv = shutil.which("uv")
+    assert uv is not None
+    destination = tmp_path / "requirements.txt"
+    distribution.export_requirements(uv, destination)
+    recipe = destination.read_text("utf-8")
+    assert "playwright==1.63.0" in recipe
+    assert "pyee==" in recipe and "greenlet==" in recipe
+    assert "--hash=sha256:" in recipe
+    assert "pytest==" not in recipe
 
 
 @pytest.mark.parametrize(

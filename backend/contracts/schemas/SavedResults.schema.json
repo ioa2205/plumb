@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "SavedResult": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "target_id": {
+          "maxLength": 96,
+          "minLength": 1,
+          "title": "Target Id",
+          "type": "string"
+        },
+        "target_kind": {
+          "enum": [
+            "inspection",
+            "review",
+            "assessment",
+            "website"
+          ],
+          "title": "Target Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_kind",
+        "target_id",
+        "label"
+      ],
+      "title": "SavedResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/SavedResults.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "results": {
+      "items": {
+        "$ref": "#/$defs/SavedResult"
+      },
+      "maxItems": 20,
+      "title": "Results",
+      "type": "array"
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "title": "SavedResults",
+  "type": "object"
+}

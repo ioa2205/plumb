@@ -91,6 +91,39 @@ class ModelRequest:
 
 
 @dataclass(frozen=True)
+class TextRequest:
+    """One self-contained request for plain wording, never for a decision (ADR-0028).
+
+    There is no schema: a reader's sentence has no shape to enforce, and a cut-off
+    answer stays readable text instead of broken JSON. Callers must not derive a
+    verdict, a permission or a citation from the answer.
+    """
+
+    name: str
+    system: str
+    user: str
+    max_tokens: int = 256
+    temperature: float = 0.0
+    seed: int = 42
+
+    def body(self, redactor: Redactor | None = None) -> dict[str, Any]:
+        redactor = redactor or Redactor.configured()
+        if redactor.text(self.name) != self.name:
+            raise RequestRejected("A credential occurs in a request identity.")
+        return {
+            "messages": [
+                {"role": "system", "content": redactor.text(self.system)},
+                {"role": "user", "content": redactor.text(self.user)},
+            ],
+            "chat_template_kwargs": {"enable_thinking": False},
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "seed": self.seed,
+            "cache_prompt": False,
+        }
+
+
+@dataclass(frozen=True)
 class JsonAnswer:
     data: dict[str, Any]
     raw: str
@@ -98,6 +131,20 @@ class JsonAnswer:
     completion_tokens: int
     seconds: float  # of the attempt that answered
     attempts: int = 1
+    # The server's own split of that attempt, when it reports one (llama.cpp ``timings``).
+    prompt_ms: float | None = None
+    predicted_ms: float | None = None
+
+
+@dataclass(frozen=True)
+class TextAnswer:
+    text: str
+    complete: bool  # False when the server stopped at ``max_tokens``
+    prompt_tokens: int
+    completion_tokens: int
+    seconds: float
+    prompt_ms: float | None = None
+    predicted_ms: float | None = None
 
 
 @dataclass
@@ -173,6 +220,21 @@ def _usage(result: dict[str, Any]) -> tuple[int, int]:
         prompt if isinstance(prompt, int) else 0,
         completion if isinstance(completion, int) else 0,
     )
+
+
+def _timings(result: dict[str, Any]) -> tuple[float | None, float | None]:
+    """Prompt-processing and generation milliseconds, only as the server reports them."""
+    timings = result.get("timings")
+    if not isinstance(timings, dict):
+        return None, None
+
+    def read(key: str) -> float | None:
+        value = timings.get(key)
+        if isinstance(value, bool) or not isinstance(value, int | float) or value < 0:
+            return None
+        return float(value)
+
+    return read("prompt_ms"), read("predicted_ms")
 
 
 def _parse(result: dict[str, Any]) -> tuple[dict[str, Any], str]:
@@ -274,7 +336,43 @@ class ModelAdapter:
         spend.prompt_tokens += prompt
         spend.completion_tokens += completion
         data, raw = _parse(result)
-        return JsonAnswer(data, raw, prompt, completion, seconds, attempts)
+        return JsonAnswer(data, raw, prompt, completion, seconds, attempts, *_timings(result))
+
+    def count_tokens(self, text: str, spend: Spend) -> int:
+        """Tokens of ``text`` by the loaded model's own tokenizer; charges only time."""
+        self.start()
+        counted, _, _ = self._send(TOKENIZE, {"content": text, "add_special": False}, spend)
+        tokens = counted.get("tokens")
+        if not isinstance(tokens, list):
+            raise AnswerError("/tokenize returned no token list")
+        return len(tokens)
+
+    def ask_text(self, request: TextRequest, spend: Spend) -> TextAnswer:
+        """Ask for plain wording once. A cut-off answer is returned and marked incomplete."""
+        body = request.body(self.redactor)
+        text = "\n".join(message["content"] for message in body["messages"])
+        tokens = self.count_tokens(text, spend)
+        if tokens > spend.prompt_tokens_left:
+            raise BudgetStop(
+                "prompt_tokens",
+                f"This request needs at least {tokens} prompt tokens, and it has "
+                f"{max(spend.prompt_tokens_left, 0)} of its {spend.budget.max_prompt_tokens} left.",
+            )
+        result, seconds, _ = self._send(CHAT, body, spend)
+        prompt, completion = _usage(result)
+        prompt = prompt or tokens
+        spend.requests += 1
+        spend.prompt_tokens += prompt
+        spend.completion_tokens += completion
+        try:
+            choice = result["choices"][0]
+            content = choice["message"]["content"]
+        except (KeyError, IndexError, TypeError) as error:
+            raise AnswerError("no text answer: missing completion content") from error
+        if not isinstance(content, str):
+            raise AnswerError("no text answer: completion content is not text")
+        complete = not (isinstance(choice, dict) and choice.get("finish_reason") == "length")
+        return TextAnswer(content, complete, prompt, completion, seconds, *_timings(result))
 
     def _send(
         self, path: str, body: dict[str, Any], spend: Spend

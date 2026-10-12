@@ -15,6 +15,27 @@ export const factWhole = (/** @type {unknown} */ value) => html`<span class="fac
 /** A source line on a sheet saying which record the sheet shows. */
 export const stamp = (/** @type {unknown} */ value) => html`<p class="stamp">${value}</p>`;
 
+/**
+ * A page in three lines, for the reader who will not read the rest of it.
+ * @param {unknown[]} lines
+ */
+export function inShort(lines) {
+  return html`<div class="in-short"><p class="in-short-k">${t('In short', 'Qisqacha')}</p><ul>${lines.map((line) => html`<li>${line}</li>`)}</ul></div>`;
+}
+
+/**
+ * The two recorded cases sit under one menu entry. This is the way from one to the other.
+ * @param {'code' | 'answers'} current
+ */
+export function caseTabs(current) {
+  const tab = (/** @type {string} */ id, /** @type {string} */ href, /** @type {string} */ label) =>
+    html`<a href="${href}"${id === current ? html` aria-current="page"` : ''}>${label}</a>`;
+  return html`<nav class="case-tabs" aria-label="${t('Recorded cases', 'Yozib olingan holatlar')}">
+      ${tab('code', '/recorded-run', t('From the code', 'Kod bo‘yicha'))}
+      ${tab('answers', '/web-assessment', t('From the app’s answers', 'Ilova javoblari bo‘yicha'))}
+    </nav>`;
+}
+
 let commandCount = 0;
 
 /**
@@ -103,6 +124,41 @@ export function reportShot(name, alt, [width, height]) {
   const image = (/** @type {string} */ theme) =>
     html`<img class="only-${theme}" src="/shots/report-${name}-${theme}.webp" alt="${alt}" width="${width}" height="${height}" loading="lazy" decoding="async">`;
   return html`<a class="shot" href="/saved-report/report.html">${image('day')}${image('night')}</a>`;
+}
+
+/**
+ * A picture of Plumb's browser workbench in the reader's theme. The pictures are regions of
+ * the captures its own view check makes (scripts/workbench-images.mjs), never mock-ups.
+ * @param {'case' | 'ask' | 'assess'} name
+ * @param {string} alt
+ * @param {[number, number]} size
+ */
+export function workbenchShot(name, alt, [width, height]) {
+  const image = (/** @type {string} */ theme) =>
+    html`<img class="only-${theme}" src="/shots/workbench-${name}-${theme}.webp" alt="${alt}" width="${width}" height="${height}" loading="lazy" decoding="async">`;
+  return html`<span class="shot">${image('day')}${image('night')}</span>`;
+}
+
+/**
+ * How far something has been checked, in the product's own marks: a filled dot for shown
+ * working with a saved record, a half for built but not settled, a ring for absent.
+ * @param {'dot' | 'half' | 'ring'} mark @param {unknown} words
+ */
+export const standing = (mark, words) => html`<p class="standing is-${mark}">${glyph(mark)}<span>${words}</span></p>`;
+
+/**
+ * A few numbered lines of a cited excerpt, for places where the whole exhibit is shown elsewhere.
+ * @param {any} excerpt @param {number} from @param {number} to @param {'access' | 'guard'} [mark]
+ */
+export function codeLines(excerpt, from, to, mark) {
+  const range = mark ? excerpt[mark] : null;
+  const kind = mark === 'access' ? 'flag' : 'cite';
+  const lines = excerpt.lines.slice(from - excerpt.start, to - excerpt.start + 1).map((/** @type {string} */ line, /** @type {number} */ index) => {
+    const number = from + index;
+    const marked = range && number >= range.start && number <= range.end;
+    return html`<span class="l${marked ? ` ${kind}` : ''}"><span class="n">${number}</span><span class="t">${tone(line)}</span></span>`;
+  });
+  return html`<pre class="code" lang="en">${lines}</pre>`;
 }
 
 /** What one recorded request returned, in words. */

@@ -223,6 +223,37 @@ export namespace CaseDetailSchema {
 }
 export type CaseDetail = CaseDetailSchema.CaseDetail;
 
+// ChatAsk.schema.json · SHA256 4a951a57c0c62791beb3e4fbaa595032a0cd9d576478e62ac6454d8b566950a0
+export namespace ChatAskSchema {
+  export type ChatAsk = { readonly "choice"?: ("general_question" | "creative_writing" | "explain_result" | "general_and_result" | "review_folder" | "test_website" | "about_plumb" | "unclear") | (null); readonly "max_seconds"?: number; readonly "profile"?: string; readonly "prompt": string; };
+}
+export type ChatAsk = ChatAskSchema.ChatAsk;
+
+// ChatCreate.schema.json · SHA256 63a6966fad8ae21f8684b777bd67f71fc0f65f0f8eb5f57e68e77f1f0e48c2f1
+export namespace ChatCreateSchema {
+  export type ChatCreate = { readonly "target_id"?: (string) | (null); readonly "target_kind"?: ("inspection" | "review" | "assessment" | "website") | (null); };
+}
+export type ChatCreate = ChatCreateSchema.ChatCreate;
+
+// ChatSelect.schema.json · SHA256 c2b2ce58ae2a78be9f2f3d49c0c7e852adcb2d434426d0a6dbb7f09b0f4fd123
+export namespace ChatSelectSchema {
+  export type ChatSelect = { readonly "target_id"?: (string) | (null); readonly "target_kind"?: ("inspection" | "review" | "assessment" | "website") | (null); };
+}
+export type ChatSelect = ChatSelectSchema.ChatSelect;
+
+// ChatView.schema.json · SHA256 f8094c8d5ba7197c0bb7a8d7f5dcbd1773776f560778d7250d7a31564c1d9b7a
+export namespace ChatViewSchema {
+  export type ChatChoice = { readonly "intent": "general_question" | "creative_writing" | "explain_result" | "general_and_result" | "review_folder" | "test_website" | "about_plumb" | "unclear"; readonly "label": string; };
+  export type ChatPart = { readonly "basis": string; readonly "complete"?: boolean; readonly "evidence"?: ReadonlyArray<ConversationEvidence>; readonly "guidance_card"?: (string) | (null); readonly "kind": "general" | "guidance" | "cited" | "notice"; readonly "text": string; readonly "unknowns"?: ReadonlyArray<string>; };
+  export type ChatTask = { readonly "authorization_granted"?: false; readonly "folder"?: (string) | (null); readonly "kind": "inspect_folder" | "website_setup" | "choose_result"; readonly "missing"?: ReadonlyArray<string>; readonly "ready": boolean; readonly "started"?: false; readonly "steps"?: ReadonlyArray<string>; readonly "summary": string; readonly "url"?: (string) | (null); };
+  export type ChatTurn = { readonly "actions_executed"?: false; readonly "authorization_granted"?: false; readonly "choices"?: ReadonlyArray<ChatChoice>; readonly "finding_created"?: false; readonly "intent": "general_question" | "creative_writing" | "explain_result" | "general_and_result" | "review_folder" | "test_website" | "about_plumb" | "unclear"; readonly "intent_rung": "code" | "model" | "model_reordered" | "user" | "stop"; readonly "interpretation": string; readonly "limits": string; readonly "model_requests"?: number; readonly "model_seconds"?: number; readonly "parts"?: ReadonlyArray<ChatPart>; readonly "prompt": string; readonly "task"?: (ChatTask) | (null); };
+  export type ConversationEvidence = { readonly "label": string; readonly "model_quote"?: (string) | (null); readonly "observation"?: (EvidenceCitation) | (null); readonly "quote": string; readonly "reference_id": string; readonly "source"?: (SourceSpan) | (null); };
+  export type EvidenceCitation = { readonly "artifact_id": string; readonly "field": string; readonly "sha256": string; };
+  export type SourceSpan = { readonly "content_sha256": string; readonly "end_line": number; readonly "path": string; readonly "snapshot_id": string; readonly "start_line": number; };
+  export type ChatView = { readonly "chat_id": string; readonly "confidentiality"?: "private_local"; readonly "limits"?: string; readonly "message"?: string; readonly "progress"?: (string) | (null); readonly "state"?: "idle" | "running" | "completed" | "failed" | "canceled"; readonly "target_id"?: (string) | (null); readonly "target_kind"?: ("inspection" | "review" | "assessment" | "website") | (null); readonly "target_label"?: (string) | (null); readonly "turns"?: ReadonlyArray<ChatTurn>; };
+}
+export type ChatView = ChatViewSchema.ChatView;
+
 // CitedExcerpt.schema.json · SHA256 38668ddb0c2caa4c5933c8e898c9799c4302129dd76e3dabb6e2d0bc90bcc8c5
 export namespace CitedExcerptSchema {
   export type Exhibit = { readonly "gloss": string; readonly "role": ExhibitRole; readonly "span": SourceSpan; readonly "tag": string; };
@@ -439,6 +470,12 @@ export namespace FixProposalSchema {
 }
 export type FixProposal = FixProposalSchema.FixProposal;
 
+// FixtureCreate.schema.json · SHA256 ef19882fe90367a3c870189f6c250b63a527fdd6c95e43ed2331e2cb6cb49359
+export namespace FixtureCreateSchema {
+  export type FixtureCreate = { readonly "variant"?: "open" | "defended"; };
+}
+export type FixtureCreate = FixtureCreateSchema.FixtureCreate;
+
 // Guard.schema.json · SHA256 3391d129aca6de73ef5f8f9a7aa76dcb61c601bff9167d00221f5feba46e55cb
 export namespace GuardSchema {
   export type GuardKind = "authenticated" | "owner" | "tenant" | "role" | "none" | "unknown" | "parameterized" | "allowlisted" | "contained" | "minimized";
@@ -453,6 +490,18 @@ export namespace HTTPActionProgressSchema {
   export type HTTPActionProgress = { readonly "action_id": string; readonly "artifact_ids"?: ReadonlyArray<string>; readonly "attempts"?: number; readonly "completed"?: boolean; readonly "missing_evidence"?: ReadonlyArray<string>; };
 }
 export type HTTPActionProgress = HTTPActionProgressSchema.HTTPActionProgress;
+
+// HumanAuthInput.schema.json · SHA256 57941c810e240c36dd56b67cf3f43da8fe01cab93fdc76382910b0ed227c8c31
+export namespace HumanAuthInputSchema {
+  export type HumanAuthInput = { readonly "kind": "pointer" | "text" | "submit" | "completed" | "pause" | "refresh"; readonly "text"?: (string) | (null); readonly "view_id": string; readonly "x"?: (number) | (null); readonly "y"?: (number) | (null); };
+}
+export type HumanAuthInput = HumanAuthInputSchema.HumanAuthInput;
+
+// HumanAuthView.schema.json · SHA256 26895369afb5a962dcd4df060bc4fb43ba8e1415a69b2b9d6dee0564c3cda581
+export namespace HumanAuthViewSchema {
+  export type HumanAuthView = { readonly "account_id": string; readonly "challenge": "captcha" | "one_time_code" | "single_sign_on"; readonly "height"?: number; readonly "label": string; readonly "question": string; readonly "ready"?: true; readonly "screenshot_png": string; readonly "step_id": string; readonly "view_id": string; readonly "width"?: number; };
+}
+export type HumanAuthView = HumanAuthViewSchema.HumanAuthView;
 
 // InspectRequest.schema.json · SHA256 eea4cf008c837fdf62a13f4e9da9ec0f5d6b7d0579b7be2618d432098f67a341
 export namespace InspectRequestSchema {
@@ -474,6 +523,98 @@ export namespace InspectionViewSchema {
   export type InspectionView = { readonly "capabilities"?: (CapabilityTable) | (null); readonly "captured_at": string; readonly "conditions": ReadonlyArray<Condition>; readonly "entries": ReadonlyArray<EntryPoint>; readonly "entries_total": number; readonly "excluded_files": number; readonly "exclusion_reasons": Readonly<Record<string, number>>; readonly "frameworks": Readonly<Record<string, number>>; readonly "included_files": number; readonly "inspection_id"?: (string) | (null); readonly "languages": Readonly<Record<string, number>>; readonly "limitations": ReadonlyArray<string>; readonly "model_loaded"?: false; readonly "name": string; readonly "resources": Readonly<Record<string, number>>; readonly "snapshot_id": string; readonly "target_executed"?: false; readonly "unresolved_links": number; };
 }
 export type InspectionView = InspectionViewSchema.InspectionView;
+
+// JourneyApprove.schema.json · SHA256 87b27530588d9de8356c4f6b9abc43f8581bdc7917c519feb007a932809ba7bb
+export namespace JourneyApproveSchema {
+  export type JourneyApprove = { readonly "approved_by": string; readonly "plan_sha256": string; readonly "reviewed_plan": true; readonly "step_ids"?: (ReadonlyArray<string>) | (null); };
+}
+export type JourneyApprove = JourneyApproveSchema.JourneyApprove;
+
+// JourneyCreate.schema.json · SHA256 583bbb58729c335b761854f1365877597711e2f4b6af411005898459b3f991b9
+export namespace JourneyCreateSchema {
+  export type LoginConfig = { readonly "path": string; readonly "success_path"?: (string) | (null); readonly "success_text"?: (string) | (null); };
+  export type OwnerRule = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "object_id": string; readonly "rule_id": string; readonly "statement": string; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SignupConfig = { readonly "approved_side_effects": ReadonlyArray<string>; readonly "path": string; readonly "sends_messages": boolean; readonly "success_path"?: (string) | (null); readonly "success_text"?: (string) | (null); };
+  export type WebAccount = { readonly "account_id": string; readonly "contact_email"?: (string) | (null); readonly "contact_phone"?: (string) | (null); readonly "label": string; readonly "provisioned"?: boolean; readonly "role": string; readonly "secret_ref": string; readonly "username": string; };
+  export type WebBudget = { readonly "max_bytes"?: number; readonly "max_model_questions"?: number; readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type WebObject = { readonly "kind": string; readonly "marker"?: (string) | (null); readonly "object_id": string; readonly "owner_account_id": string; readonly "path": string; readonly "synthetic"?: true; };
+  export type WebTarget = { readonly "origin": string; readonly "paths": ReadonlyArray<string>; };
+  export type WebsiteScope = { readonly "accounts"?: ReadonlyArray<WebAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report">; readonly "authority": ScopeAuthority; readonly "budget"?: WebBudget; readonly "confirmed_targets": true; readonly "expires_at": string; readonly "login"?: (LoginConfig) | (null); readonly "mode": "owned_fixture" | "external"; readonly "name": string; readonly "objects"?: ReadonlyArray<WebObject>; readonly "public_values"?: ReadonlyArray<string>; readonly "purpose": string; readonly "rules"?: ReadonlyArray<OwnerRule>; readonly "scope_id": string; readonly "signup"?: (SignupConfig) | (null); readonly "start_path"?: string; readonly "stop_conditions": ReadonlyArray<string>; readonly "targets": ReadonlyArray<WebTarget>; readonly "website_id": string; };
+  export type JourneyCreate = { readonly "confirmed_authority": true; readonly "scope": WebsiteScope; };
+}
+export type JourneyCreate = JourneyCreateSchema.JourneyCreate;
+
+// JourneyList.schema.json · SHA256 0e285ea33f90d9088ef8e38eed00003e85d6d87489ffb279c9189e1829c497ed
+export namespace JourneyListSchema {
+  export type AccountRecord = { readonly "account_id": string; readonly "note"?: string; readonly "session_kept"?: boolean; readonly "state"?: "not_tried" | "signed_in" | "created" | "failed" | "handoff" | "uncertain" | "needs_sign_in"; };
+  export type BlockedRequest = { readonly "count"?: number; readonly "host": string; readonly "kind": "off_scope" | "redirect" | "websocket" | "download" | "budget" | "address" | "other"; readonly "reason": string; };
+  export type CheckRecord = { readonly "check_id": string; readonly "citations"?: ReadonlyArray<EvidenceRef>; readonly "comparison"?: "candidate" | "protected" | "inconclusive" | "not_run"; readonly "facts"?: Readonly<Record<string, string>>; readonly "gaps"?: ReadonlyArray<string>; readonly "judged"?: ("supported" | "not_confirmed") | (null); readonly "judgment"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "note"?: string; readonly "object_id": string; readonly "other_account_id": string; readonly "owner_account_id": string; readonly "path": string; readonly "rule_id": string; readonly "state"?: "pending" | "completed" | "blocked"; };
+  export type DecisionRecord = { readonly "at": string; readonly "attempts"?: ReadonlyArray<Readonly<Record<string, JsonValue>>>; readonly "question_type": string; readonly "reason"?: (string) | (null); readonly "rung": "code" | "model" | "model_reordered" | "user" | "stop"; readonly "stage": "scope" | "discover" | "authenticate" | "map" | "select" | "execute" | "challenge" | "record" | "report"; readonly "subject": string; readonly "value"?: (string) | (null); };
+  export type EvidenceRef = { readonly "evidence_id": string; readonly "field": string; readonly "sha256": string; };
+  export type Finding = { readonly "affected_application": string; readonly "affected_endpoint": string; readonly "check_id": string; readonly "conclusion": "supported" | "candidate"; readonly "description": string; readonly "evidence": ReadonlyArray<EvidenceRef>; readonly "explanation": string; readonly "explanation_source": "model" | "code"; readonly "finding_id": string; readonly "limits": ReadonlyArray<string>; readonly "methodology": ReadonlyArray<string>; readonly "mitigation": string; readonly "potential_impact": string; readonly "runtime"?: "observed_once_by_plumb_runner"; readonly "safe_reproduction": ReadonlyArray<string>; readonly "title": string; readonly "tools_and_models": ReadonlyArray<string>; };
+  export type Incident = { readonly "at": string; readonly "content_kept"?: false; readonly "kinds": ReadonlyArray<string>; readonly "path": string; readonly "step_id": string; };
+  export type JourneyView = { readonly "accounts"?: ReadonlyArray<AccountRecord>; readonly "activity"?: string; readonly "approval"?: (PlanApproval) | (null); readonly "approval_revoked_at"?: (string) | (null); readonly "approval_used_at"?: (string) | (null); readonly "blocked"?: ReadonlyArray<BlockedRequest>; readonly "browser"?: "not_used" | "used" | "unavailable"; readonly "browser_note"?: string; readonly "checks"?: ReadonlyArray<CheckRecord>; readonly "confidentiality"?: "private_local"; readonly "created_at": string; readonly "decisions"?: ReadonlyArray<DecisionRecord>; readonly "evidence"?: ReadonlyArray<WebEvidence>; readonly "findings"?: ReadonlyArray<Finding>; readonly "handoffs"?: ReadonlyArray<string>; readonly "incidents"?: ReadonlyArray<Incident>; readonly "journey_id": string; readonly "leads"?: ReadonlyArray<string>; readonly "pages"?: ReadonlyArray<PageRecord>; readonly "plan": WebsitePlan; readonly "plan_sha256": string; readonly "report_path"?: (string) | (null); readonly "scope": WebsiteScope; readonly "spent"?: Spent; readonly "stage"?: "scope" | "discover" | "authenticate" | "map" | "select" | "execute" | "challenge" | "record" | "report"; readonly "status"?: "planned" | "approved" | "running" | "paused" | "stopped" | "handoff" | "done" | "failed"; readonly "steps"?: ReadonlyArray<StepRecord>; readonly "stop_reason"?: (string) | (null); readonly "updated_at": string; readonly "waiting"?: ReadonlyArray<UserQuestion>; };
+  export type JsonValue = unknown;
+  export type LoginConfig = { readonly "path": string; readonly "success_path"?: (string) | (null); readonly "success_text"?: (string) | (null); };
+  export type OwnerRule = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "object_id": string; readonly "rule_id": string; readonly "statement": string; };
+  export type PageRecord = { readonly "account_id"?: (string) | (null); readonly "blocked"?: ReadonlyArray<BlockedRequest>; readonly "evidence_id"?: (string) | (null); readonly "forms"?: ReadonlyArray<string>; readonly "kind"?: string; readonly "kind_rung"?: ("code" | "model" | "model_reordered" | "user" | "stop") | (null); readonly "links"?: number; readonly "note"?: string; readonly "path": string; readonly "status"?: (number) | (null); readonly "title"?: string; readonly "via": "http" | "browser"; };
+  export type PlanApproval = { readonly "approved_by": string; readonly "approved_step_ids": ReadonlyArray<string>; readonly "expires_at": string; readonly "granted_at": string; readonly "plan_sha256": string; readonly "reviewed_plan": true; };
+  export type PlanStep = { readonly "account_id"?: (string) | (null); readonly "action": "read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report"; readonly "max_requests": number; readonly "object_id"?: (string) | (null); readonly "stage": "discover" | "authenticate" | "map" | "check" | "report"; readonly "state_changing": boolean; readonly "step_id": string; readonly "summary": string; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SignupConfig = { readonly "approved_side_effects": ReadonlyArray<string>; readonly "path": string; readonly "sends_messages": boolean; readonly "success_path"?: (string) | (null); readonly "success_text"?: (string) | (null); };
+  export type Spent = { readonly "bytes"?: number; readonly "model_questions"?: number; readonly "model_seconds"?: number; readonly "requests"?: number; readonly "seconds"?: number; };
+  export type StepRecord = { readonly "action": "read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report"; readonly "evidence_ids"?: ReadonlyArray<string>; readonly "note"?: string; readonly "requests"?: number; readonly "state"?: "planned" | "attempted" | "completed" | "uncertain" | "blocked" | "skipped"; readonly "step_id": string; };
+  export type UserChoice = { readonly "label": string; readonly "meaning": string; };
+  export type UserQuestion = { readonly "choices": ReadonlyArray<UserChoice>; readonly "question_type": string; readonly "subject": string; readonly "text": string; };
+  export type WebAccount = { readonly "account_id": string; readonly "contact_email"?: (string) | (null); readonly "contact_phone"?: (string) | (null); readonly "label": string; readonly "provisioned"?: boolean; readonly "role": string; readonly "secret_ref": string; readonly "username": string; };
+  export type WebBudget = { readonly "max_bytes"?: number; readonly "max_model_questions"?: number; readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type WebEvidence = { readonly "account_id"?: (string) | (null); readonly "collected_at": string; readonly "evidence_id": string; readonly "fields": Readonly<Record<string, string>>; readonly "kind": "page" | "response" | "comparison" | "screenshot" | "note"; readonly "object_id"?: (string) | (null); readonly "provenance": string; readonly "reviewed"?: boolean; readonly "sha256": string; readonly "via": "http" | "browser" | "code"; readonly "website_id": string; };
+  export type WebObject = { readonly "kind": string; readonly "marker"?: (string) | (null); readonly "object_id": string; readonly "owner_account_id": string; readonly "path": string; readonly "synthetic"?: true; };
+  export type WebTarget = { readonly "origin": string; readonly "paths": ReadonlyArray<string>; };
+  export type WebsitePlan = { readonly "budget": WebBudget; readonly "created_at": string; readonly "expected_model_seconds": number; readonly "expires_at": string; readonly "model_questions": number; readonly "not_covered"?: ReadonlyArray<string>; readonly "plan_id": string; readonly "scope_sha256": string; readonly "steps": ReadonlyArray<PlanStep>; readonly "unmeasured_question_types"?: ReadonlyArray<string>; readonly "website_id": string; };
+  export type WebsiteScope = { readonly "accounts"?: ReadonlyArray<WebAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report">; readonly "authority": ScopeAuthority; readonly "budget"?: WebBudget; readonly "confirmed_targets": true; readonly "expires_at": string; readonly "login"?: (LoginConfig) | (null); readonly "mode": "owned_fixture" | "external"; readonly "name": string; readonly "objects"?: ReadonlyArray<WebObject>; readonly "public_values"?: ReadonlyArray<string>; readonly "purpose": string; readonly "rules"?: ReadonlyArray<OwnerRule>; readonly "scope_id": string; readonly "signup"?: (SignupConfig) | (null); readonly "start_path"?: string; readonly "stop_conditions": ReadonlyArray<string>; readonly "targets": ReadonlyArray<WebTarget>; readonly "website_id": string; };
+  export type JourneyList = { readonly "journeys": ReadonlyArray<JourneyView>; };
+}
+export type JourneyList = JourneyListSchema.JourneyList;
+
+// JourneyRun.schema.json · SHA256 478390fefb1866c75fce9b04965cc52ab099dbb5bd88d2e591a49570899734e9
+export namespace JourneyRunSchema {
+  export type JourneyRun = { readonly "answers"?: Readonly<Record<string, string>>; readonly "profile"?: string; readonly "secrets"?: Readonly<Record<string, string>>; readonly "use_model"?: boolean; };
+}
+export type JourneyRun = JourneyRunSchema.JourneyRun;
+
+// JourneyView.schema.json · SHA256 1a8fe8bc55040974d1f870dfc8d614d763bb65763dc772f1dfb604f2e1af4897
+export namespace JourneyViewSchema {
+  export type AccountRecord = { readonly "account_id": string; readonly "note"?: string; readonly "session_kept"?: boolean; readonly "state"?: "not_tried" | "signed_in" | "created" | "failed" | "handoff" | "uncertain" | "needs_sign_in"; };
+  export type BlockedRequest = { readonly "count"?: number; readonly "host": string; readonly "kind": "off_scope" | "redirect" | "websocket" | "download" | "budget" | "address" | "other"; readonly "reason": string; };
+  export type CheckRecord = { readonly "check_id": string; readonly "citations"?: ReadonlyArray<EvidenceRef>; readonly "comparison"?: "candidate" | "protected" | "inconclusive" | "not_run"; readonly "facts"?: Readonly<Record<string, string>>; readonly "gaps"?: ReadonlyArray<string>; readonly "judged"?: ("supported" | "not_confirmed") | (null); readonly "judgment"?: (Readonly<Record<string, JsonValue>>) | (null); readonly "note"?: string; readonly "object_id": string; readonly "other_account_id": string; readonly "owner_account_id": string; readonly "path": string; readonly "rule_id": string; readonly "state"?: "pending" | "completed" | "blocked"; };
+  export type DecisionRecord = { readonly "at": string; readonly "attempts"?: ReadonlyArray<Readonly<Record<string, JsonValue>>>; readonly "question_type": string; readonly "reason"?: (string) | (null); readonly "rung": "code" | "model" | "model_reordered" | "user" | "stop"; readonly "stage": "scope" | "discover" | "authenticate" | "map" | "select" | "execute" | "challenge" | "record" | "report"; readonly "subject": string; readonly "value"?: (string) | (null); };
+  export type EvidenceRef = { readonly "evidence_id": string; readonly "field": string; readonly "sha256": string; };
+  export type Finding = { readonly "affected_application": string; readonly "affected_endpoint": string; readonly "check_id": string; readonly "conclusion": "supported" | "candidate"; readonly "description": string; readonly "evidence": ReadonlyArray<EvidenceRef>; readonly "explanation": string; readonly "explanation_source": "model" | "code"; readonly "finding_id": string; readonly "limits": ReadonlyArray<string>; readonly "methodology": ReadonlyArray<string>; readonly "mitigation": string; readonly "potential_impact": string; readonly "runtime"?: "observed_once_by_plumb_runner"; readonly "safe_reproduction": ReadonlyArray<string>; readonly "title": string; readonly "tools_and_models": ReadonlyArray<string>; };
+  export type Incident = { readonly "at": string; readonly "content_kept"?: false; readonly "kinds": ReadonlyArray<string>; readonly "path": string; readonly "step_id": string; };
+  export type JsonValue = unknown;
+  export type LoginConfig = { readonly "path": string; readonly "success_path"?: (string) | (null); readonly "success_text"?: (string) | (null); };
+  export type OwnerRule = { readonly "allowed_account_ids": ReadonlyArray<string>; readonly "basis": string; readonly "declared_by": string; readonly "object_id": string; readonly "rule_id": string; readonly "statement": string; };
+  export type PageRecord = { readonly "account_id"?: (string) | (null); readonly "blocked"?: ReadonlyArray<BlockedRequest>; readonly "evidence_id"?: (string) | (null); readonly "forms"?: ReadonlyArray<string>; readonly "kind"?: string; readonly "kind_rung"?: ("code" | "model" | "model_reordered" | "user" | "stop") | (null); readonly "links"?: number; readonly "note"?: string; readonly "path": string; readonly "status"?: (number) | (null); readonly "title"?: string; readonly "via": "http" | "browser"; };
+  export type PlanApproval = { readonly "approved_by": string; readonly "approved_step_ids": ReadonlyArray<string>; readonly "expires_at": string; readonly "granted_at": string; readonly "plan_sha256": string; readonly "reviewed_plan": true; };
+  export type PlanStep = { readonly "account_id"?: (string) | (null); readonly "action": "read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report"; readonly "max_requests": number; readonly "object_id"?: (string) | (null); readonly "stage": "discover" | "authenticate" | "map" | "check" | "report"; readonly "state_changing": boolean; readonly "step_id": string; readonly "summary": string; };
+  export type ScopeAuthority = { readonly "granted_at": string; readonly "granted_by": string; readonly "reference": string; };
+  export type SignupConfig = { readonly "approved_side_effects": ReadonlyArray<string>; readonly "path": string; readonly "sends_messages": boolean; readonly "success_path"?: (string) | (null); readonly "success_text"?: (string) | (null); };
+  export type Spent = { readonly "bytes"?: number; readonly "model_questions"?: number; readonly "model_seconds"?: number; readonly "requests"?: number; readonly "seconds"?: number; };
+  export type StepRecord = { readonly "action": "read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report"; readonly "evidence_ids"?: ReadonlyArray<string>; readonly "note"?: string; readonly "requests"?: number; readonly "state"?: "planned" | "attempted" | "completed" | "uncertain" | "blocked" | "skipped"; readonly "step_id": string; };
+  export type UserChoice = { readonly "label": string; readonly "meaning": string; };
+  export type UserQuestion = { readonly "choices": ReadonlyArray<UserChoice>; readonly "question_type": string; readonly "subject": string; readonly "text": string; };
+  export type WebAccount = { readonly "account_id": string; readonly "contact_email"?: (string) | (null); readonly "contact_phone"?: (string) | (null); readonly "label": string; readonly "provisioned"?: boolean; readonly "role": string; readonly "secret_ref": string; readonly "username": string; };
+  export type WebBudget = { readonly "max_bytes"?: number; readonly "max_model_questions"?: number; readonly "max_requests"?: number; readonly "max_seconds"?: number; };
+  export type WebEvidence = { readonly "account_id"?: (string) | (null); readonly "collected_at": string; readonly "evidence_id": string; readonly "fields": Readonly<Record<string, string>>; readonly "kind": "page" | "response" | "comparison" | "screenshot" | "note"; readonly "object_id"?: (string) | (null); readonly "provenance": string; readonly "reviewed"?: boolean; readonly "sha256": string; readonly "via": "http" | "browser" | "code"; readonly "website_id": string; };
+  export type WebObject = { readonly "kind": string; readonly "marker"?: (string) | (null); readonly "object_id": string; readonly "owner_account_id": string; readonly "path": string; readonly "synthetic"?: true; };
+  export type WebTarget = { readonly "origin": string; readonly "paths": ReadonlyArray<string>; };
+  export type WebsitePlan = { readonly "budget": WebBudget; readonly "created_at": string; readonly "expected_model_seconds": number; readonly "expires_at": string; readonly "model_questions": number; readonly "not_covered"?: ReadonlyArray<string>; readonly "plan_id": string; readonly "scope_sha256": string; readonly "steps": ReadonlyArray<PlanStep>; readonly "unmeasured_question_types"?: ReadonlyArray<string>; readonly "website_id": string; };
+  export type WebsiteScope = { readonly "accounts"?: ReadonlyArray<WebAccount>; readonly "allowed_actions": ReadonlyArray<"read" | "sign_in" | "sign_up" | "submit_form" | "compare" | "report">; readonly "authority": ScopeAuthority; readonly "budget"?: WebBudget; readonly "confirmed_targets": true; readonly "expires_at": string; readonly "login"?: (LoginConfig) | (null); readonly "mode": "owned_fixture" | "external"; readonly "name": string; readonly "objects"?: ReadonlyArray<WebObject>; readonly "public_values"?: ReadonlyArray<string>; readonly "purpose": string; readonly "rules"?: ReadonlyArray<OwnerRule>; readonly "scope_id": string; readonly "signup"?: (SignupConfig) | (null); readonly "start_path"?: string; readonly "stop_conditions": ReadonlyArray<string>; readonly "targets": ReadonlyArray<WebTarget>; readonly "website_id": string; };
+  export type JourneyView = { readonly "accounts"?: ReadonlyArray<AccountRecord>; readonly "activity"?: string; readonly "approval"?: (PlanApproval) | (null); readonly "approval_revoked_at"?: (string) | (null); readonly "approval_used_at"?: (string) | (null); readonly "blocked"?: ReadonlyArray<BlockedRequest>; readonly "browser"?: "not_used" | "used" | "unavailable"; readonly "browser_note"?: string; readonly "checks"?: ReadonlyArray<CheckRecord>; readonly "confidentiality"?: "private_local"; readonly "created_at": string; readonly "decisions"?: ReadonlyArray<DecisionRecord>; readonly "evidence"?: ReadonlyArray<WebEvidence>; readonly "findings"?: ReadonlyArray<Finding>; readonly "handoffs"?: ReadonlyArray<string>; readonly "incidents"?: ReadonlyArray<Incident>; readonly "journey_id": string; readonly "leads"?: ReadonlyArray<string>; readonly "pages"?: ReadonlyArray<PageRecord>; readonly "plan": WebsitePlan; readonly "plan_sha256": string; readonly "report_path"?: (string) | (null); readonly "scope": WebsiteScope; readonly "spent"?: Spent; readonly "stage"?: "scope" | "discover" | "authenticate" | "map" | "select" | "execute" | "challenge" | "record" | "report"; readonly "status"?: "planned" | "approved" | "running" | "paused" | "stopped" | "handoff" | "done" | "failed"; readonly "steps"?: ReadonlyArray<StepRecord>; readonly "stop_reason"?: (string) | (null); readonly "updated_at": string; readonly "waiting"?: ReadonlyArray<UserQuestion>; };
+}
+export type JourneyView = JourneyViewSchema.JourneyView;
 
 // LabActionPreview.schema.json · SHA256 625c7215955854db6e3b4b36bab1c3a753e7f549b32fc898d70725123dca73ab
 export namespace LabActionPreviewSchema {
@@ -880,6 +1021,13 @@ export namespace SavedFindingAnswerSchema {
 }
 export type SavedFindingAnswer = SavedFindingAnswerSchema.SavedFindingAnswer;
 
+// SavedResults.schema.json · SHA256 261aacb2a6d8eeb86b89c774159e9fddff64867a855c46486aad79f8aa6ce17d
+export namespace SavedResultsSchema {
+  export type SavedResult = { readonly "label": string; readonly "target_id": string; readonly "target_kind": "inspection" | "review" | "assessment" | "website"; };
+  export type SavedResults = { readonly "results": ReadonlyArray<SavedResult>; };
+}
+export type SavedResults = SavedResultsSchema.SavedResults;
+
 // ScopeCreate.schema.json · SHA256 81ec9619f0011283b48cbc10c973a6d3284ec1643a4962cae787bf1efcf91239
 export namespace ScopeCreateSchema {
   export type AssessmentBudget = { readonly "max_requests"?: number; readonly "max_seconds"?: number; };
@@ -981,6 +1129,12 @@ export namespace ToolObservationSchema {
   export type ToolObservation = { readonly "finished_at": string; readonly "id": string; readonly "inputs": Readonly<Record<string, JsonValue>>; readonly "output_sha256"?: (string) | (null); readonly "question_id"?: (string) | (null); readonly "run_id": string; readonly "started_at": string; readonly "status": ObservationStatus; readonly "tool": string; readonly "tool_version": string; };
 }
 export type ToolObservation = ToolObservationSchema.ToolObservation;
+
+// WebsiteReadiness.schema.json · SHA256 007a7282b79dfbc0741cbe40b3b92974986b3aa06e0aa6ad34c3bc4d79963454
+export namespace WebsiteReadinessSchema {
+  export type WebsiteReadiness = { readonly "browser_note": string; readonly "browser_ready": boolean; readonly "external_note": string; readonly "external_ready": boolean; };
+}
+export type WebsiteReadiness = WebsiteReadinessSchema.WebsiteReadiness;
 
 // WebsiteScopeCreate.schema.json · SHA256 b8f39971a475caa807a3045ba91a30f4be59eae19c8013180b21a727ab151cfd
 export namespace WebsiteScopeCreateSchema {

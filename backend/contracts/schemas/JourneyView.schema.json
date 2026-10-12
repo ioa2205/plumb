@@ -1,0 +1,1958 @@
+{
+  "$defs": {
+    "AccountRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 600,
+          "title": "Note",
+          "type": "string"
+        },
+        "session_kept": {
+          "default": false,
+          "title": "Session Kept",
+          "type": "boolean"
+        },
+        "state": {
+          "default": "not_tried",
+          "enum": [
+            "not_tried",
+            "signed_in",
+            "created",
+            "failed",
+            "handoff",
+            "uncertain",
+            "needs_sign_in"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "AccountRecord",
+      "type": "object"
+    },
+    "BlockedRequest": {
+      "additionalProperties": false,
+      "description": "Something the page wanted that was not allowed. Shown, never silently dropped.",
+      "properties": {
+        "count": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "host": {
+          "maxLength": 253,
+          "title": "Host",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "off_scope",
+            "redirect",
+            "websocket",
+            "download",
+            "budget",
+            "address",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "host",
+        "reason"
+      ],
+      "title": "BlockedRequest",
+      "type": "object"
+    },
+    "CheckRecord": {
+      "additionalProperties": false,
+      "description": "One cross-account comparison on a known synthetic object, as code computed it.",
+      "properties": {
+        "check_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Check Id",
+          "type": "string"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "maxItems": 20,
+          "title": "Citations",
+          "type": "array"
+        },
+        "comparison": {
+          "default": "not_run",
+          "enum": [
+            "candidate",
+            "protected",
+            "inconclusive",
+            "not_run"
+          ],
+          "title": "Comparison",
+          "type": "string"
+        },
+        "facts": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 24,
+          "title": "Facts",
+          "type": "object"
+        },
+        "gaps": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "title": "Gaps",
+          "type": "array"
+        },
+        "judged": {
+          "anyOf": [
+            {
+              "enum": [
+                "supported",
+                "not_confirmed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Judged"
+        },
+        "judgment": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Judgment"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 600,
+          "title": "Note",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "other_account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Other Account Id",
+          "type": "string"
+        },
+        "owner_account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Owner Account Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "title": "Path",
+          "type": "string"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "state": {
+          "default": "pending",
+          "enum": [
+            "pending",
+            "completed",
+            "blocked"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "check_id",
+        "rule_id",
+        "object_id",
+        "path",
+        "owner_account_id",
+        "other_account_id"
+      ],
+      "title": "CheckRecord",
+      "type": "object"
+    },
+    "DecisionRecord": {
+      "additionalProperties": false,
+      "description": "One decision and the rung of the ladder that made it. Raw answers are kept.",
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "attempts": {
+          "items": {
+            "additionalProperties": {
+              "$ref": "#/$defs/JsonValue"
+            },
+            "type": "object"
+          },
+          "maxItems": 6,
+          "title": "Attempts",
+          "type": "array"
+        },
+        "question_type": {
+          "maxLength": 40,
+          "title": "Question Type",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "rung": {
+          "enum": [
+            "code",
+            "model",
+            "model_reordered",
+            "user",
+            "stop"
+          ],
+          "title": "Rung",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "scope",
+            "discover",
+            "authenticate",
+            "map",
+            "select",
+            "execute",
+            "challenge",
+            "record",
+            "report"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 200,
+          "title": "Subject",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "at",
+        "stage",
+        "question_type",
+        "subject",
+        "rung"
+      ],
+      "title": "DecisionRecord",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "field": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "field",
+        "sha256"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_application": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Affected Application",
+          "type": "string"
+        },
+        "affected_endpoint": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Affected Endpoint",
+          "type": "string"
+        },
+        "check_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Check Id",
+          "type": "string"
+        },
+        "conclusion": {
+          "enum": [
+            "supported",
+            "candidate"
+          ],
+          "title": "Conclusion",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "explanation_source": {
+          "enum": [
+            "model",
+            "code"
+          ],
+          "title": "Explanation Source",
+          "type": "string"
+        },
+        "finding_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "limits": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Limits",
+          "type": "array"
+        },
+        "methodology": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Methodology",
+          "type": "array"
+        },
+        "mitigation": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Mitigation",
+          "type": "string"
+        },
+        "potential_impact": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Potential Impact",
+          "type": "string"
+        },
+        "runtime": {
+          "const": "observed_once_by_plumb_runner",
+          "default": "observed_once_by_plumb_runner",
+          "title": "Runtime",
+          "type": "string"
+        },
+        "safe_reproduction": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Safe Reproduction",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "tools_and_models": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Tools And Models",
+          "type": "array"
+        }
+      },
+      "required": [
+        "finding_id",
+        "title",
+        "conclusion",
+        "description",
+        "affected_application",
+        "affected_endpoint",
+        "safe_reproduction",
+        "potential_impact",
+        "evidence",
+        "mitigation",
+        "methodology",
+        "tools_and_models",
+        "limits",
+        "explanation",
+        "explanation_source",
+        "check_id"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Incident": {
+      "additionalProperties": false,
+      "description": "A privacy or production-risk stop. Kinds only; the content was discarded.",
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "content_kept": {
+          "const": false,
+          "default": false,
+          "title": "Content Kept",
+          "type": "boolean"
+        },
+        "kinds": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Kinds",
+          "type": "array"
+        },
+        "path": {
+          "maxLength": 512,
+          "title": "Path",
+          "type": "string"
+        },
+        "step_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Step Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "at",
+        "step_id",
+        "path",
+        "kinds"
+      ],
+      "title": "Incident",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "LoginConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "success_path": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Path"
+        },
+        "success_text": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Text"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "LoginConfig",
+      "type": "object"
+    },
+    "OwnerRule": {
+      "additionalProperties": false,
+      "description": "What the owner says should happen. A declaration, never an observation.",
+      "properties": {
+        "allowed_account_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Allowed Account Ids",
+          "type": "array"
+        },
+        "basis": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Basis",
+          "type": "string"
+        },
+        "declared_by": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Declared By",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "statement": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "statement",
+        "object_id",
+        "allowed_account_ids",
+        "declared_by",
+        "basis"
+      ],
+      "title": "OwnerRule",
+      "type": "object"
+    },
+    "PageRecord": {
+      "additionalProperties": false,
+      "description": "One place in the page and action map.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "blocked": {
+          "items": {
+            "$ref": "#/$defs/BlockedRequest"
+          },
+          "maxItems": 40,
+          "title": "Blocked",
+          "type": "array"
+        },
+        "evidence_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Id"
+        },
+        "forms": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Forms",
+          "type": "array"
+        },
+        "kind": {
+          "default": "",
+          "maxLength": 40,
+          "title": "Kind",
+          "type": "string"
+        },
+        "kind_rung": {
+          "anyOf": [
+            {
+              "enum": [
+                "code",
+                "model",
+                "model_reordered",
+                "user",
+                "stop"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind Rung"
+        },
+        "links": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Links",
+          "type": "integer"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Note",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "title": "Path",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "title": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Title",
+          "type": "string"
+        },
+        "via": {
+          "enum": [
+            "http",
+            "browser"
+          ],
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "via"
+      ],
+      "title": "PageRecord",
+      "type": "object"
+    },
+    "PlanApproval": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_by": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Approved By",
+          "type": "string"
+        },
+        "approved_step_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Approved Step Ids",
+          "type": "array"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "granted_at": {
+          "format": "date-time",
+          "title": "Granted At",
+          "type": "string"
+        },
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "reviewed_plan": {
+          "const": true,
+          "title": "Reviewed Plan",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "plan_sha256",
+        "approved_step_ids",
+        "approved_by",
+        "granted_at",
+        "expires_at",
+        "reviewed_plan"
+      ],
+      "title": "PlanApproval",
+      "type": "object"
+    },
+    "PlanStep": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "action": {
+          "enum": [
+            "read",
+            "sign_in",
+            "sign_up",
+            "submit_form",
+            "compare",
+            "report"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "max_requests": {
+          "maximum": 2000,
+          "minimum": 0,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "object_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Id"
+        },
+        "stage": {
+          "enum": [
+            "discover",
+            "authenticate",
+            "map",
+            "check",
+            "report"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "state_changing": {
+          "title": "State Changing",
+          "type": "boolean"
+        },
+        "step_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "stage",
+        "action",
+        "summary",
+        "state_changing",
+        "max_requests"
+      ],
+      "title": "PlanStep",
+      "type": "object"
+    },
+    "ScopeAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "granted_at": {
+          "format": "date-time",
+          "title": "Granted At",
+          "type": "string"
+        },
+        "granted_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Granted By",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "granted_by",
+        "reference",
+        "granted_at"
+      ],
+      "title": "ScopeAuthority",
+      "type": "object"
+    },
+    "SignupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_side_effects": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Approved Side Effects",
+          "type": "array"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sends_messages": {
+          "title": "Sends Messages",
+          "type": "boolean"
+        },
+        "success_path": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Path"
+        },
+        "success_text": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Text"
+        }
+      },
+      "required": [
+        "path",
+        "approved_side_effects",
+        "sends_messages"
+      ],
+      "title": "SignupConfig",
+      "type": "object"
+    },
+    "Spent": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "model_questions": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Questions",
+          "type": "integer"
+        },
+        "model_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Seconds",
+          "type": "number"
+        },
+        "requests": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Requests",
+          "type": "integer"
+        },
+        "seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        }
+      },
+      "title": "Spent",
+      "type": "object"
+    },
+    "StepRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "read",
+            "sign_in",
+            "sign_up",
+            "submit_form",
+            "compare",
+            "report"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 60,
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 600,
+          "title": "Note",
+          "type": "string"
+        },
+        "requests": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Requests",
+          "type": "integer"
+        },
+        "state": {
+          "default": "planned",
+          "enum": [
+            "planned",
+            "attempted",
+            "completed",
+            "uncertain",
+            "blocked",
+            "skipped"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "step_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Step Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "action"
+      ],
+      "title": "StepRecord",
+      "type": "object"
+    },
+    "UserChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "meaning": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Meaning",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "meaning"
+      ],
+      "title": "UserChoice",
+      "type": "object"
+    },
+    "UserQuestion": {
+      "additionalProperties": false,
+      "description": "The ladder's last rung: a plain question only the user can answer.",
+      "properties": {
+        "choices": {
+          "items": {
+            "$ref": "#/$defs/UserChoice"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Choices",
+          "type": "array"
+        },
+        "question_type": {
+          "maxLength": 40,
+          "title": "Question Type",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 200,
+          "title": "Subject",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject",
+        "question_type",
+        "text",
+        "choices"
+      ],
+      "title": "UserQuestion",
+      "type": "object"
+    },
+    "WebAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Phone"
+        },
+        "label": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "provisioned": {
+          "default": true,
+          "title": "Provisioned",
+          "type": "boolean"
+        },
+        "role": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "secret_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Secret Ref",
+          "type": "string"
+        },
+        "username": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "role",
+        "label",
+        "username",
+        "secret_ref"
+      ],
+      "title": "WebAccount",
+      "type": "object"
+    },
+    "WebBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_bytes": {
+          "default": 20971520,
+          "maximum": 268435456,
+          "minimum": 1024,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_model_questions": {
+          "default": 24,
+          "maximum": 60,
+          "minimum": 0,
+          "title": "Max Model Questions",
+          "type": "integer"
+        },
+        "max_requests": {
+          "default": 300,
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 900,
+          "maximum": 7200,
+          "minimum": 1,
+          "title": "Max Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "WebBudget",
+      "type": "object"
+    },
+    "WebEvidence": {
+      "additionalProperties": false,
+      "description": "One sanitized observation kept as evidence. Fields are cited exactly, by hash.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "collected_at": {
+          "format": "date-time",
+          "title": "Collected At",
+          "type": "string"
+        },
+        "evidence_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 60,
+          "minProperties": 1,
+          "title": "Fields",
+          "type": "object"
+        },
+        "kind": {
+          "enum": [
+            "page",
+            "response",
+            "comparison",
+            "screenshot",
+            "note"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "object_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Id"
+        },
+        "provenance": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "reviewed": {
+          "default": false,
+          "title": "Reviewed",
+          "type": "boolean"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "via": {
+          "enum": [
+            "http",
+            "browser",
+            "code"
+          ],
+          "title": "Via",
+          "type": "string"
+        },
+        "website_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Website Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "website_id",
+        "kind",
+        "via",
+        "fields",
+        "collected_at",
+        "provenance",
+        "sha256"
+      ],
+      "title": "WebEvidence",
+      "type": "object"
+    },
+    "WebObject": {
+      "additionalProperties": false,
+      "description": "A known synthetic object. Unknown identifiers are never tried.",
+      "properties": {
+        "kind": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "marker": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 6,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "owner_account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Owner Account Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "object_id",
+        "owner_account_id",
+        "kind",
+        "path"
+      ],
+      "title": "WebObject",
+      "type": "object"
+    },
+    "WebTarget": {
+      "additionalProperties": false,
+      "description": "One approved origin and the path prefixes approved on it. Nothing is inherited.",
+      "properties": {
+        "origin": {
+          "maxLength": 300,
+          "minLength": 8,
+          "title": "Origin",
+          "type": "string"
+        },
+        "paths": {
+          "items": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 40,
+          "minItems": 1,
+          "title": "Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "origin",
+        "paths"
+      ],
+      "title": "WebTarget",
+      "type": "object"
+    },
+    "WebsitePlan": {
+      "additionalProperties": false,
+      "description": "One bounded plan, shown in plain words and approved once.",
+      "properties": {
+        "budget": {
+          "$ref": "#/$defs/WebBudget"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "expected_model_seconds": {
+          "minimum": 0,
+          "title": "Expected Model Seconds",
+          "type": "number"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "model_questions": {
+          "maximum": 60,
+          "minimum": 0,
+          "title": "Model Questions",
+          "type": "integer"
+        },
+        "not_covered": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Not Covered",
+          "type": "array"
+        },
+        "plan_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "scope_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Scope Sha256",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PlanStep"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "unmeasured_question_types": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Unmeasured Question Types",
+          "type": "array"
+        },
+        "website_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Website Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id",
+        "website_id",
+        "scope_sha256",
+        "steps",
+        "budget",
+        "model_questions",
+        "expected_model_seconds",
+        "created_at",
+        "expires_at"
+      ],
+      "title": "WebsitePlan",
+      "type": "object"
+    },
+    "WebsiteScope": {
+      "additionalProperties": false,
+      "properties": {
+        "accounts": {
+          "items": {
+            "$ref": "#/$defs/WebAccount"
+          },
+          "maxItems": 6,
+          "title": "Accounts",
+          "type": "array"
+        },
+        "allowed_actions": {
+          "items": {
+            "enum": [
+              "read",
+              "sign_in",
+              "sign_up",
+              "submit_form",
+              "compare",
+              "report"
+            ],
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "authority": {
+          "$ref": "#/$defs/ScopeAuthority"
+        },
+        "budget": {
+          "$ref": "#/$defs/WebBudget"
+        },
+        "confirmed_targets": {
+          "const": true,
+          "title": "Confirmed Targets",
+          "type": "boolean"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "login": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LoginConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mode": {
+          "enum": [
+            "owned_fixture",
+            "external"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/WebObject"
+          },
+          "maxItems": 20,
+          "title": "Objects",
+          "type": "array"
+        },
+        "public_values": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Public Values",
+          "type": "array"
+        },
+        "purpose": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/OwnerRule"
+          },
+          "maxItems": 20,
+          "title": "Rules",
+          "type": "array"
+        },
+        "scope_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "signup": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SignupConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start_path": {
+          "default": "/",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Start Path",
+          "type": "string"
+        },
+        "stop_conditions": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Stop Conditions",
+          "type": "array"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/$defs/WebTarget"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Targets",
+          "type": "array"
+        },
+        "website_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Website Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope_id",
+        "website_id",
+        "name",
+        "mode",
+        "targets",
+        "purpose",
+        "authority",
+        "allowed_actions",
+        "expires_at",
+        "stop_conditions",
+        "confirmed_targets"
+      ],
+      "title": "WebsiteScope",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/JourneyView.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accounts": {
+      "items": {
+        "$ref": "#/$defs/AccountRecord"
+      },
+      "maxItems": 6,
+      "title": "Accounts",
+      "type": "array"
+    },
+    "activity": {
+      "default": "Waiting for the plan to be approved.",
+      "maxLength": 300,
+      "title": "Activity",
+      "type": "string"
+    },
+    "approval": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanApproval"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "approval_revoked_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approval Revoked At"
+    },
+    "approval_used_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approval Used At"
+    },
+    "blocked": {
+      "items": {
+        "$ref": "#/$defs/BlockedRequest"
+      },
+      "maxItems": 200,
+      "title": "Blocked",
+      "type": "array"
+    },
+    "browser": {
+      "default": "not_used",
+      "enum": [
+        "not_used",
+        "used",
+        "unavailable"
+      ],
+      "title": "Browser",
+      "type": "string"
+    },
+    "browser_note": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Browser Note",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CheckRecord"
+      },
+      "maxItems": 40,
+      "title": "Checks",
+      "type": "array"
+    },
+    "confidentiality": {
+      "const": "private_local",
+      "default": "private_local",
+      "title": "Confidentiality",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/DecisionRecord"
+      },
+      "maxItems": 200,
+      "title": "Decisions",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/WebEvidence"
+      },
+      "maxItems": 300,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "maxItems": 40,
+      "title": "Findings",
+      "type": "array"
+    },
+    "handoffs": {
+      "items": {
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Handoffs",
+      "type": "array"
+    },
+    "incidents": {
+      "items": {
+        "$ref": "#/$defs/Incident"
+      },
+      "maxItems": 20,
+      "title": "Incidents",
+      "type": "array"
+    },
+    "journey_id": {
+      "pattern": "^journey-[0-9a-f]{32}$",
+      "title": "Journey Id",
+      "type": "string"
+    },
+    "leads": {
+      "items": {
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 40,
+      "title": "Leads",
+      "type": "array"
+    },
+    "pages": {
+      "items": {
+        "$ref": "#/$defs/PageRecord"
+      },
+      "maxItems": 120,
+      "title": "Pages",
+      "type": "array"
+    },
+    "plan": {
+      "$ref": "#/$defs/WebsitePlan"
+    },
+    "plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Sha256",
+      "type": "string"
+    },
+    "report_path": {
+      "anyOf": [
+        {
+          "maxLength": 1024,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Report Path"
+    },
+    "scope": {
+      "$ref": "#/$defs/WebsiteScope"
+    },
+    "spent": {
+      "$ref": "#/$defs/Spent"
+    },
+    "stage": {
+      "default": "scope",
+      "enum": [
+        "scope",
+        "discover",
+        "authenticate",
+        "map",
+        "select",
+        "execute",
+        "challenge",
+        "record",
+        "report"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "status": {
+      "default": "planned",
+      "enum": [
+        "planned",
+        "approved",
+        "running",
+        "paused",
+        "stopped",
+        "handoff",
+        "done",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/StepRecord"
+      },
+      "maxItems": 60,
+      "title": "Steps",
+      "type": "array"
+    },
+    "stop_reason": {
+      "anyOf": [
+        {
+          "maxLength": 600,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Reason"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "waiting": {
+      "items": {
+        "$ref": "#/$defs/UserQuestion"
+      },
+      "maxItems": 20,
+      "title": "Waiting",
+      "type": "array"
+    }
+  },
+  "required": [
+    "journey_id",
+    "scope",
+    "plan",
+    "plan_sha256",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "JourneyView",
+  "type": "object"
+}

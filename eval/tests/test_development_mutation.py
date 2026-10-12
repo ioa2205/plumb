@@ -282,12 +282,15 @@ def test_preconditions_refuse_wrong_family_absent_guard_and_ambiguous_rewrite() 
 
 
 def test_manifest_is_current_metadata_only_and_cli_cannot_reseal(
-    tmp_path: Path, cases: list[dev.Case], monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path,
+    cases: list[dev.Case],
+    monkeypatch: pytest.MonkeyPatch,
+    current_development_manifest: Path,
 ) -> None:
     # Real CLI consistency check, including current source generation and pins.
     assert dev.main(["check"]) == 0
     monkeypatch.setattr(dev, "make_cases", lambda: cases)
-    assert dev.check() == cases
+    assert dev.check(current_development_manifest) == cases
     manifest = json.loads(dev.MANIFEST.read_bytes())
     assert manifest == dev.manifest_for(cases)
     assert "source" not in manifest and "sealed_test_sha256" not in manifest

@@ -1,0 +1,33 @@
+{
+  "$id": "https://plumb.local/schemas/WebsiteReadiness.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "browser_note": {
+      "maxLength": 600,
+      "title": "Browser Note",
+      "type": "string"
+    },
+    "browser_ready": {
+      "title": "Browser Ready",
+      "type": "boolean"
+    },
+    "external_note": {
+      "maxLength": 600,
+      "title": "External Note",
+      "type": "string"
+    },
+    "external_ready": {
+      "title": "External Ready",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "browser_ready",
+    "browser_note",
+    "external_ready",
+    "external_note"
+  ],
+  "title": "WebsiteReadiness",
+  "type": "object"
+}

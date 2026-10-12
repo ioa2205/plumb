@@ -1,0 +1,570 @@
+{
+  "$defs": {
+    "LoginConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "success_path": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Path"
+        },
+        "success_text": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Text"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "LoginConfig",
+      "type": "object"
+    },
+    "OwnerRule": {
+      "additionalProperties": false,
+      "description": "What the owner says should happen. A declaration, never an observation.",
+      "properties": {
+        "allowed_account_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Allowed Account Ids",
+          "type": "array"
+        },
+        "basis": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Basis",
+          "type": "string"
+        },
+        "declared_by": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Declared By",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "statement": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "statement",
+        "object_id",
+        "allowed_account_ids",
+        "declared_by",
+        "basis"
+      ],
+      "title": "OwnerRule",
+      "type": "object"
+    },
+    "ScopeAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "granted_at": {
+          "format": "date-time",
+          "title": "Granted At",
+          "type": "string"
+        },
+        "granted_by": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Granted By",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "granted_by",
+        "reference",
+        "granted_at"
+      ],
+      "title": "ScopeAuthority",
+      "type": "object"
+    },
+    "SignupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_side_effects": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Approved Side Effects",
+          "type": "array"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sends_messages": {
+          "title": "Sends Messages",
+          "type": "boolean"
+        },
+        "success_path": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Path"
+        },
+        "success_text": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Text"
+        }
+      },
+      "required": [
+        "path",
+        "approved_side_effects",
+        "sends_messages"
+      ],
+      "title": "SignupConfig",
+      "type": "object"
+    },
+    "WebAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Phone"
+        },
+        "label": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "provisioned": {
+          "default": true,
+          "title": "Provisioned",
+          "type": "boolean"
+        },
+        "role": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "secret_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Secret Ref",
+          "type": "string"
+        },
+        "username": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "role",
+        "label",
+        "username",
+        "secret_ref"
+      ],
+      "title": "WebAccount",
+      "type": "object"
+    },
+    "WebBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_bytes": {
+          "default": 20971520,
+          "maximum": 268435456,
+          "minimum": 1024,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_model_questions": {
+          "default": 24,
+          "maximum": 60,
+          "minimum": 0,
+          "title": "Max Model Questions",
+          "type": "integer"
+        },
+        "max_requests": {
+          "default": 300,
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 900,
+          "maximum": 7200,
+          "minimum": 1,
+          "title": "Max Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "WebBudget",
+      "type": "object"
+    },
+    "WebObject": {
+      "additionalProperties": false,
+      "description": "A known synthetic object. Unknown identifiers are never tried.",
+      "properties": {
+        "kind": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "marker": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 6,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "owner_account_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Owner Account Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "object_id",
+        "owner_account_id",
+        "kind",
+        "path"
+      ],
+      "title": "WebObject",
+      "type": "object"
+    },
+    "WebTarget": {
+      "additionalProperties": false,
+      "description": "One approved origin and the path prefixes approved on it. Nothing is inherited.",
+      "properties": {
+        "origin": {
+          "maxLength": 300,
+          "minLength": 8,
+          "title": "Origin",
+          "type": "string"
+        },
+        "paths": {
+          "items": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 40,
+          "minItems": 1,
+          "title": "Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "origin",
+        "paths"
+      ],
+      "title": "WebTarget",
+      "type": "object"
+    },
+    "WebsiteScope": {
+      "additionalProperties": false,
+      "properties": {
+        "accounts": {
+          "items": {
+            "$ref": "#/$defs/WebAccount"
+          },
+          "maxItems": 6,
+          "title": "Accounts",
+          "type": "array"
+        },
+        "allowed_actions": {
+          "items": {
+            "enum": [
+              "read",
+              "sign_in",
+              "sign_up",
+              "submit_form",
+              "compare",
+              "report"
+            ],
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "authority": {
+          "$ref": "#/$defs/ScopeAuthority"
+        },
+        "budget": {
+          "$ref": "#/$defs/WebBudget"
+        },
+        "confirmed_targets": {
+          "const": true,
+          "title": "Confirmed Targets",
+          "type": "boolean"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "login": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LoginConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mode": {
+          "enum": [
+            "owned_fixture",
+            "external"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/WebObject"
+          },
+          "maxItems": 20,
+          "title": "Objects",
+          "type": "array"
+        },
+        "public_values": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Public Values",
+          "type": "array"
+        },
+        "purpose": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/OwnerRule"
+          },
+          "maxItems": 20,
+          "title": "Rules",
+          "type": "array"
+        },
+        "scope_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "signup": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SignupConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start_path": {
+          "default": "/",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Start Path",
+          "type": "string"
+        },
+        "stop_conditions": {
+          "items": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Stop Conditions",
+          "type": "array"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/$defs/WebTarget"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Targets",
+          "type": "array"
+        },
+        "website_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$",
+          "title": "Website Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope_id",
+        "website_id",
+        "name",
+        "mode",
+        "targets",
+        "purpose",
+        "authority",
+        "allowed_actions",
+        "expires_at",
+        "stop_conditions",
+        "confirmed_targets"
+      ],
+      "title": "WebsiteScope",
+      "type": "object"
+    }
+  },
+  "$id": "https://plumb.local/schemas/JourneyCreate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "confirmed_authority": {
+      "const": true,
+      "title": "Confirmed Authority",
+      "type": "boolean"
+    },
+    "scope": {
+      "$ref": "#/$defs/WebsiteScope"
+    }
+  },
+  "required": [
+    "scope",
+    "confirmed_authority"
+  ],
+  "title": "JourneyCreate",
+  "type": "object"
+}

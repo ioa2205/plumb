@@ -1,0 +1,80 @@
+{
+  "$id": "https://plumb.local/schemas/HumanAuthView.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A private, transient view of one approved account's live challenge.",
+  "properties": {
+    "account_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Account Id",
+      "type": "string"
+    },
+    "challenge": {
+      "enum": [
+        "captcha",
+        "one_time_code",
+        "single_sign_on"
+      ],
+      "title": "Challenge",
+      "type": "string"
+    },
+    "height": {
+      "default": 900,
+      "maximum": 900,
+      "minimum": 1,
+      "title": "Height",
+      "type": "integer"
+    },
+    "label": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "question": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "ready": {
+      "const": true,
+      "default": true,
+      "title": "Ready",
+      "type": "boolean"
+    },
+    "screenshot_png": {
+      "maxLength": 4194304,
+      "title": "Screenshot Png",
+      "type": "string"
+    },
+    "step_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Step Id",
+      "type": "string"
+    },
+    "view_id": {
+      "pattern": "^[0-9a-f]{32}$",
+      "title": "View Id",
+      "type": "string"
+    },
+    "width": {
+      "default": 1280,
+      "maximum": 1280,
+      "minimum": 1,
+      "title": "Width",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "view_id",
+    "step_id",
+    "account_id",
+    "label",
+    "challenge",
+    "question",
+    "screenshot_png"
+  ],
+  "title": "HumanAuthView",
+  "type": "object"
+}

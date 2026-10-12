@@ -56,6 +56,24 @@ def command(arguments: list[str], *, output: Path | None = None) -> str:
     return result.stdout.decode("utf-8").strip()
 
 
+def export_requirements(uv: str, destination: Path) -> None:
+    """Ship the browser's Python runtime; Chromium remains an explicit external install."""
+    command(
+        [
+            uv,
+            "export",
+            "--locked",
+            "--extra",
+            "browser",
+            "--no-dev",
+            "--no-emit-project",
+            "--format",
+            "requirements-txt",
+        ],
+        output=destination,
+    )
+
+
 def unpack_zip(
     archive: Path, target: Path, *, prefix: str = "", only: set[str] | None = None
 ) -> None:
@@ -127,6 +145,11 @@ def source_files() -> list[str]:
     for name in tracked:
         parts = Path(name).parts
         if not parts or any(p in {"tests", "node_modules", "__pycache__"} for p in parts):
+            continue
+        if name.startswith("labs/chorsu/"):
+            # The owned practice website: standard library only, checked against its pin
+            # before every start. It needs no environment of its own.
+            result.append(name)
             continue
         if (parts[0] in packages or name.startswith("labs/tandir/")) and name.endswith(
             (
@@ -277,10 +300,7 @@ def build(output: Path, cache: Path) -> Path:
     if uv is None:
         raise ValueError("The build requires uv")
     requirements = cache / "requirements.txt"
-    command(
-        [uv, "export", "--locked", "--no-dev", "--no-emit-project", "--format", "requirements-txt"],
-        output=requirements,
-    )
+    export_requirements(uv, requirements)
     lock = tomllib.loads((ROOT / "uv.lock").read_text())
     ty = next(p for p in lock["package"] if p["name"] == "ty")
     with requirements.open("a", encoding="utf-8") as stream:
@@ -370,6 +390,7 @@ def build(output: Path, cache: Path) -> Path:
         "with a check of the model runner. Both were exercised on the development laptop;\n"
         "a second computer has not been tested.\n\n"
         "TERMINAL ALTERNATIVES\n"
+        'plumb.cmd chat "What is SQL injection?"\n'
         'plumb.cmd inspect "D:\\path\\to\\project"\n'
         'plumb.cmd review "D:\\path\\to\\project" --limit 1\n'
         "plumb.cmd resume <run-id>\n"
@@ -378,12 +399,22 @@ def build(output: Path, cache: Path) -> Path:
         "Saved reports open without a model; completed matching receipt replays are shown.\n"
         "The replay command needs an optional pinned Tandir execution environment that\n"
         "this portable package does not include. Source reviews do not require that runner.\n\n"
-        "CURRENT EXPERIMENTAL TOOLS\n"
-        "Local conversations, private assessment scopes and reviewed observation reports\n"
-        "are included. plumb.cmd chat --help and plumb.cmd assess --help describe them.\n"
-        "Website-start previews also require the optional pinned practice-app runner.\n"
-        "Approved HTTP collection requires the separate hash-pinned practice-app runner;\n"
-        "external website testing stays disabled and collected artifacts need human review.\n"
+        "CHAT AND WEBSITE TESTING\n"
+        "Ask a question in Ask or run plumb.cmd with no arguments. General answers use\n"
+        "the local model; saved evidence has separate citation checks. Model decisions\n"
+        "require a passing capability map for the exact local runtime and question type.\n"
+        "In Website, describe an authorized scope using ordinary fields, create a plan,\n"
+        "and approve the exact steps. Passwords are entered only when the plan runs.\n"
+        "The pinned Playwright package and the owned Chorsu practice site are included.\n"
+        "Check the browser with: plumb.cmd browser check\n"
+        "Install its pinned Chromium explicitly with: plumb.cmd browser install\n"
+        "Chromium is stored outside this installation; existing verified assets are reused.\n"
+        "Run the practice site with: plumb.cmd website fixture --no-model\n"
+        "External tests require: plumb.cmd website qualify\n"
+        "Qualification is per computer and current boundary code. It does not approve a\n"
+        "target. Each test still needs an unexpired scope and explicitly approved plan.\n"
+        "Reports and test-account secrets stay in private local storage.\n"
+        "The older Tandir HTTP collector still needs its separate pinned lab runner.\n"
         "Local security playbooks and fact/decomposed reasoning options are included.\n"
         "They have software checks, but the latest model comparison did not establish\n"
         "better accuracy. The baseline stays the default and all evidence gates remain.\n\n"

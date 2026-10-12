@@ -37,6 +37,9 @@ from backend.redaction import Redactor
 
 LOOPBACK = "127.0.0.1"
 COOKIE = "plumb_session"
+# Where a signed-in browser starts: the plain-language composer (ADR-0028).
+LANDING = "/ask/"
+
 BOOTSTRAP_PATH = "/bootstrap"
 
 CSP_SCRIPT_HASHES = "plumb.workbench.script_hashes"  # internal ASGI scope key, never a header
@@ -208,10 +211,10 @@ class Guarded:
 def bootstrap(gate: Gate, token: str | None, cookie_header: str | None) -> Response:
     """Exchange the one-time token for the session cookie, then leave the link behind."""
     if gate.has_session(cookie_header):
-        return RedirectResponse("/", status_code=303)  # the link reopened from history
+        return RedirectResponse(LANDING, status_code=303)  # the link reopened from history
     session = gate.exchange(token or "")
     if session is None:
         return PlainTextResponse(USED_LINK, status_code=403)
-    response = RedirectResponse("/", status_code=303)
+    response = RedirectResponse(LANDING, status_code=303)
     response.set_cookie(COOKIE, session, httponly=True, samesite="strict", path="/")
     return response

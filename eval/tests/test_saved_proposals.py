@@ -96,6 +96,7 @@ def test_current_tandir_accounting_accepts_source_proposal_without_runtime_credi
 def test_matched_accounting_keeps_valid_proposed_changes_and_grammar_modes(
     tmp_path: Path,
     method: plumb.Method,
+    current_development_manifest: Path,
 ) -> None:
     ids = {"v2_command_arguments/original", "v2_command_arguments/shell_input"}
     prepared = base.prepare(

@@ -1,0 +1,18 @@
+{
+  "$id": "https://plumb.local/schemas/FixtureCreate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "variant": {
+      "default": "open",
+      "enum": [
+        "open",
+        "defended"
+      ],
+      "title": "Variant",
+      "type": "string"
+    }
+  },
+  "title": "FixtureCreate",
+  "type": "object"
+}

@@ -14,6 +14,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { PRIVATE_PATTERNS } from './private.mjs';
+import { downloadIdentity, matchDownloadEvidence, reportClaims } from './download-record.mjs';
 
 const LANDING = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = resolve(LANDING, '..');
@@ -679,40 +680,34 @@ function extractScannerPin() {
  * saved checks recorded are kept. Neither check loaded a model, so nothing here says that the
  * package has run a review: the pages have to say that it has not.
  *
- * The smoke record's own top-level verdict is not required: the preserved report of a run saved
- * by an older version refuses by design. That refusal is recorded below separately.
+ * Inert command/protection checks must pass. Historical report refusals are expected outcomes,
+ * separate from an opened current report and from the newer no-model owned website journey.
  * @param {any} run the recorded run, as extracted above
  * @param {any} cpuProfile the processor-only run, as extracted above
  * @param {Record<string, string>} cpuInvestigator the files that completed that run, by hash
  * @param {any} scanner the pinned pattern scanner
  */
 function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
-  const smoke = json(`${RESULTS}/2026-10-11-m7.9i-package-smoke.json`);
-  const followup = json(`${RESULTS}/2026-10-11-m7.9i-package-followup.json`);
+  const portable = json(`${RESULTS}/2026-10-12-website-repair-portable.json`);
+  const smoke = json(`${RESULTS}/2026-10-12-website-publication-portable-inert.json`);
+  const followup = smoke;
+  const planning = json(`${RESULTS}/2026-10-12-website-repair-planning.json`);
   const recorded = json(`${RESULTS}/2026-10-08-m7.7f-package-smoke.json`).artifact;
-  const { artifact } = smoke;
-  must(smoke.package === followup.package, 'the two download checks name different packages');
-  must(artifact.passed && artifact.zip_inventory_and_hashes_pass && artifact.private_files_absent, 'download artifact checks did not pass');
-  must(artifact.source_dirty === false, 'download was built from uncommitted source');
+  const artifact = matchDownloadEvidence(portable, smoke);
+  must(planning.conditions.type_qualified_for_exact_pins === false && planning.conditions.actual_model_menu_choice === false,
+    'the current planning record no longer supports its unqualified limit');
   const check = (/** @type {string} */ command) => smoke.checks.find((/** @type {any} */ entry) => entry.args[0] === command);
   must(check('--help')?.passed && check('setup')?.passed && check('inspect')?.passed && smoke.web.passed, 'download command checks did not pass');
-  must(followup.report_opened && followup.current_report_unchanged, 'download did not open the recorded report');
   const features = followup.feature_checks;
   must(
     features?.included_modules_import === true && features.security_card_pack_loaded === true &&
       features.security_card_count === 3 && features.security_card_license_present === true &&
       features.baseline_default_preserved === true && features.website_missing_runner_refused === true &&
-      features.model_loaded === false && features.external_testing_enabled === false,
+      features.model_loaded === false && features.external_testing_enabled === false &&
+      features.external_scope_and_qualification_required === true,
     'the current package features or unchanged safety defaults were not checked',
   );
-  must(
-    followup.checks.some((/** @type {any} */ entry) => entry.passed && entry.args[0] === 'report' && entry.args[1] === run.id),
-    'the report the download opened is not the recorded run',
-  );
-  const name = String(artifact.archive).split(/[\\/]/).pop() ?? '';
-  must(/^plumb-[\w.-]+\.zip$/.test(name), 'unexpected download name');
-  const built = name.match(/-(\d{4})(\d{2})(\d{2})-[a-z]\.zip$/);
-  must(built, 'the download name carries no build day');
+  const identity = downloadIdentity(String(artifact.archive));
 
   // The investigator: the files Plumb records as its identity in every review.
   const files = /** @type {Record<string, string>} */ (artifact.implementation_sha256);
@@ -730,14 +725,12 @@ function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
   // What the package's own commands printed, with no model loaded.
   const doctor = JSON.parse(check('doctor').stdout);
   const preview = JSON.parse(check('setup').stdout);
-  const olderReport = check('report');
 
   return {
-    name,
+    ...identity,
     archive_bytes: artifact.archive_bytes,
     archive_sha256: artifact.archive_sha256,
     inventoried_files: artifact.inventoried_files,
-    built_on: /** @type {RegExpMatchArray} */ (built).slice(1).join('-'),
     checked_at: smoke.created_at,
     // Every source file inside the package was compared with the checkout it was built from;
     // the artifact check does not pass unless all of them match.
@@ -761,17 +754,21 @@ function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
     // The setup preview carries the model chosen with --model; earlier packages had no such field.
     setup_takes_model: 'model' in preview,
     knows_pattern_scanner: doctor.pattern_scanner?.name === scanner.name && doctor.pattern_scanner?.release === scanner.release,
-    model_loaded: [smoke.model_loaded, followup.model_loaded, followup.model_loaded_by_doctor, doctor.model_loaded, preview.model_loaded].some((value) => value !== false),
+    model_loaded: [smoke.model_loaded, portable.model_loaded, doctor.model_loaded, preview.model_loaded].some((value) => value !== false),
     // The checks used the model and its runner as already installed on the laptop: the
     // package's own install step fetched nothing.
-    downloaded_or_installed: [smoke.downloads_or_installation, followup.downloads_started_by_doctor, doctor.downloads_started].some((value) => value !== false),
+    downloaded_or_installed: [smoke.downloads_or_installation, doctor.downloads_started, portable.chromium_download_exercised].some((value) => value !== false),
     model_already_installed: followup.doctor_summary?.model_verified === true && followup.doctor_summary?.runtime_verified === true,
     developer_tools_on_path: smoke.developer_tools_on_path || followup.developer_tools_on_path,
     clean_user_profile: smoke.clean_user_profile,
     folder_name_had_spaces: smoke.package_path_contains_spaces,
     launch_rechecks_memory: doctor.profiles.length > 0 && doctor.profiles.every((/** @type {any} */ profile) => profile.launch_rechecks_memory === true),
     doctor_refused_for_memory: followup.doctor_summary?.messages?.some((/** @type {string} */ m) => /RAM/.test(m)) ?? false,
-    older_report_refused: smoke.saved_report_is_historical === true && olderReport?.passed === false && /refused/i.test(olderReport.stdout),
+    ...reportClaims(smoke, run.id),
+    pinned_browser_checked: portable.conditions.pinned_browser_used === true && portable.calls.some((/** @type {any} */ entry) => entry.arguments[0] === 'browser' && entry.arguments[1] === 'check' && entry.returncode === 0),
+    owned_website_completed: portable.conditions.journey_done === true && portable.conditions.designated_accounts_confirmed === true && portable.conditions.defended_has_no_findings === true,
+    external_website_tested: portable.external_website_tested,
+    model_planning_qualified: planning.conditions.type_qualified_for_exact_pins,
     features: {
       included_modules_import: features.included_modules_import,
       security_card_count: features.security_card_count,
@@ -779,6 +776,7 @@ function extractDownload(run, cpuProfile, cpuInvestigator, scanner) {
       baseline_default_preserved: features.baseline_default_preserved,
       website_missing_runner_refused: features.website_missing_runner_refused,
       external_testing_enabled: features.external_testing_enabled,
+      external_scope_and_qualification_required: features.external_scope_and_qualification_required,
     },
   };
 }
@@ -793,7 +791,272 @@ function extractObservationComparison() {
       result.correct === 0 && result.incorrect_decisive === 0 && result.supported === 0 && result.inconclusive === result.analyzed_cases),
     'the observation comparison no longer supports the stated quality limit',
   );
-  return { acceptance_met: false, completed_analyses_inconclusive: true, conditions_unrun: true, baseline_retained: true };
+  // The run itself, condition by condition: what was asked, what came back and why it stopped.
+  const execution = json(`${TOOL}/execution.json`);
+  const plan = json(`${TOOL}/preparation.json`);
+  must(execution.state === accounting.execution_state && execution.unrun_conditions === accounting.unrun_conditions, 'the comparison run and its accounting disagree');
+  must(execution.target_executed === false && execution.final_evaluation === false && execution.runtime_verification === 'not_attempted', 'the comparison ran something it should not have');
+  must(plan.max_retries === 0 && plan.seeds.length === plan.per_condition_requests, 'the comparison plan changed');
+  const approaches = /** @type {string[]} */ (accounting.summary.map((/** @type {any} */ entry) => entry.approach));
+  const sum = (/** @type {number[]} */ values) => values.reduce((a, b) => a + b, 0);
+  const conditions = execution.conditions.map((/** @type {any} */ entry) => ({
+    case: entry.case_id,
+    approach: entry.approach,
+    expected: entry.expected_interpretation,
+    conclusion: entry.analysis.conclusion,
+    stop_reason: entry.analysis.stop_reason,
+    attempts: entry.attempted_requests,
+    answers: entry.completed_requests,
+    prompt_tokens: entry.prompt_tokens,
+    completion_tokens: entry.completion_tokens,
+    usage_unknown_requests: entry.token_usage_unavailable_requests,
+    wall_seconds: sum(entry.wall_seconds),
+    correct: entry.correct,
+  }));
+  must(conditions.every((/** @type {any} */ entry) => approaches.includes(entry.approach) && entry.conclusion === 'inconclusive' && entry.correct === false), 'a comparison condition is no longer Inconclusive');
+  must(sum(conditions.map((/** @type {any} */ entry) => entry.attempts)) === execution.judgment_attempts, 'comparison attempts do not add up');
+  const planned = plan.cases.length * approaches.length;
+  must(planned === conditions.length + execution.unrun_conditions, 'planned, run and unrun comparison conditions do not add up');
+  return {
+    acceptance_met: false,
+    completed_analyses_inconclusive: true,
+    conditions_unrun: true,
+    baseline_retained: true,
+    recorded_at: execution.started_at,
+    seconds: execution.seconds,
+    attempts: execution.judgment_attempts,
+    answers: sum(conditions.map((/** @type {any} */ entry) => entry.answers)),
+    planned,
+    unrun: execution.unrun_conditions,
+    cases: plan.cases.map((/** @type {any} */ entry) => ({ id: entry.case_id, expected: entry.expected_interpretation })),
+    approaches,
+    limits: {
+      attempts: plan.max_judgment_attempts,
+      seconds: plan.max_seconds,
+      condition_attempts: plan.per_condition_requests,
+      condition_seconds: plan.per_condition_seconds,
+      retries: plan.max_retries,
+    },
+    profile: plan.profile.id,
+    model: plan.profile.model_id,
+    guidance_card: plan.guidance_card.id,
+    conditions,
+  };
+}
+
+// ---------------------------------------------------------------- web assessment
+
+const TOOL = `${RESULTS}/2026-10-11-tool-assisted`;
+
+/**
+ * The one recorded collection of requests from the bundled practice app: the plan that was
+ * shown, what was approved, and what each request got back. Sign-in replies are not kept as
+ * evidence, so those steps carry no answer here. The run's own port number is left out.
+ */
+function extractCollection() {
+  const saved = json(`${TOOL}/collection.json`);
+  const preview = saved.preview.preview;
+  const { trace } = saved;
+  const permission = saved.developer_test_permission;
+  must(saved.state === 'completed_pending_human_review' && saved.human_attachment_review === 'pending' && saved.automatic_import === false, 'the collection is no longer waiting for human review');
+  must(saved.external_access_enabled === false && preview.external_access_enabled === false, 'the collection reached beyond the practice app');
+  must(saved.model_loaded === false && saved.runtime_verification === 'not_attempted', 'the collection claims more than requests and answers');
+  must(saved.preview.preview_sha256 === trace.preview_sha256 && permission.preview_sha256 === trace.preview_sha256 && permission.reviewed_preview === true, 'the approval is not for the plan that ran');
+  must(/^http:\/\/127\.0\.0\.1:\d+$/.test(trace.runner_origin), 'the collection did not stay on this computer');
+  must(trace.stopped === false && trace.stop_reason === null && trace.requests_used === preview.actions.length, 'the collection did not complete its plan');
+  must(permission.approved_action_ids.length === preview.actions.length, 'not every planned request was approved');
+  must(trace.requests_used <= preview.max_requests && trace.bytes_received <= preview.max_total_bytes && trace.seconds <= preview.max_seconds, 'the collection went over its limits');
+
+  const records = new Map(trace.records.map((/** @type {any} */ entry) => [entry.artifact_id, entry]));
+  const actions = preview.actions.map((/** @type {any} */ action, /** @type {number} */ index) => {
+    const progress = trace.action_progress[index];
+    must(progress.action_id === action.action_id && progress.completed === true && progress.attempts === 1 && progress.missing_evidence.length === 0, `${action.action_id}: not completed in one attempt`);
+    must(permission.approved_action_ids.includes(action.action_id), `${action.action_id}: ran without approval`);
+    const kept = progress.artifact_ids.map((/** @type {string} */ id) => records.get(id));
+    must(kept.length <= 1 && kept.every(Boolean), `${action.action_id}: unexpected evidence`);
+    const [answer] = kept;
+    if (answer) must(answer.context.account_id === action.account_id && answer.request.method === action.method, `${action.action_id}: answer does not match the plan`);
+    /** @type {any} */
+    let body = null;
+    try {
+      body = answer ? JSON.parse(answer.response.body) : null;
+    } catch {
+      body = null;
+    }
+    return {
+      id: action.action_id,
+      account: action.account_id,
+      method: action.method,
+      template: action.path,
+      path: answer ? new URL(answer.request.url).pathname : action.path,
+      purpose: action.purpose,
+      state_change: action.state_change,
+      kept: Boolean(answer),
+      status: answer ? answer.response.status : null,
+      marker_present: answer ? String(answer.response.body).includes(preview.spec.marker) : null,
+      detail: body && typeof body.detail === 'string' ? body.detail : null,
+    };
+  });
+  must(records.size === actions.filter((/** @type {any} */ action) => action.kept).length, 'kept answers and plan disagree');
+
+  // What "safe" would look like, as the plan itself declares it.
+  const expectations = [...preview.spec.requests, ...preview.control_spec.requests]
+    .filter((/** @type {any} */ request) => request.role !== 'setup')
+    .map((/** @type {any} */ request) => ({ account: request.principal, method: request.method, template: request.path, role: request.role, expected_if_safe: request.expected_if_safe }));
+
+  return {
+    recorded_at: saved.started_at,
+    seconds: trace.seconds,
+    requests: trace.requests_used,
+    bytes_received: trace.bytes_received,
+    runner: preview.runner,
+    loopback_only: true,
+    marker: preview.spec.marker,
+    limits: {
+      requests: preview.max_requests,
+      seconds: preview.max_seconds,
+      response_bytes: preview.max_response_bytes,
+      total_bytes: preview.max_total_bytes,
+      permission_hours: (Date.parse(permission.expires_at) - Date.parse(preview.created_at)) / 3_600_000,
+    },
+    approved_by: permission.approved_by,
+    human_review: saved.human_attachment_review,
+    imported: saved.automatic_import,
+    external_access: saved.external_access_enabled,
+    model_loaded: saved.model_loaded,
+    runtime_verification: saved.runtime_verification,
+    actions,
+    expectations,
+  };
+}
+
+/** The three reviewed method cards Plumb can hand the model, by title and source. */
+function extractCards() {
+  const path = 'knowledge/data/security-cards-v1.json';
+  const pack = json(path);
+  const checked = json(`${TOOL}/playbooks.json`);
+  must(sources.get(path) === checked.pack.sha256, 'the card pack differs from the one that was checked');
+  must(pack.cards.length === 3 && pack.cards.every((/** @type {any} */ card) => card.kind === 'methodology_only'), 'the card pack changed');
+  must(checked.target_authority === false && checked.cloud_inference === false && checked.verification.result === 'passed', 'the card checks did not pass');
+  return {
+    version: pack.version,
+    license: pack.license_id,
+    bytes: bytes(path).length,
+    tests: checked.verification.tests,
+    cards: pack.cards.map((/** @type {any} */ card) => ({
+      id: card.id,
+      title: card.title,
+      family: card.family,
+      sources: card.sources.map((/** @type {any} */ source) => ({ id: source.source_id, title: source.title, version: source.version })),
+    })),
+  };
+}
+
+/**
+ * What `plumb models` and `plumb ask` printed when they were run for this site, from the
+ * record landing/scripts/console-records.mjs saved. Neither loads the model.
+ * @param {any} run the recorded run @param {any} cpuProfile the processor-only run
+ */
+function extractConsoleRecords(run, cpuProfile) {
+  const saved = json(`${RESULTS}/2026-10-12-m7.9j-read-only-commands.json`);
+  must(saved.model_processes_before === 0 && saved.model_processes_after === 0, 'a model process was running during the capture');
+  must(saved.models.exit === 0 && saved.ask.exit === 0, 'a captured command failed');
+  const { catalog } = saved.models;
+  const models = catalog.models.map((/** @type {any} */ model) => {
+    const states = [...new Set(model.profiles.map((/** @type {any} */ profile) => profile.quality_state))];
+    must(states.length <= 1, `${model.model_id}: profiles disagree on quality`);
+    return {
+      id: model.model_id,
+      family: model.family,
+      quantization: model.quantization,
+      size_bytes: model.size_bytes,
+      installed: model.verified_installed,
+      quality: states[0] ?? 'untested',
+      profiles: model.profiles.map((/** @type {any} */ profile) => ({
+        id: profile.profile_id,
+        backend: profile.backend,
+        required_ram_bytes: profile.required_ram_bytes,
+        required_vram_bytes: profile.required_vram_bytes,
+        memory_fit: profile.memory_fit,
+        first_use_check: profile.first_use_check,
+        launch_available: profile.launch_available,
+        automatic_eligible: profile.automatic_eligible,
+      })),
+    };
+  });
+  const [first] = models;
+  must(first.id === run.model.id && first.quality === 'recorded_scoped' && first.installed === true, 'the default model is no longer the one with a recorded result');
+  must(first.profiles.some((/** @type {any} */ profile) => profile.id === run.profile) && first.profiles.some((/** @type {any} */ profile) => profile.id === cpuProfile.id), 'the default model lost a recorded profile');
+  must(models.slice(1).every((/** @type {any} */ model) => model.quality === 'untested' && model.installed === false && model.profiles.every((/** @type {any} */ profile) => !profile.automatic_eligible)), 'another model is no longer untested');
+  must(saved.ask.run_id === run.id && saved.ask.finding === run.findings[0].display_id && saved.ask.conclusion === run.findings[0].conclusion, 'the captured question is not about the recorded finding');
+  must(saved.ask.generated_by === 'saved_evidence' && saved.ask.network_activity === false && saved.ask.authorization_granted === false, 'the captured answer did more than read saved evidence');
+  return {
+    recorded_at: saved.recorded_at,
+    models: {
+      command: saved.models.command,
+      lines: saved.models.lines,
+      available_ram_bytes: catalog.available_ram_bytes,
+      selected_profile: catalog.selected_profile,
+      list: models,
+    },
+    ask: {
+      prompt: saved.ask.prompt,
+      finding: saved.ask.finding,
+      conclusion: saved.ask.conclusion,
+      exhibits: saved.ask.exhibits,
+      checks: saved.ask.checks,
+      limitations: saved.ask.limitations,
+      generated_by: saved.ask.generated_by,
+    },
+  };
+}
+
+/** The saved check of the workbench's new screens, which the site's pictures are cut from. */
+function extractWorkbenchViews() {
+  const saved = json(`${RESULTS}/2026-10-11-improvements-ui-checks.json`);
+  must(saved.passed === true && saved.errors.length === 0 && saved.model_loaded === false && saved.runner_started === false, 'the workbench view check did not pass');
+  must(saved.samples.every((/** @type {any} */ sample) => sample.violations.length === 0 && sample.emptyButtons === 0 && sample.scrollWidth <= sample.width), 'a workbench view overflowed or broke its page policy');
+  return {
+    captures: saved.samples.length,
+    screens: [...new Set(saved.samples.map((/** @type {any} */ sample) => sample.screen))],
+    widths: [...new Set(saved.samples.map((/** @type {any} */ sample) => sample.width))],
+    fresh_model_acceptance: saved.fresh_model_acceptance,
+    signed_in_acceptance: saved.authenticated_backend_acceptance,
+    label: saved.label,
+  };
+}
+
+/** The private report drafts written from the comparison's synthetic cases. None was exported. */
+function extractReportDrafts() {
+  const saved = json(`${TOOL}/private-reports.json`);
+  const parts = ['description', 'safe_steps', 'impact', 'mitigation', 'tools', 'limitations'];
+  must(saved.published === false && saved.synthetic_fixtures_only === true, 'a private report draft was published');
+  must(
+    saved.reports.every((/** @type {any} */ report) => parts.every((part) => report[part] === true) && report.endpoints.length > 0 && report.claimed_runtime_verification === 'not_attempted'),
+    'a report draft lost a required part',
+  );
+  return { count: saved.reports.length, published: saved.published, synthetic_only: saved.synthetic_fixtures_only, parts: ['description', 'endpoints', ...parts.slice(1)] };
+}
+
+/** The read-only connection for other tools (MCP), as its saved acceptance check recorded it. */
+function extractToolConnection() {
+  const saved = json(`${RESULTS}/2026-10-06-m7.4-acceptance.json`);
+  must(saved.passed === true && saved.model_loaded === false && saved.target_executed === false && saved.saved_report_files_unchanged === true, 'the tool connection check did not pass');
+  must(saved.remaining_owned_child_pids.length === 0, 'the tool connection check left a process behind');
+  const listings = saved.calls.filter((/** @type {any} */ call) => Array.isArray(call.tools));
+  const names = listings.map((/** @type {any} */ call) => call.tools.map((/** @type {any} */ tool) => tool.name).sort().join(' '));
+  must(listings.length === 2 && names[0] === names[1], 'the two connection modes list different lookups');
+  return { recorded_at: saved.started, lookups: names[0].split(' '), modes: listings.length };
+}
+
+/** The latest whole run of the Python tests, with its one failure and how it was repaired. */
+function extractLatestSuite() {
+  const saved = json(`${TOOL}/software-checks.json`);
+  const full = saved.python_full_run;
+  must(saved.fresh_inference === false && full.collected === full.passed + full.failed + full.skipped, 'the latest suite figures do not add up');
+  const repaired = saved.repairs.at(-1);
+  must(repaired.failed === 0 && repaired.passed > 0, 'the repair of the latest suite failure did not pass');
+  return { date: saved.date, collected: full.collected, passed: full.passed, failed: full.failed, skipped: full.skipped, repaired_checks: repaired.passed, schemas: saved.schemas.schemas };
 }
 
 function extractSoftware() {
@@ -962,7 +1225,13 @@ function main() {
     scanner_download: scanner,
     download: extractDownload(run, cpuProfile, extractCpuInvestigator(cpuProfile), scanner),
     observation_comparison: extractObservationComparison(),
-    software: extractSoftware(),
+    collection: extractCollection(),
+    cards: extractCards(),
+    console_records: extractConsoleRecords(run, cpuProfile),
+    workbench_views: extractWorkbenchViews(),
+    report_drafts: extractReportDrafts(),
+    tool_connection: extractToolConnection(),
+    software: { ...extractSoftware(), latest: extractLatestSuite() },
     development: extractDevelopment(),
     sources: Object.fromEntries([...sources.entries()].sort(([a], [b]) => a.localeCompare(b))),
   };

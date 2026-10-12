@@ -1140,22 +1140,23 @@
     "size": 53652992
   },
   "download": {
-    "name": "plumb-0.0.0-prototype-20261011-j.zip",
-    "archive_bytes": 97404466,
-    "archive_sha256": "022885c0ca6faa66a99f89ec1bc49c8c5162835974d365f017c76f7d387b0fdb",
-    "inventoried_files": 3033,
-    "built_on": "2026-10-11",
-    "checked_at": "2026-10-11T18:32:11.481534+00:00",
-    "source_files_checked": 571,
+    "name": "plumb-0.0.0-prototype-20261012-web.zip",
+    "built_on": "2026-10-12",
+    "archive_bytes": 136626473,
+    "archive_sha256": "5bbea48aa7a74cd5ca5c61b87f8353bf9bec5bb4ceaf59fecb1802602c43d49d",
+    "inventoried_files": 3407,
+    "checked_at": "2026-10-12T13:38:18.845035+00:00",
+    "source_files_checked": 636,
     "investigator_files": 64,
     "investigator_same_as_source": true,
     "same_investigator_as_cpu_profile_run": false,
     "since_recorded_test": {
-      "same": 60,
+      "same": 59,
       "changed": [
         "backend/review.py",
         "backend/profiles.py",
-        "backend/vulkan_profile.py"
+        "backend/vulkan_profile.py",
+        "agent/llm.py"
       ],
       "added": [
         "backend/cpu_profile.py"
@@ -1176,20 +1177,540 @@
     "launch_rechecks_memory": true,
     "doctor_refused_for_memory": false,
     "older_report_refused": true,
+    "recorded_report_opened": true,
+    "pinned_browser_checked": true,
+    "owned_website_completed": true,
+    "external_website_tested": false,
+    "model_planning_qualified": false,
     "features": {
       "included_modules_import": true,
       "security_card_count": 3,
       "security_card_license_present": true,
       "baseline_default_preserved": true,
       "website_missing_runner_refused": true,
-      "external_testing_enabled": false
+      "external_testing_enabled": false,
+      "external_scope_and_qualification_required": true
     }
   },
   "observation_comparison": {
     "acceptance_met": false,
     "completed_analyses_inconclusive": true,
     "conditions_unrun": true,
-    "baseline_retained": true
+    "baseline_retained": true,
+    "recorded_at": "2026-10-11T16:05:06.861845+00:00",
+    "seconds": 1312.1596391999992,
+    "attempts": 12,
+    "answers": 10,
+    "planned": 12,
+    "unrun": 7,
+    "cases": [
+      {
+        "id": "receipt-issue",
+        "expected": "supported"
+      },
+      {
+        "id": "invoice-protected",
+        "expected": "rejected"
+      },
+      {
+        "id": "receipt-adversarial",
+        "expected": "supported"
+      }
+    ],
+    "approaches": [
+      "baseline",
+      "facts",
+      "decomposed",
+      "facts_guidance"
+    ],
+    "limits": {
+      "attempts": 36,
+      "seconds": 3600,
+      "condition_attempts": 3,
+      "condition_seconds": 300,
+      "retries": 0
+    },
+    "profile": "mx350-vulkan-8k",
+    "model": "qwen3.5-2b-q4_k_m",
+    "guidance_card": "GUIDE-object-authorization",
+    "conditions": [
+      {
+        "case": "receipt-issue",
+        "approach": "baseline",
+        "expected": "supported",
+        "conclusion": "inconclusive",
+        "stop_reason": "ValueError",
+        "attempts": 2,
+        "answers": 2,
+        "prompt_tokens": 1736,
+        "completion_tokens": 544,
+        "usage_unknown_requests": 0,
+        "wall_seconds": 220.43815690000338,
+        "correct": false
+      },
+      {
+        "case": "receipt-issue",
+        "approach": "facts",
+        "expected": "supported",
+        "conclusion": "inconclusive",
+        "stop_reason": null,
+        "attempts": 3,
+        "answers": 3,
+        "prompt_tokens": 3540,
+        "completion_tokens": 636,
+        "usage_unknown_requests": 0,
+        "wall_seconds": 298.2471684999982,
+        "correct": false
+      },
+      {
+        "case": "receipt-issue",
+        "approach": "decomposed",
+        "expected": "supported",
+        "conclusion": "inconclusive",
+        "stop_reason": "ValueError",
+        "attempts": 2,
+        "answers": 2,
+        "prompt_tokens": 2516,
+        "completion_tokens": 666,
+        "usage_unknown_requests": 0,
+        "wall_seconds": 280.0096607000014,
+        "correct": false
+      },
+      {
+        "case": "receipt-issue",
+        "approach": "facts_guidance",
+        "expected": "supported",
+        "conclusion": "inconclusive",
+        "stop_reason": "BudgetStop",
+        "attempts": 3,
+        "answers": 2,
+        "prompt_tokens": 3356,
+        "completion_tokens": 467,
+        "usage_unknown_requests": 1,
+        "wall_seconds": 300.52896989999863,
+        "correct": false
+      },
+      {
+        "case": "invoice-protected",
+        "approach": "baseline",
+        "expected": "rejected",
+        "conclusion": "inconclusive",
+        "stop_reason": "ModelUnavailable",
+        "attempts": 2,
+        "answers": 1,
+        "prompt_tokens": 849,
+        "completion_tokens": 252,
+        "usage_unknown_requests": 1,
+        "wall_seconds": 146.5910526000007,
+        "correct": false
+      }
+    ]
+  },
+  "collection": {
+    "recorded_at": "2026-10-11T15:59:53.716051+00:00",
+    "seconds": 7.2517554000005475,
+    "requests": 9,
+    "bytes_received": 1638,
+    "runner": "hash_pinned_owned_tandir",
+    "loopback_only": true,
+    "marker": "PLUMB-TASK2-SYNTHETIC-ORDER",
+    "limits": {
+      "requests": 12,
+      "seconds": 180,
+      "response_bytes": 65536,
+      "total_bytes": 786432,
+      "permission_hours": 3.999995
+    },
+    "approved_by": "Fixed owned synthetic development exercise under implementation task",
+    "human_review": "pending",
+    "imported": false,
+    "external_access": false,
+    "model_loaded": false,
+    "runtime_verification": "not_attempted",
+    "actions": [
+      {
+        "id": "readiness:health",
+        "account": null,
+        "method": "GET",
+        "template": "/health",
+        "path": "/health",
+        "purpose": "readiness",
+        "state_change": false,
+        "kept": false,
+        "status": null,
+        "marker_present": null,
+        "detail": null
+      },
+      {
+        "id": "authenticate:alice",
+        "account": "alice",
+        "method": "POST",
+        "template": "/auth/login",
+        "path": "/auth/login",
+        "purpose": "authenticate",
+        "state_change": true,
+        "kept": false,
+        "status": null,
+        "marker_present": null,
+        "detail": null
+      },
+      {
+        "id": "authenticate:bob",
+        "account": "bob",
+        "method": "POST",
+        "template": "/auth/login",
+        "path": "/auth/login",
+        "purpose": "authenticate",
+        "state_change": true,
+        "kept": false,
+        "status": null,
+        "marker_present": null,
+        "detail": null
+      },
+      {
+        "id": "probe:0",
+        "account": "alice",
+        "method": "POST",
+        "template": "/orders",
+        "path": "/orders",
+        "purpose": "create_synthetic",
+        "state_change": true,
+        "kept": true,
+        "status": 201,
+        "marker_present": false,
+        "detail": null
+      },
+      {
+        "id": "probe:1",
+        "account": "bob",
+        "method": "GET",
+        "template": "/orders/{order_id}/receipt",
+        "path": "/orders/3/receipt",
+        "purpose": "read",
+        "state_change": false,
+        "kept": true,
+        "status": 200,
+        "marker_present": true,
+        "detail": null
+      },
+      {
+        "id": "probe:2",
+        "account": "alice",
+        "method": "GET",
+        "template": "/orders/{order_id}/receipt",
+        "path": "/orders/3/receipt",
+        "purpose": "read",
+        "state_change": false,
+        "kept": true,
+        "status": 200,
+        "marker_present": true,
+        "detail": null
+      },
+      {
+        "id": "probe:3",
+        "account": "bob",
+        "method": "GET",
+        "template": "/orders/{order_id}/invoice",
+        "path": "/orders/3/invoice",
+        "purpose": "read",
+        "state_change": false,
+        "kept": true,
+        "status": 404,
+        "marker_present": false,
+        "detail": "Order not found"
+      },
+      {
+        "id": "probe:4",
+        "account": "alice",
+        "method": "GET",
+        "template": "/orders/{order_id}/invoice",
+        "path": "/orders/3/invoice",
+        "purpose": "read",
+        "state_change": false,
+        "kept": true,
+        "status": 200,
+        "marker_present": true,
+        "detail": null
+      },
+      {
+        "id": "probe:5",
+        "account": "bob",
+        "method": "GET",
+        "template": "/orders/{order_id}/invoice",
+        "path": "/orders/3/invoice",
+        "purpose": "read",
+        "state_change": false,
+        "kept": true,
+        "status": 404,
+        "marker_present": false,
+        "detail": "Order not found"
+      }
+    ],
+    "expectations": [
+      {
+        "account": "bob",
+        "method": "GET",
+        "template": "/orders/{order_id}/receipt",
+        "role": "attack",
+        "expected_if_safe": "denied"
+      },
+      {
+        "account": "alice",
+        "method": "GET",
+        "template": "/orders/{order_id}/receipt",
+        "role": "control",
+        "expected_if_safe": "allowed"
+      },
+      {
+        "account": "bob",
+        "method": "GET",
+        "template": "/orders/{order_id}/invoice",
+        "role": "attack",
+        "expected_if_safe": "denied"
+      },
+      {
+        "account": "alice",
+        "method": "GET",
+        "template": "/orders/{order_id}/invoice",
+        "role": "control",
+        "expected_if_safe": "allowed"
+      }
+    ]
+  },
+  "cards": {
+    "version": "1.0.0",
+    "license": "CC-BY-SA-4.0",
+    "bytes": 15063,
+    "tests": 25,
+    "cards": [
+      {
+        "id": "GUIDE-object-authorization",
+        "title": "Cross-account object authorization",
+        "family": "authorization",
+        "sources": [
+          {
+            "id": "WSTG-4.2-ATHZ-04",
+            "title": "Testing for Insecure Direct Object References",
+            "version": "WSTG-4.2"
+          },
+          {
+            "id": "ASVS-5.0.0-V8",
+            "title": "V8 Authorization",
+            "version": "ASVS-5.0.0"
+          }
+        ]
+      },
+      {
+        "id": "GUIDE-function-authorization",
+        "title": "Role and function authorization",
+        "family": "authorization",
+        "sources": [
+          {
+            "id": "WSTG-4.2-ATHZ-02",
+            "title": "Testing for Bypassing Authorization Schema",
+            "version": "WSTG-4.2"
+          },
+          {
+            "id": "ASVS-5.0.0-V8",
+            "title": "V8 Authorization",
+            "version": "ASVS-5.0.0"
+          }
+        ]
+      },
+      {
+        "id": "GUIDE-session-continuity",
+        "title": "Session identity and termination continuity",
+        "family": "session_management",
+        "sources": [
+          {
+            "id": "WSTG-4.2-SESS-06",
+            "title": "Testing for Logout Functionality",
+            "version": "WSTG-4.2"
+          },
+          {
+            "id": "ASVS-5.0.0-V7",
+            "title": "V7 Session Management",
+            "version": "ASVS-5.0.0"
+          }
+        ]
+      }
+    ]
+  },
+  "console_records": {
+    "recorded_at": "2026-10-11T19:50:24.774Z",
+    "models": {
+      "command": "uv run --locked plumb models",
+      "lines": [
+        "qwen3.5-2b-q4_k_m: recorded scoped quality; verified installed",
+        "  mx350-vulkan-8k: unavailable now; first-use not needed",
+        "  cpu-8k: unavailable now; first-use passed",
+        "qwen3.5-0.8b-q4_k_m: untested quality; missing or unverified",
+        "  cpu-8k-qwen3.5-0.8b-q4_k_m: unavailable now; first-use pending",
+        "qwen3.5-4b-q4_k_m: untested quality; missing or unverified",
+        "  cpu-8k-qwen3.5-4b-q4_k_m: unavailable now; first-use pending",
+        "gemma-4-e2b-it-qat-q4_0: untested quality; missing or unverified",
+        "  No launch profile: memory requirement or runtime support has not been measured.",
+        "qwen3-4b-instruct-2507-q4_k_m: untested quality; missing or unverified",
+        "  cpu-8k-qwen3-4b-instruct-2507-q4_k_m: unavailable now; first-use pending",
+        "Automatic profile: mx350-vulkan-8k",
+        "Automatic selection requires recorded scoped development quality, compatible hardware and the current memory/asset/runtime gates. Prefer the measured hardware profile when available, then its CPU profile. Untested alternatives require an explicit choice and their own first-use check. Model size never ranks security quality. If no eligible profile is ready, setup shows the eligible compatible choice and refuses launch until its gates pass.",
+        "Use --model <id> to select. Installation, large-download approval and first-use checks remain separate."
+      ],
+      "available_ram_bytes": 1215864832,
+      "selected_profile": "mx350-vulkan-8k",
+      "list": [
+        {
+          "id": "qwen3.5-2b-q4_k_m",
+          "family": "Qwen3.5-2B",
+          "quantization": "Q4_K_M",
+          "size_bytes": 1396198496,
+          "installed": true,
+          "quality": "recorded_scoped",
+          "profiles": [
+            {
+              "id": "mx350-vulkan-8k",
+              "backend": "vulkan",
+              "required_ram_bytes": 1361051648,
+              "required_vram_bytes": 1776287744,
+              "memory_fit": false,
+              "first_use_check": "not needed",
+              "launch_available": false,
+              "automatic_eligible": true
+            },
+            {
+              "id": "cpu-8k",
+              "backend": "cpu",
+              "required_ram_bytes": 2436385888,
+              "required_vram_bytes": 0,
+              "memory_fit": false,
+              "first_use_check": "passed",
+              "launch_available": false,
+              "automatic_eligible": true
+            }
+          ]
+        },
+        {
+          "id": "qwen3.5-0.8b-q4_k_m",
+          "family": "Qwen3.5-0.8B",
+          "quantization": "Q4_K_M",
+          "size_bytes": 579615840,
+          "installed": false,
+          "quality": "untested",
+          "profiles": [
+            {
+              "id": "cpu-8k-qwen3.5-0.8b-q4_k_m",
+              "backend": "cpu",
+              "required_ram_bytes": 1619803232,
+              "required_vram_bytes": 0,
+              "memory_fit": false,
+              "first_use_check": "pending",
+              "launch_available": false,
+              "automatic_eligible": false
+            }
+          ]
+        },
+        {
+          "id": "qwen3.5-4b-q4_k_m",
+          "family": "Qwen3.5-4B",
+          "quantization": "Q4_K_M",
+          "size_bytes": 3013027808,
+          "installed": false,
+          "quality": "untested",
+          "profiles": [
+            {
+              "id": "cpu-8k-qwen3.5-4b-q4_k_m",
+              "backend": "cpu",
+              "required_ram_bytes": 5026293728,
+              "required_vram_bytes": 0,
+              "memory_fit": false,
+              "first_use_check": "pending",
+              "launch_available": false,
+              "automatic_eligible": false
+            }
+          ]
+        },
+        {
+          "id": "gemma-4-e2b-it-qat-q4_0",
+          "family": "Gemma 4 E2B",
+          "quantization": "Q4_0 (official QAT)",
+          "size_bytes": 3349516256,
+          "installed": false,
+          "quality": "untested",
+          "profiles": []
+        },
+        {
+          "id": "qwen3-4b-instruct-2507-q4_k_m",
+          "family": "Qwen3-4B-Instruct-2507",
+          "quantization": "Q4_K_M",
+          "size_bytes": 2497280736,
+          "installed": false,
+          "quality": "untested",
+          "profiles": [
+            {
+              "id": "cpu-8k-qwen3-4b-instruct-2507-q4_k_m",
+              "backend": "cpu",
+              "required_ram_bytes": 5181635296,
+              "required_vram_bytes": 0,
+              "memory_fit": false,
+              "first_use_check": "pending",
+              "launch_available": false,
+              "automatic_eligible": false
+            }
+          ]
+        }
+      ]
+    },
+    "ask": {
+      "prompt": "Explain F-01 and its limitations",
+      "finding": "F-01",
+      "conclusion": "supported",
+      "exhibits": 31,
+      "checks": 5,
+      "limitations": 26,
+      "generated_by": "saved_evidence"
+    }
+  },
+  "workbench_views": {
+    "captures": 24,
+    "screens": [
+      "website-url",
+      "assessment",
+      "source-prompt",
+      "saved-followup",
+      "model-recorded",
+      "model-untested"
+    ],
+    "widths": [
+      1440,
+      390
+    ],
+    "fresh_model_acceptance": false,
+    "signed_in_acceptance": false,
+    "label": "Synthetic Tandir UI fixture; no model or live test evidence; conversation answers and model catalog are labelled synthetic display fixtures"
+  },
+  "report_drafts": {
+    "count": 12,
+    "published": false,
+    "synthetic_only": true,
+    "parts": [
+      "description",
+      "endpoints",
+      "safe_steps",
+      "impact",
+      "mitigation",
+      "tools",
+      "limitations"
+    ]
+  },
+  "tool_connection": {
+    "recorded_at": "2026-10-05T23:51:27.996734+00:00",
+    "lookups": [
+      "get_evidence",
+      "get_finding",
+      "get_run",
+      "list_findings"
+    ],
+    "modes": 2
   },
   "software": {
     "python": {
@@ -1199,7 +1720,16 @@
       "passed_first_run": 2330,
       "passed_on_isolated_retry": 1
     },
-    "frontend_tests": 68
+    "frontend_tests": 68,
+    "latest": {
+      "date": "2026-10-11",
+      "collected": 2845,
+      "passed": 2841,
+      "failed": 1,
+      "skipped": 3,
+      "repaired_checks": 69,
+      "schemas": 89
+    }
   },
   "development": {
     "baseline": {
@@ -1296,6 +1826,7 @@
     "docs/results/2026-10-05-m4.2-invoice.json": "092ee3b2dc249ed520257b1684819dcaff314ae98949b3b72074525671915f3e",
     "docs/results/2026-10-05-m4.2-receipt.json": "5c9be0fcdddf9b7ddd8e3a6bb75cb0cfa0fc9df728e74f262bd0984c6188c0ee",
     "docs/results/2026-10-06-evaluation.md": "1d999b1820c1f2bc173f74795b3649a7e17d2783f8e2b23dd65ae34422f3688e",
+    "docs/results/2026-10-06-m7.4-acceptance.json": "94fe6ab931f54536c3b850a0136eba4dc58b4afaa7a5b3fcb85e5708ef2cbde0",
     "docs/results/2026-10-07-m4.5b-acceptance.json": "6dccbed8b5cb91e21bc743610cecc99a8e7f40150254edbcbbfd76d25bb1f90f",
     "docs/results/2026-10-08-m6.9r-action-phone.md": "e8f68c56785731e23dd1ad71272d98f89eabcf6704db9476c8c6a0ff530836af",
     "docs/results/2026-10-08-m6.9v-phone-client-binding.md": "857e7fbb287f0c7d6051714262a288aeae9d94f05d8d8649d19a3b84e7aff340",
@@ -1313,10 +1844,20 @@
     "docs/results/2026-10-10-a1-cpu-profile-first-use-check.json": "a6d94e3de6663743def55d579a3654858e0f2aacf6361d06c0b09d5cbef408d4",
     "docs/results/2026-10-10-a1-cpu-profile-review/invocation-20261009-195948-576621.json": "904f385749f6319dd31c03afe16a65c46e2e93722606cb575a0b45fd3c4d88f1",
     "docs/results/2026-10-10-a1-cpu-profile-review/report.json": "893e6a2a22bf24a410f1b363f4ba19e703fbe7c1fd8b1463d5dc7d5b6be2fdd7",
-    "docs/results/2026-10-11-m7.9i-package-followup.json": "0259ba80f23d788e4b3dbcec706542ef8d4a8e64ddc9dbbd52a7c6a2fc9d2617",
-    "docs/results/2026-10-11-m7.9i-package-smoke.json": "8ee475e2ba02128e6472609b6985e9c1fd8b6bd3652e1b01186a41519f6a900d",
+    "docs/results/2026-10-11-improvements-ui-checks.json": "ef2b6d9a1b455c1116199a2ea5a926afc817b644f8826635010b63f7c201ceb6",
     "docs/results/2026-10-11-tool-assisted/accounting.json": "badc13b38804b2337c4460aaa77ec2b22722c17fe037b7df5d7882fcd11621b7",
+    "docs/results/2026-10-11-tool-assisted/collection.json": "126c5ede69340168c762c25f85fabafe80aaa0cbda7c824811313511819a719a",
+    "docs/results/2026-10-11-tool-assisted/execution.json": "0f22c41ea668077051d51ca83aaf2a328f35722630cd5c31c8edc3375497a659",
+    "docs/results/2026-10-11-tool-assisted/playbooks.json": "7c07e8eb47b0eb8ee5489f6a71d304317e67222a13d0a2860f6e22eabc83c38b",
+    "docs/results/2026-10-11-tool-assisted/preparation.json": "344ee8a6b809a5c9406d6cff1407fef6a1e6f40bcae242b6532b0eb98c45205b",
+    "docs/results/2026-10-11-tool-assisted/private-reports.json": "8564ab666f52f0a37b29ab0678b0ccabe980f7bf4be9772895d4876ad004049a",
+    "docs/results/2026-10-11-tool-assisted/software-checks.json": "e1b2ec16ba79ada007eb6939d1ba84804eabf286ddbd11dbbb2c27f6a4640370",
+    "docs/results/2026-10-12-m7.9j-read-only-commands.json": "b069e7f808f0e5e4bef7a2328ad32ba86b4121fa7af076b674992282b8c8af89",
+    "docs/results/2026-10-12-website-publication-portable-inert.json": "36e95cff3d8c5a0bab36e5ac375adb9a57f8354e6182ebd8a0075cc8beec663a",
+    "docs/results/2026-10-12-website-repair-planning.json": "bed4ba526a4f034c6a404e4d178aceacbd8d87bb80bcd21f4529db305db22cff",
+    "docs/results/2026-10-12-website-repair-portable.json": "f848c9267f3a7bbfc9d34ca53e9838a4eef3dc918db1f4b46d93b78eebe7ded4",
     "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",
+    "knowledge/data/security-cards-v1.json": "aaf9944796a97f42db88faa0cfc54612a8ecc5ef78cef18d500b977689644aff",
     "labs/tandir/api/tandir/routers/orders.py": "630cd43b008758f357c7f8587db84612c647a4b80ba281ee5bc1a79dbbbdbe1a",
     "labs/tandir/api/tandir/schemas.py": "ce87fbd5a376e3bc4b5aacc6de7f190e1644f5dac9d6c432769544e75727b26e",
     "labs/tandir/api/tandir/security.py": "829a746b47bc94aa930ea468cedf6aeb8c95b6fbf70cefa1ebef3647c146b431",

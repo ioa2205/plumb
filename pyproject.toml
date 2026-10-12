@@ -4,7 +4,12 @@ version = "0.0.0"
 description = "Local AI security investigator for web applications"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    # Used directly by the website egress broker (ADR-0028); already locked through httpx/mcp.
+    "certifi>=2026.7.22",
+    "cryptography>=50.0.2",
     "fastapi==0.142.2",
+    "h11>=0.16.0",
+    "httpcore>=1.0.9",
     "httpx>=0.28.1",
     "libcst>=1.9.0",
     "mcp==2.3.0",
@@ -17,6 +22,11 @@ dependencies = [
     "tree-sitter-typescript==0.23.2",
     "uvicorn==0.54.0",
 ]
+
+[project.optional-dependencies]
+# The pinned browser runner for JavaScript pages (ADR-0028). The Chromium build it
+# drives is provisioned separately and explicitly: python -m backend.setup.browser install
+browser = ["playwright==1.63.0"]
 
 [project.scripts]
 plumb = "backend.cli:main"
@@ -34,6 +44,9 @@ module-name = ["backend", "analysis", "agent", "verification", "eval", "knowledg
 minversion = "8.0"
 testpaths = ["backend", "analysis", "agent", "verification", "eval", "knowledge"]
 addopts = ["--import-mode=importlib", "-ra", "--strict-markers", "--strict-config"]
+markers = [
+    "browser: runs the provisioned pinned browser (skipped when it is not installed)",
+]
 
 [tool.ruff]
 line-length = 100

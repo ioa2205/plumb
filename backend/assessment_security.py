@@ -10,6 +10,8 @@ def private_input(path: str) -> bool:
     return (
         path.startswith("/api/assessments")
         or path.startswith("/api/conversations")
+        or path.startswith("/api/chats")
+        or path.startswith("/api/websites")
         or path.startswith("/api/assessment-jobs")
         or path in {"/api/projects/prompt", "/api/projects/review"}
         or (path.startswith("/api/runs/") and path.endswith("/ask"))
