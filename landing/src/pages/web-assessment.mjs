@@ -289,8 +289,8 @@ export function render(context) {
     intro: html`<div class="stack-gap">
       ${standing('half', t('Built. Tested on made-up records only', 'Qurilgan. Faqat soxta yozuvlarda sinalgan'))}
       <p>${t(
-        'For apps Plumb is not allowed to contact, which is every app except its own practice app.',
-        'Plumb murojaat qilishi mumkin bo‘lmagan ilovalar uchun, ya’ni o‘zining sinov ilovasidan boshqa barcha ilovalar uchun.',
+        'For apps Plumb should not contact itself, or may not contact yet: it works from what you saved.',
+        'Plumb o‘zi murojaat qilmasligi kerak yoki hali murojaat qila olmaydigan ilovalar uchun: u siz saqlagan yozuvlar bilan ishlaydi.',
       )}</p>
     </div>`,
     body: html`<div class="stack-gap">
@@ -420,15 +420,15 @@ export function render(context) {
     heading: t('What this is not.', 'Bu nima emas.'),
     body: html`<ul class="limits">
       ${t(
-        html`<li><strong>Not a way to test someone else’s website.</strong> Plumb contacts only its own practice app, on this computer. That is built in, not a setting.</li>
+        html`<li><strong>Not a way to test a website you may not test.</strong> The collection on this page contacts only Plumb’s own practice app, on this computer; that is built in, not a setting. <a href="/what-it-does#can-web">A website test</a> is a separate path, with its own approved scope and plan.</li>
         <li><strong>Not a scanner.</strong> It does not crawl an app or try lists of attacks. It sends a short plan you have read and approved.</li>
         <li><strong>Not a proof.</strong> An observation shows what the app answered once. A source finding shows what the code allows. A runtime check shows a flaw working under a fixed script. Plumb reports each under its own name and never turns one into another.</li>
-        <li><strong>Not a browser robot.</strong> Requests are plain web requests. Pages that only work with scripts are out of reach for now.</li>
+        <li><strong>Not a browser.</strong> The collection sends plain web requests, so pages that only work with scripts are out of its reach. A website test uses a browser of its own, and only for the steps in its approved plan.</li>
         <li><strong>Not something that leaves your computer.</strong> Records, drafts and the AI model stay in Plumb’s data folder.</li>`,
-        html`<li><strong>Birovning saytini sinash vositasi emas.</strong> Plumb faqat o‘zining sinov ilovasiga, shu kompyuterning o‘zida murojaat qiladi. Bu sozlama emas, dasturning tuzilishi shunday.</li>
+        html`<li><strong>Sinashga ruxsatingiz yo‘q saytni sinash vositasi emas.</strong> Bu sahifadagi yig‘ish faqat Plumbning o‘z sinov ilovasiga, shu kompyuterning o‘zida murojaat qiladi. Bu sozlama emas, dasturning tuzilishi shunday. <a href="/what-it-does#can-web">Sayt sinovi</a> esa alohida yo‘l, uning o‘z tasdiqlangan qamrovi va rejasi bor.</li>
         <li><strong>Skaner emas.</strong> U ilovani boshdan-oyoq aylanib chiqmaydi va hujumlar ro‘yxatini sinab ko‘rmaydi. Siz o‘qib, tasdiqlagan qisqa rejanigina yuboradi.</li>
         <li><strong>Isbot emas.</strong> Kuzatuv ilova bir safar nima deb javob berganini ko‘rsatadi. Koddan chiqarilgan xulosa kod nimaga yo‘l qo‘yishini ko‘rsatadi. Jonli sinov esa xato qat’iy belgilangan skript ostida amalda ishlashini ko‘rsatadi. Plumb har birini o‘z nomi bilan beradi va hech qachon birini boshqasiga aylantirmaydi.</li>
-        <li><strong>Brauzer roboti emas.</strong> So‘rovlar oddiy veb-so‘rovlar. Faqat skriptlar bilan ishlaydigan sahifalar hozircha qamrovdan tashqarida.</li>
+        <li><strong>Brauzer emas.</strong> Yig‘ish oddiy veb-so‘rovlar yuboradi, shuning uchun faqat skriptlar bilan ishlaydigan sahifalar uning qamrovidan tashqarida. Sayt sinovi esa o‘z brauzeridan foydalanadi, faqat tasdiqlangan rejadagi qadamlar uchun.</li>
         <li><strong>Kompyuteringizdan tashqariga chiqadigan narsa emas.</strong> Yozuvlar, qoralamalar va SI modeli Plumbning ma’lumotlar papkasida qoladi.</li>`,
       )}
     </ul>`,

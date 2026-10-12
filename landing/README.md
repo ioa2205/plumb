@@ -3,12 +3,16 @@
 A static site that explains Plumb to readers who are new to AI and security.
 
 The front page is short on purpose: it shows more than it says, and a check
-keeps it under 600 words. It opens with a walk-through in four chapters (one
-customer changes a digit and sees another customer's receipt, Plumb finds the
-one place with no check, it tries to clear the suspect, and a report comes
-out), then gives one picture each to why ordinary tests miss this, why the
-code stays on the reader's laptop, how far the claims go, and the real saved
-report. Detail lives behind it:
+keeps it at 600 reading words or fewer. It opens with a walk-through in four
+chapters (one customer changes a digit and sees another customer's receipt,
+Plumb finds the one place with no check, it tries to clear the suspect, and a
+report comes out). Then the same kind of flaw on a website, with no code: three
+recorded requests for one parcel label on the practice website, with the
+answer that should have been refused ringed. Then one recorded plain question,
+why the code stays on the reader's laptop and the real saved report. It ends
+in a parts list: every part of Plumb that about.md describes, each with the
+same mark for how far it has been checked that `/what-it-does` gives it.
+Detail lives behind it:
 
 | Page | What it holds |
 | --- | --- |
@@ -25,6 +29,31 @@ only its design tokens and typefaces.
 
 There are no dependencies and no framework. Pages are plain modules that turn
 one extracted record into HTML. Node.js 22 or later is enough.
+
+## How it looks
+
+The site is drawn like a marked-up technical drawing, in the product's own
+marks (design.md §1): ink for what has been shown, blue pencil for what is
+built but not settled, and red pencil for what is out of true. Colour comes
+only from the generated tokens and always means one of those three things.
+
+- **Plates.** A picture sits on a sheet with a caption strip in the
+  monospaced face: what it shows on the left, the record's date or name on the
+  right. A picture without a record behind it does not get a plate.
+- **One red-pencil ring per section**, on the one thing that is wrong:
+  `ringed()` in `src/components/glyphs.mjs`. The headline's ring sits on the
+  words "isn't theirs".
+- **Rhythm by tone, not lines.** Sections sit on the desk, on a full-width
+  sheet (`band-sheet`), or, once, in reverse on ink (`band-ink`, the promise
+  that code stays on the laptop). In Night the ink band becomes the light
+  sheet; it stays the one inverted section.
+- **The footer is the drawing's title block**: how many saved records and
+  how many source files (code and pins the records are checked against) the
+  page was drawn from, the newest record's date, and who made it. A check
+  keeps both counts equal to what extraction read.
+- **The parts list** closes the front page: every part of Plumb, grouped as
+  code, websites, questions and results, each group linking to its place on
+  `/what-it-does`.
 
 ## The rule this site is built on
 
@@ -74,6 +103,24 @@ one extracted record into HTML. Node.js 22 or later is enough.
   stops saying other websites are switched off.
 - Web observations are a third kind of evidence. They are never shown as a
   source finding or as a runtime check.
+- The website test on the front page and on the deeper pages is the one
+  recorded journey on Plumb's own practice website (Chorsu Parcel Lockers,
+  `docs/results/2026-10-12-website-repair-open/`). Extraction refuses it unless
+  it stayed on the owned fixture, ran one approved plan to the end within its
+  limits, recorded no privacy incident, and left every finding a lead observed
+  once. The front page shows its one label comparison: the owner, another
+  customer and a signed-out visitor, each with the status that came back.
+  The fixture's port is left out.
+- The plain question is the one recorded chat session
+  (`docs/results/2026-10-12-website-repair-chat.json`, with its accounting).
+  Only the general answer's first sentence is quoted, word for word, with what
+  it rests on. That a general part declined in the mixed question is extracted
+  too, and the deeper pages say so.
+- Parts that have no recorded run are described from the code that ships, so
+  the site cannot name more than Plumb carries: the two configuration rules
+  and the advisory list (checked against its pin) behind the supplementary
+  signals, the reviewer decisions a finding accepts, the website commands, and
+  the sign-in steps handed to a person (a CAPTCHA or a one-time code).
 - What `plumb models` and `plumb ask` print is shown from a record made with
   `scripts/console-records.mjs`, which runs the two read-only commands and
   saves their output under `docs/results/`. Neither loads the model.
@@ -256,17 +303,39 @@ node landing/scripts/workbench-images.mjs
 
 ## Motion
 
-Three things move, and none when the reader asks for less motion:
+Every movement acts out something Plumb does; none is a plain fade added for
+show. Nothing moves when the reader asks for less motion, and without scripts
+every part is drawn in its final state.
 
-- the plumb bob in the wordmark swings and settles when a page opens;
-- the walk-through on the front page plays its four chapters like a short
-  film;
-- a list of recorded requests arrives row by row when it scrolls into view
-  (`data-tape` in `src/components/trace.mjs`, played by `site.js`), with a
-  "Play again" button.
+- **The wordmark's bob** swings and settles when a page opens.
+- **The headline hangs and settles true** (front page). Each word drops in on
+  its own string and swings to rest; the phrase that is out of true settles a
+  little crooked and is then ringed in red pencil. The swings are fixed in
+  `site.css` (`.headline .w:nth-child(n)`), so every visit plays the same scene.
+- **The walk-through** plays its four chapters like a short film.
+- **Three requests** (front page, `data-lanes`): the owner, another customer
+  and a signed-out visitor each send the same request along a wire to the
+  site, one after another; what came back slides out, and the answer that
+  should have been refused is ringed. "Play again" replays it.
+- **A stamp**: what a chat answer rests on is stamped on once the answer is in
+  view (`data-reveal`).
+- **A plumb line through the laptop** (front page): it drops through "Your
+  code" and "AI model", pauses, and comes to rest on "Report"; then the wire to
+  the online service is cut. The review happens inside the laptop.
+- **Ink fills the parts list** (`data-parts`): each part's mark draws its ring
+  and fills with ink as far as that part has been shown working (full for
+  ink, half for blue pencil), one part after another.
+- **Red-pencil rings** draw themselves when they come into view (`data-draw`).
+- **A plumb line in the margin** of screens 1360 px and wider, on every page
+  (`data-plumb`). Its bob hangs at the reader's place on the page; scrolling
+  sets it swinging and it settles back to true when the page stops. The swing
+  is a small spring in `site.js`, limited so the bob never strays more than
+  about 34 px.
+- **Recorded request lists** arrive row by row when they scroll into view
+  (`data-tape` in `src/components/trace.mjs`), with a "Play again" button.
 
-Without scripts the lists are simply there. Bars are SVG rectangles sized by
-attributes, because the page policy allows no inline style.
+Bars are SVG rectangles sized by attributes, because the page policy allows no
+inline style; values set from script go through `style.setProperty`.
 
 ### The walk-through
 

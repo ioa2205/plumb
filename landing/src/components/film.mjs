@@ -79,7 +79,7 @@ export function film(record) {
       captions: [
         t(`${viewer} signs in to a bakery app and opens his own receipt: order ${intruder.id}.`, `${viewer} nonvoyxona ilovasiga kirib, o‘z chekini ochadi: ${intruder.id}-buyurtma.`),
         t('He changes one digit in the address.', 'U manzildagi bitta raqamni o‘zgartiradi.'),
-        t(`The app hands him ${owner}’s name, home address and order, as if nothing were wrong.`, `Ilova hech narsa bo‘lmagandek unga ${owner}’ning ismi, uy manzili va buyurtmasini ko‘rsatadi.`),
+        t(`The app hands him ${owner}’s name, home address and order.`, `Ilova unga ${owner}’ning ismi, uy manzili va buyurtmasini ko‘rsatadi.`),
       ],
       stage: html`<div class="stage s1">
     <div class="s-browser">
@@ -94,7 +94,7 @@ export function film(record) {
     {
       name: t('Plumb finds it', 'Plumb uni topadi'),
       captions: [
-        t(`Point Plumb at the app’s code. It finds every place that hands out an order: ${peer.compared} here.`, `Plumbga ilova kodini ko‘rsating. U buyurtma beriladigan har bir joyni topadi: bu ilovada ${peer.compared} ta.`),
+        t(`Point Plumb at the code. It finds every place that hands out an order: ${peer.compared} here.`, `Plumbga kodni ko‘rsating. U buyurtma beriladigan har bir joyni topadi: bu yerda ${peer.compared} ta.`),
         t(`${peer.deviation.peers_applying} of them check whose order it is. One does not.`, `Ularning ${peer.deviation.peers_applying} tasi buyurtma kimniki ekanini tekshiradi. Bittasi tekshirmaydi.`),
         t('Plumb points to the exact line: the order is loaded by its number alone.', 'Plumb aynan qaysi qator ekanini ko‘rsatadi: buyurtma faqat raqami bo‘yicha yuklanadi.'),
       ],
@@ -117,9 +117,9 @@ export function film(record) {
     {
       name: t('It checks itself', 'O‘zini tekshiradi'),
       captions: [
-        t('Before it reports anything, Plumb looks for a check it may have missed.', 'Biror narsa deyishdan oldin Plumb o‘zi payqamay qolgan tekshiruv yo‘qmi, deb qidiradi.'),
-        t('A small AI model on your laptop judges the evidence three times. All three find nothing that protects it.', 'Noutbukingizdagi kichik SI modeli dalillarga uch marta baho beradi. Uchalasida ham uni himoya qiladigan hech narsa topilmadi.'),
-        t('The invoice looks the same, but a check in another file protects it. Plumb clears it and stays quiet.', 'Hisob-faktura ham xuddi shunday ko‘rinadi, lekin uni boshqa fayldagi tekshiruv himoya qiladi. Plumb uni oqlaydi va bezovta qilmaydi.'),
+        t('First, Plumb looks for a check it may have missed.', 'Avval Plumb o‘zi payqamay qolgan tekshiruvni qidiradi.'),
+        t('A small AI model on your laptop judges the evidence three times. None finds a protection.', 'Noutbukingizdagi kichik SI modeli dalillarga uch marta baho beradi. Birortasi himoya topmaydi.'),
+        t('The invoice looks the same, but a check in another file protects it. Plumb clears it.', 'Hisob-faktura ham xuddi shunday ko‘rinadi, lekin uni boshqa fayldagi tekshiruv himoya qiladi. Plumb uni oqlaydi.'),
       ],
       stage: html`<div class="stage s3">
     <p class="s-chip" data-from="2">${chipIcon}${t('AI model · on this laptop', 'SI modeli · shu noutbukda')}</p>
@@ -138,9 +138,9 @@ export function film(record) {
     {
       name: t('You get a report', 'Hisobot olasiz'),
       captions: [
-        t('You get a report: the place, the file, the line, and the evidence behind it.', 'Sizga hisobot beriladi: joy, fayl, qator va ularni tasdiqlovchi dalillar.'),
+        t('You get a report: the place, the file, the line, the evidence.', 'Sizga hisobot beriladi: joy, fayl, qator va dalillar.'),
         t('It also says what it did not check, so you know how far to trust it.', 'Unda nima tekshirilmagani ham yozilgan, shuning uchun unga qanchalik ishonish mumkinligini bilasiz.'),
-        t('All of this ran on one laptop. Nothing was uploaded.', 'Bularning hammasi bitta noutbukda bajarildi. Hech narsa tashqariga yuborilmadi.'),
+        t('All of it ran on one laptop.', 'Hammasi bitta noutbukda bajarildi.'),
       ],
       stage: html`<div class="stage s4">
     <div class="s-report">
@@ -176,8 +176,8 @@ export function film(record) {
     <button class="btn film-btn" type="button" data-film-replay>${t('Play again', 'Boshidan ko‘rish')}</button>
   </p>
   <p class="small film-note">${t(
-    `Drawn from the recorded test of Plumb’s practice app, ${longDay(run.started_at)}. A separate recorded test on ${day(runtime.receipt.at)} sent ${viewer}’s request for real, and the reply contained ${owner}’s data.`,
-    `Rasmlar Plumbning sinov ilovasida ${longDay(run.started_at)} kuni yozib olingan sinov asosida chizilgan. ${day(runtime.receipt.at)} kuni alohida yozib olingan sinovda ${viewer}’ning so‘rovi haqiqatan yuborilgan va javobda ${owner}’ning ma’lumotlari kelgan.`,
+    `${viewer}’s request was also sent for real on ${day(runtime.receipt.at)}: the reply held ${owner}’s data.`,
+    `${day(runtime.receipt.at)} kuni alohida sinovda ${viewer}’ning so‘rovi haqiqatan yuborilgan: javobda ${owner}’ning ma’lumotlari kelgan.`,
   )}</p>
 </div>`;
 }

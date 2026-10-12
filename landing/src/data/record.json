@@ -1712,6 +1712,89 @@
     ],
     "modes": 2
   },
+  "journey": {
+    "recorded_at": "2026-10-12T12:29:57.247780Z",
+    "site": "Chorsu Parcel Lockers",
+    "mode": "owned_fixture",
+    "purpose": "Check who can read a parcel and its pickup label on Plumb's own fixture.",
+    "accounts": 3,
+    "signup_approved": true,
+    "rule": "Only the customer a parcel belongs to may read its pickup label.",
+    "object": "pickup label of parcel 4117",
+    "path": "/api/parcels/4117/label",
+    "owner": "Dilnoza",
+    "other": "Rustam",
+    "owner_status": 200,
+    "other_status": 200,
+    "signed_out_status": 401,
+    "identical": true,
+    "comparison": "candidate",
+    "finding": {
+      "id": "W-01",
+      "conclusion": "candidate",
+      "runtime": "observed_once_by_plumb_runner"
+    },
+    "findings": 2,
+    "supported": 0,
+    "pages": 22,
+    "requests": 163,
+    "max_requests": 200,
+    "seconds": 34,
+    "max_seconds": 900,
+    "model_questions": 2,
+    "steps": 13,
+    "stop_conditions": 3,
+    "browser_used": true,
+    "signed_in": 2,
+    "created": 1,
+    "handoffs": 0,
+    "commands": [
+      "list",
+      "fixture",
+      "setup",
+      "run",
+      "show",
+      "report",
+      "stop",
+      "qualify"
+    ],
+    "handed_over": [
+      "captcha",
+      "one_time_code",
+      "single_sign_on"
+    ]
+  },
+  "chat": {
+    "recorded_at": "2026-10-12T12:34:22.205328+00:00",
+    "profile": "mx350-vulkan-8k",
+    "prompt": "What is SQL injection?",
+    "answer": "SQL injection is a security vulnerability that occurs when an attacker injects malicious code into a database query. This happens when user input is directly concatenated into a SQL statement without proper validation or sanitization.",
+    "basis": "General answer from the local model. No website, code or saved result was looked at, and this is not a finding.",
+    "message": "Answered. Nothing was run or approved by this message.",
+    "model_seconds": 6.901,
+    "turns": 4,
+    "mixed_general_declined": true,
+    "mixed_cited_by_code": true,
+    "first_run_unmet": [
+      "rewrite_received_previous_text"
+    ]
+  },
+  "signals": {
+    "version": "supplementary-signals-1",
+    "config_rules": [
+      "config-fastapi-debug",
+      "config-httpx-tls"
+    ],
+    "advisories": 2,
+    "advisories_dated": "2026-10-07",
+    "advisories_from": "GitHub Advisory Database"
+  },
+  "decisions": [
+    "open",
+    "dismissed",
+    "accepted_risk",
+    "resolved"
+  ],
   "software": {
     "python": {
       "collected": 2334,
@@ -1819,14 +1902,21 @@
     ]
   },
   "sources": {
+    "analysis/advisory_pack/pack.json": "dbd50ca6e8506a8505bbd84689e206aca2ca96cbb285ea2688adad884ba8c74e",
+    "analysis/advisory_pack/pin.json": "fec1c01db568661c3219d0e705b898ab0ce5c7bdf406f3ce09072e38b149a57f",
+    "analysis/security_signals.py": "873437fa3d20147b530b2ab7f2f7616f3c713a2b9dee883e31b426aaa2ebdf31",
+    "backend/contracts/investigation.py": "42e72c7f6958de95da34739ca14c5e9673b992b0441435ce87d7b28d5b676448",
+    "backend/contracts/web_journey.py": "fc531fa405d1c8442dcf94f8a7616e633e6674c678d6e00d4be1a786d39f0c0e",
     "backend/profiles.py": "0a5bc199e1d4679c86b9176cf34f591cf5f342d8ee2897c20b29c1c66d6eba6e",
     "backend/setup/pins/llama_cpp.toml": "4e289c977fa76f257b37edcfc67769f71a39b142b60e67b6f4bbf754594c1fca",
     "backend/setup/pins/models.toml": "5aaecdee08e3476305857284b3ace0ccb70a0540ede36e0eb8acaadabd620088",
     "backend/setup/pins/opengrep.toml": "2f90d9ca77c8151e041293733853d431ac8dcc4c16ecb599286671f7dbf31bc4",
+    "backend/web_cli.py": "7d6f57b978efa1ef72207b02550b5f40d49de5247874f9fbf75d9309417bb600",
     "docs/results/2026-10-05-m4.2-invoice.json": "092ee3b2dc249ed520257b1684819dcaff314ae98949b3b72074525671915f3e",
     "docs/results/2026-10-05-m4.2-receipt.json": "5c9be0fcdddf9b7ddd8e3a6bb75cb0cfa0fc9df728e74f262bd0984c6188c0ee",
     "docs/results/2026-10-06-evaluation.md": "1d999b1820c1f2bc173f74795b3649a7e17d2783f8e2b23dd65ae34422f3688e",
     "docs/results/2026-10-06-m7.4-acceptance.json": "94fe6ab931f54536c3b850a0136eba4dc58b4afaa7a5b3fcb85e5708ef2cbde0",
+    "docs/results/2026-10-07-m3.14-signals.md": "aa853ca57e51bfb7e167bb3fdc2894637705def3e7bbd83d6c9f15876085e4fd",
     "docs/results/2026-10-07-m4.5b-acceptance.json": "6dccbed8b5cb91e21bc743610cecc99a8e7f40150254edbcbbfd76d25bb1f90f",
     "docs/results/2026-10-08-m6.9r-action-phone.md": "e8f68c56785731e23dd1ad71272d98f89eabcf6704db9476c8c6a0ff530836af",
     "docs/results/2026-10-08-m6.9v-phone-client-binding.md": "857e7fbb287f0c7d6051714262a288aeae9d94f05d8d8649d19a3b84e7aff340",
@@ -1854,6 +1944,11 @@
     "docs/results/2026-10-11-tool-assisted/software-checks.json": "e1b2ec16ba79ada007eb6939d1ba84804eabf286ddbd11dbbb2c27f6a4640370",
     "docs/results/2026-10-12-m7.9j-read-only-commands.json": "b069e7f808f0e5e4bef7a2328ad32ba86b4121fa7af076b674992282b8c8af89",
     "docs/results/2026-10-12-website-publication-portable-inert.json": "36e95cff3d8c5a0bab36e5ac375adb9a57f8354e6182ebd8a0075cc8beec663a",
+    "docs/results/2026-10-12-website-repair-chat.accounting.json": "0c5c35f41227eef5097c1d9a7b801953f47784e546eb219b48f04715c0eeca6a",
+    "docs/results/2026-10-12-website-repair-chat.json": "6411656b1ab9419f14cc9bd68084749c2d407436b6a508ac8362f93b5e4eed28",
+    "docs/results/2026-10-12-website-repair-open/acceptance.json": "f863a79e909e3e9919634ba9d1a44e22d6dd5351ba135d05d14c9f81c765a85c",
+    "docs/results/2026-10-12-website-repair-open/journey.json": "e01d6e03f9e19773ca69208b3b658be1b43b69b52180c3f3dba851052096674b",
+    "docs/results/2026-10-12-website-repair-open/scope.json": "3d0e20139987559f8f6bcd854a5da1a539d16e39415267fd65e3962790dedc67",
     "docs/results/2026-10-12-website-repair-planning.json": "bed4ba526a4f034c6a404e4d178aceacbd8d87bb80bcd21f4529db305db22cff",
     "docs/results/2026-10-12-website-repair-portable.json": "f848c9267f3a7bbfc9d34ca53e9838a4eef3dc918db1f4b46d93b78eebe7ded4",
     "frontend/tokens.json": "2ffe9d9e2c42502c168c6d2b3ab40e75b02c628badb62b025b04bc3c7c272cfa",

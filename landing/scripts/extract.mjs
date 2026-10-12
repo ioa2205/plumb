@@ -1183,6 +1183,167 @@ function copyFonts() {
 
 // ---------------------------------------------------------------- output
 
+// ---------------------------------------------------------------- the website test
+
+const JOURNEY = `${RESULTS}/2026-10-12-website-repair-open`;
+
+/**
+ * The one recorded website test: Plumb's own practice website (Chorsu Parcel Lockers), its
+ * synthetic accounts, the owner's rule, and what each account received for the same pickup
+ * label. Refused unless it stayed on the owned fixture, ran only the approved plan, kept to
+ * its limits, and left every finding a lead rather than a confirmed one.
+ */
+function extractJourney() {
+  const journey = json(`${JOURNEY}/journey.json`);
+  const scope = json(`${JOURNEY}/scope.json`);
+  const acceptance = json(`${JOURNEY}/acceptance.json`);
+  const conditions = Object.entries(acceptance.conditions);
+  must(conditions.length > 0 && conditions.every(([, held]) => held === true), 'the website test acceptance did not hold');
+  must(JSON.stringify(journey.scope) === JSON.stringify(scope), 'the website test and its saved scope differ');
+  must(scope.mode === 'owned_fixture' && scope.targets.every((/** @type {any} */ target) => /^http:\/\/127\.0\.0\.1:\d+$/.test(target.origin)), 'the website test left Plumb’s own practice website');
+  must(journey.status === 'done' && journey.approval.reviewed_plan === true && journey.approval.plan_sha256 === journey.plan_sha256, 'the website test did not run one approved plan to the end');
+  must(journey.approval.approved_step_ids.length === journey.steps.length && journey.steps.every((/** @type {any} */ step) => step.state === 'completed'), 'the website test ran steps outside its approval');
+  const { spent } = journey;
+  must(spent.requests <= scope.budget.max_requests && spent.seconds <= scope.budget.max_seconds && spent.bytes <= scope.budget.max_bytes, 'the website test went over its limits');
+  must(journey.findings.length > 0 && journey.findings.every((/** @type {any} */ finding) => finding.conclusion === 'candidate' && finding.runtime === 'observed_once_by_plumb_runner'), 'a website finding says more than a lead observed once');
+  must(journey.incidents.length === 0, 'the website test recorded a privacy incident');
+
+  const check = journey.checks.find((/** @type {any} */ entry) => entry.check_id === 'check-rule-1-rustam');
+  must(check && check.state === 'completed' && check.comparison === 'candidate' && check.gaps.length === 0, 'the label comparison is missing or incomplete');
+  const rule = scope.rules.find((/** @type {any} */ entry) => entry.rule_id === check.rule_id);
+  const object = scope.objects.find((/** @type {any} */ entry) => entry.object_id === check.object_id);
+  must(rule.allowed_account_ids.length === 1 && rule.allowed_account_ids[0] === check.owner_account_id && object.owner_account_id === check.owner_account_id, 'the rule and the object name different owners');
+  must(object.synthetic === true && object.marker, 'the compared object is not a marked synthetic one');
+  const fact = (/** @type {string} */ name) => check.facts[name];
+  must(fact('owner received the object') === 'yes' && fact('other account received the object') === 'yes' && fact('response captures complete') === 'yes', 'the comparison does not show both accounts receiving the label');
+  const finding = journey.findings.find((/** @type {any} */ entry) => entry.check_id === check.check_id);
+  must(finding, 'no finding comes from the label comparison');
+  const name = (/** @type {string} */ id) => scope.accounts.find((/** @type {any} */ account) => account.account_id === id).label.replace(/ \(.*\)$/, '');
+
+  return {
+    recorded_at: journey.created_at,
+    site: scope.name.replace(/ \(.*\)$/, ''),
+    mode: scope.mode,
+    purpose: scope.purpose,
+    accounts: scope.accounts.length,
+    signup_approved: scope.allowed_actions.includes('sign_up'),
+    rule: rule.statement,
+    object: object.kind,
+    path: object.path,
+    owner: name(check.owner_account_id),
+    other: name(check.other_account_id),
+    owner_status: Number(fact('owner status')),
+    other_status: Number(fact('other account status')),
+    signed_out_status: Number(fact('signed-out status')),
+    identical: fact('responses are identical') === 'yes',
+    comparison: check.comparison,
+    finding: { id: finding.finding_id, conclusion: finding.conclusion, runtime: finding.runtime },
+    findings: journey.findings.length,
+    supported: journey.findings.filter((/** @type {any} */ entry) => entry.conclusion === 'supported').length,
+    pages: journey.pages.length,
+    requests: spent.requests,
+    max_requests: scope.budget.max_requests,
+    seconds: Math.round(spent.seconds),
+    max_seconds: scope.budget.max_seconds,
+    model_questions: spent.model_questions,
+    steps: journey.steps.length,
+    stop_conditions: scope.stop_conditions.length,
+    // How the test got in: a real browser, accounts signed in, and one created by an
+    // approved sign-up. A hand-off is a pause for a person (a CAPTCHA or a one-time code).
+    browser_used: journey.browser === 'used',
+    signed_in: journey.accounts.filter((/** @type {any} */ account) => account.state === 'signed_in').length,
+    created: journey.accounts.filter((/** @type {any} */ account) => account.state === 'created').length,
+    handoffs: journey.handoffs.length,
+    ...websiteControls(),
+  };
+}
+
+/** What a person can do with a website test, read from the code: its commands, and the sign-in steps handed to them. */
+function websiteControls() {
+  const cli = text('backend/web_cli.py');
+  const commands = cli.match(/choices=\[((?:"[a-z]+", )*"[a-z]+")\]/g)?.map((list) => [...list.matchAll(/"([a-z]+)"/g)].map((match) => match[1])).find((list) => list.includes('qualify'));
+  must(commands && ['setup', 'run', 'show', 'report', 'stop'].every((command) => commands.includes(command)), 'the website commands changed');
+  const contract = text('backend/contracts/web_journey.py');
+  const kinds = contract.match(/challenge: Literal\[((?:"\w+", )*"\w+")\]/)?.[1].match(/\w+/g);
+  must(kinds && kinds.includes('captcha') && kinds.includes('one_time_code'), 'the sign-in steps handed to a person changed');
+  return { commands, handed_over: kinds };
+}
+
+/**
+ * What a review notes beside its findings: shapes of secrets, two configuration rules and
+ * the bundled list of known-vulnerable package versions. Read from the shipped code and the
+ * pinned list, so the site cannot claim more rules or advisories than Plumb carries.
+ */
+function extractSignals() {
+  const pin = json('analysis/advisory_pack/pin.json');
+  const data = bytes('analysis/advisory_pack/pack.json');
+  must(sha256(data) === pin.sha256 && data.length === pin.size, 'the advisory list differs from its pin');
+  const pack = JSON.parse(data.toString('utf8'));
+  must(Array.isArray(pack.records) && pack.records.length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(pack.snapshot_date), 'the advisory list is unreadable');
+  const observer = text('analysis/security_signals.py');
+  const version = observer.match(/^VERSION = "([^"]+)"$/m)?.[1];
+  const rules = [...new Set(observer.match(/"config-[a-z-]+"/g) ?? [])].map((rule) => rule.slice(1, -1));
+  must(version === 'supplementary-signals-1' && rules.length === 2, 'the signal rules changed: reread what the site says about them');
+  must(/package-lock\.json/.test(observer) && /uv\.lock/.test(observer), 'the lock files the advisories are matched against changed');
+  const recorded = text(`${RESULTS}/2026-10-07-m3.14-signals.md`);
+  must(/Signals never enter finding IDs/.test(recorded) && /\[REDACTED\]/.test(recorded), 'the signals record no longer says they stay apart from findings and hide secret values');
+  return {
+    version,
+    config_rules: rules,
+    advisories: pack.records.length,
+    advisories_dated: pack.snapshot_date,
+    advisories_from: pack.publisher,
+  };
+}
+
+/**
+ * The decisions a reviewer can record on a finding. They are appended beside it and never
+ * rewrite its conclusion or evidence.
+ */
+function extractDecisions() {
+  const contract = text('backend/contracts/investigation.py');
+  const block = contract.match(/class Disposition\(StrEnum\):\n((?: {4}\w+ = "\w+"\n)+)/);
+  must(block, 'the reviewer decisions are no longer listed where the site reads them');
+  const values = [...block[1].matchAll(/= "(\w+)"/g)].map((match) => match[1]);
+  must(JSON.stringify(values) === JSON.stringify(['open', 'dismissed', 'accepted_risk', 'resolved']), 'the reviewer decisions changed: reread what the site says about them');
+  must(/no evidence or runtime fields are writable/.test(contract), 'a reviewer decision may now change evidence');
+  return values;
+}
+
+/**
+ * The one recorded conversation with the local model: a general question, answered and
+ * labelled as general knowledge, with nothing run or approved. Only the first paragraph of
+ * the answer is published, word for word.
+ */
+function extractChat() {
+  const saved = json(`${RESULTS}/2026-10-12-website-repair-chat.json`);
+  const accounting = json(`${RESULTS}/2026-10-12-website-repair-chat.accounting.json`);
+  must(accounting.source === '2026-10-12-website-repair-chat.json' && accounting.fresh_inference === false && accounting.passed === true, 'the chat accounting does not cover the saved session');
+  must(saved.cleanup_completed === true && saved.conditions.chat_granted_no_authority === true, 'the chat session granted something or left the model running');
+  const turn = saved.turns.find((/** @type {any} */ entry) => entry.name === 'ordinary');
+  must(turn && turn.state === 'completed' && turn.turn.intent === 'general_question', 'the general question is missing');
+  const { turn: answer } = turn;
+  must(answer.authorization_granted === false && answer.actions_executed === false && answer.finding_created === false, 'a chat answer changed something');
+  must(answer.parts.length === 1 && answer.parts[0].kind === 'general' && answer.parts[0].evidence.length === 0, 'the general answer carries evidence it should not');
+  // Which turns did not do what they were asked: published as a count, never hidden.
+  const mixed = saved.turns.find((/** @type {any} */ entry) => entry.name === 'mixed');
+  const general = mixed.turn.parts.find((/** @type {any} */ part) => part.kind === 'general');
+  const declined = /^I cannot provide/.test(general.text);
+  return {
+    recorded_at: saved.at,
+    profile: saved.profile_requested,
+    prompt: answer.prompt,
+    answer: answer.parts[0].text.split('\n\n')[0],
+    basis: answer.parts[0].basis,
+    message: turn.message,
+    model_seconds: answer.model_seconds,
+    turns: saved.turns.length,
+    mixed_general_declined: declined,
+    mixed_cited_by_code: mixed.turn.parts.some((/** @type {any} */ part) => part.kind === 'cited' && /by code/.test(part.basis)),
+    first_run_unmet: saved.unmet,
+  };
+}
+
 const checking = process.argv.includes('--check');
 /** @type {string[]} */
 const stale = [];
@@ -1231,6 +1392,10 @@ function main() {
     workbench_views: extractWorkbenchViews(),
     report_drafts: extractReportDrafts(),
     tool_connection: extractToolConnection(),
+    journey: extractJourney(),
+    chat: extractChat(),
+    signals: extractSignals(),
+    decisions: extractDecisions(),
     software: { ...extractSoftware(), latest: extractLatestSuite() },
     development: extractDevelopment(),
     sources: Object.fromEntries([...sources.entries()].sort(([a], [b]) => a.localeCompare(b))),
@@ -1249,8 +1414,8 @@ function main() {
   }
   console.log(
     checking
-      ? `Extraction matches ${sources.size} saved records.`
-      : `Wrote public data from ${sources.size} saved records.`,
+      ? `Extraction matches ${sources.size} files: ${[...sources.keys()].filter((path) => path.startsWith(RESULTS)).length} saved records and the code they are checked against.`
+      : `Wrote public data from ${sources.size} files: ${[...sources.keys()].filter((path) => path.startsWith(RESULTS)).length} saved records and the code they are checked against.`,
   );
 }
 

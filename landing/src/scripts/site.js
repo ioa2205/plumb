@@ -133,6 +133,111 @@
       });
     }
 
+    // Things that happen once, when they come into view: a red-pencil ring draws itself
+    // (data-draw), a label is stamped on (data-reveal), and the three website requests are
+    // sent one after another (data-lanes, which also draws its own ring).
+    var once = function (selector, threshold, act) {
+      var nodes = document.querySelectorAll(selector);
+      if (!nodes.length || !root.classList.contains('can-play')) return;
+      var watch = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            watch.unobserve(entry.target);
+            act(entry.target);
+          });
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: threshold }
+      );
+      nodes.forEach(function (node) {
+        watch.observe(node);
+      });
+    };
+    once('[data-draw]', 0.5, function (ring) {
+      if (!ring.closest('[data-lanes]')) ring.classList.add('is-drawn');
+    });
+    once('[data-reveal]', 0.6, function (node) {
+      node.classList.add('is-in');
+    });
+    // The parts list is tall on a phone, so it starts as soon as a little of it shows.
+    once('[data-parts]', 0.12, function (node) {
+      node.classList.add('is-in');
+    });
+    once('[data-lanes]', 0.45, function (box) {
+      var send = function () {
+        box.classList.add('is-in');
+        box.querySelectorAll('[data-draw]').forEach(function (ring) {
+          ring.classList.add('is-drawn');
+        });
+      };
+      send();
+      var again = box.querySelector('[data-lanes-replay]');
+      if (!again) return;
+      // Offered once the three requests have come back, not while they are on their way.
+      setTimeout(function () {
+        again.hidden = false;
+      }, 5600);
+      again.addEventListener('click', function () {
+        box.classList.add('is-cut');
+        box.classList.remove('is-in');
+        box.querySelectorAll('[data-draw]').forEach(function (ring) {
+          ring.classList.remove('is-drawn');
+        });
+        void box.offsetWidth;
+        box.classList.remove('is-cut');
+        send();
+      });
+    });
+
+    // A plumb line in the margin of wide screens. Its bob hangs at the reader's place on the
+    // page; moving the page sets it swinging, and it settles back to true when the page stops.
+    var plumb = document.querySelector('[data-plumb]');
+    if (plumb && root.classList.contains('can-play')) {
+      var tilt = 0;
+      var spin = 0;
+      var lastY = window.scrollY;
+      var lastAt = 0;
+      var moving = false;
+      var hang = function () {
+        var room = document.documentElement.scrollHeight - window.innerHeight;
+        var part = room > 0 ? Math.min(1, Math.max(0, window.scrollY / room)) : 0;
+        var length = 96 + part * Math.max(0, window.innerHeight - 190);
+        plumb.style.setProperty('--len', length.toFixed(1) + 'px');
+        return length;
+      };
+      var swing = function (now) {
+        var dt = lastAt ? Math.min(0.05, (now - lastAt) / 1000) : 1 / 60;
+        lastAt = now;
+        var y = window.scrollY;
+        var speed = (y - lastY) / dt;
+        lastY = y;
+        // The bob never strays more than about 34 px sideways, however long the string.
+        var limit = (Math.atan(34 / hang()) * 180) / Math.PI;
+        var pull = Math.max(-limit, Math.min(limit, -speed * 0.006));
+        spin += (64 * (pull - tilt) - 6.5 * spin) * dt;
+        tilt += spin * dt;
+        plumb.style.setProperty('--tilt', tilt.toFixed(3) + 'deg');
+        if (speed === 0 && Math.abs(tilt) < 0.01 && Math.abs(spin) < 0.02) {
+          moving = false;
+          lastAt = 0;
+          plumb.style.setProperty('--tilt', '0deg');
+          return;
+        }
+        requestAnimationFrame(swing);
+      };
+      hang();
+      window.addEventListener(
+        'scroll',
+        function () {
+          if (moving) return;
+          moving = true;
+          requestAnimationFrame(swing);
+        },
+        { passive: true }
+      );
+      window.addEventListener('resize', hang);
+    }
+
     // The walk-through on the front page: four chapters that play in order, a caption per
     // beat. It starts when it scrolls into view, waits while it is out of view, and stops at
     // the end. A chapter title jumps to that chapter.

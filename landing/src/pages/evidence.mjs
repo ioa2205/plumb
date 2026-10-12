@@ -6,7 +6,7 @@ import { day, int, mb, minutes, seconds, shortHash } from '../lib/format.mjs';
 import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
 import { lang, t } from '../lib/lang.mjs';
-import { websiteLimits } from '../lib/website-limits.mjs';
+import { externalLimits, websiteLimits } from '../lib/website-limits.mjs';
 
 export const path = '/evidence';
 
@@ -17,7 +17,7 @@ const recorded = (/** @type {string} */ word) => (lang() === 'uz' ? html` <span 
 export function render(context) {
   const { record } = context;
   const { run, runtime, software, development, download, cpu_profile: cpu } = record;
-  const { collection, observation_comparison: comparison, console_records: consoles, cards, workbench_views: views, report_drafts: drafts } = record;
+  const { collection, observation_comparison: comparison, console_records: consoles, cards, workbench_views: views, report_drafts: drafts, journey, chat } = record;
   const { latest } = software;
   const [receipt, invoice] = run.findings;
   const { baseline, family_run: familyRun } = development;
@@ -71,6 +71,9 @@ export function render(context) {
   holds(views.captures === 24 && views.signed_in_acceptance === false && views.fresh_model_acceptance === false, 'the workbench pictures used stand-in content and no signed-in walk-through');
   holds(drafts.count === 12 && drafts.published === false, 'twelve report drafts, none exported');
   holds(latest.failed === 1 && latest.skipped === 3 && latest.collected === latest.passed + latest.failed + latest.skipped, 'the latest whole run of the tests had one failure and three skips');
+  holds(journey.mode === 'owned_fixture' && journey.supported === 0 && journey.findings > 0, 'the one website test ran on the practice website and left only leads');
+  holds(download.model_planning_qualified === false, 'the AI model is not yet trusted to plan website steps');
+  holds(chat.turns > 1 && chat.mixed_general_declined === true && /not a finding/.test(chat.basis), 'one recorded chat session; its general answer is labelled, and one general part declined');
 
   const head = html`<header class="page-head">
   <div class="wrap">
@@ -82,7 +85,7 @@ export function render(context) {
     ${inShort([
       t('Shown working: reading an app’s code, on one practice app and one laptop.', 'Ishlashi ko‘rsatilgan: ilova kodini o‘qib tekshirish, bitta sinov ilovasida va bitta noutbukda.'),
       t('Not working yet: the AI model reaches no verdict from an app’s answers, and in tests it missed other kinds of flaw.', 'Hali ishlamaydi: SI modeli ilova javoblari bo‘yicha aniq xulosaga kelmaydi, sinovlarda esa boshqa turdagi xatolarni aniqlay olmagan.'),
-      t('Not tested: real projects, a second computer, a conversation with the AI model.', 'Sinalmagan: haqiqiy loyihalar, ikkinchi kompyuter, SI modeli bilan suhbat.'),
+      t('Not tested: real projects, a website other than its own, a second computer, how good the AI model’s answers are.', 'Sinalmagan: haqiqiy loyihalar, o‘zinikidan boshqa sayt, ikkinchi kompyuter, SI modeli javoblarining sifati.'),
     ])}
   </div>
 </header>`;
@@ -119,6 +122,11 @@ export function render(context) {
           html`With a plan that was shown and approved first, Plumb sent ${fact(collection.requests)} requests to its own practice app and saved what came back. <a href="/web-assessment#trace">Each request and reply</a>. ${websiteLimits(download)}`,
           html`Avval ko‘rsatilib, tasdiqlangan reja bo‘yicha Plumb o‘zining sinov ilovasiga ${fact(collection.requests)} ta so‘rov yuborib, kelgan javoblarni saqladi. <a href="/web-assessment#trace">Har bir so‘rov va javob</a>. ${websiteLimits(download)}`,
         )}</dd></div>
+      <div>${glyph('half', partly)}<dt>${t('Testing a website you may test', 'Sinashga ruxsatingiz bor saytni sinash')}</dt>
+        <dd>${t(
+          html`Built: scope, plan, your approval, sign-in as each test account, comparisons and a private report. Run once on Plumb’s own practice website on ${day(journey.recorded_at)}: ${fact(journey.requests)} of ${fact(journey.max_requests)} allowed requests, ${fact(journey.findings)} leads and no confirmed finding. The AI model is not yet trusted to plan the steps, so plain code and the reviewer choose them. ${externalLimits(download)}`,
+          html`Qurilgan: qamrov, reja, sizning tasdig‘ingiz, har bir test hisobi bilan kirish, solishtirish va shaxsiy hisobot. ${day(journey.recorded_at)} kuni Plumbning o‘z sinov saytida bir marta ishga tushirilgan: ruxsat etilgan ${fact(journey.max_requests)} ta so‘rovdan ${fact(journey.requests)} tasi, ${fact(journey.findings)} ta iz, tasdiqlangan topilma yo‘q. SI modeliga qadamlarni rejalashtirish hali ishonib topshirilmagan, ularni oddiy kod va tekshiruvchi tanlaydi. ${externalLimits(download)}`,
+        )}</dd></div>
       <div>${glyph('half', partly)}<dt>${t('Judging an app from its replies', 'Ilovani javoblariga qarab baholash')}</dt>
         <dd>${t(
           html`The whole path is built: a scope you declare, saved requests and replies, a comparison of two accounts, three judgments by the AI model and a private report draft. In the one comparison on record the model’s answer was Inconclusive every time. <a href="/web-assessment#judged">What happened</a>.`,
@@ -126,8 +134,8 @@ export function render(context) {
         )}</dd></div>
       <div>${glyph('half', partly)}<dt>${t('Questions in plain words', 'Oddiy so‘zlar bilan savollar')}</dt>
         <dd>${t(
-          html`A question about a saved finding is answered from the saved evidence, without the AI model; that was run for this site on ${day(consoles.recorded_at)}. Open questions to the AI model about a project, a review or an assessment are built and pass their software tests. No real conversation has been recorded, so nothing is known about how good its answers are.`,
-          html`Saqlangan topilma haqidagi savolga SI modelisiz, saqlangan dalillar asosida javob beriladi; bu shu sayt uchun ${day(consoles.recorded_at)} kuni ishga tushirib ko‘rilgan. Loyiha, tekshiruv yoki veb-tekshiruv haqida SI modeliga erkin savol berish imkoniyati qurilgan va dasturiy testlardan o‘tadi. Model bilan haqiqiy suhbat hali qayd etilmagan, shuning uchun javoblari qanchalik yaxshi ekani haqida hech narsa ma’lum emas.`,
+          html`A question about a saved finding is answered from the saved evidence, without the AI model; that was run for this site on ${day(consoles.recorded_at)}. General questions in plain words were recorded once, on ${day(chat.recorded_at)}: the model answered and labelled its answer as general knowledge, and in a mixed question its general part declined to answer. Open questions to the AI model about a project, a review or an assessment are built and pass their software tests; none has been recorded, so nothing is known about how good those answers are.`,
+          html`Saqlangan topilma haqidagi savolga SI modelisiz, saqlangan dalillar asosida javob beriladi; bu shu sayt uchun ${day(consoles.recorded_at)} kuni ishga tushirib ko‘rilgan. Oddiy so‘zlar bilan berilgan umumiy savollar ${day(chat.recorded_at)} kuni bir marta yozib olingan: model javob berib, uni umumiy bilim deb belgiladi, aralash savolda esa umumiy qism javob berishdan bosh tortdi. Loyiha, tekshiruv yoki veb-tekshiruv haqida SI modeliga erkin savol berish imkoniyati qurilgan va dasturiy testlardan o‘tadi; bunday suhbat hali qayd etilmagan, shuning uchun bu javoblar qanchalik yaxshi ekani haqida hech narsa ma’lum emas.`,
         )}</dd></div>
       <div>${glyph('half', partly)}<dt>${t('Choosing the AI model', 'SI modelini tanlash')}</dt>
         <dd>${t(
@@ -360,8 +368,8 @@ export function render(context) {
       ${t(
         html`<li><strong>Any accuracy figure.</strong> No precision, recall or false-alarm rate exists for Plumb. A sealed test set was prepared and has not been opened.</li>
       <li><strong>Comparison with other tools or models.</strong> None has been run on equal terms. That includes the larger models Plumb can install from its list: none has been downloaded or run here, so nothing is known about how they compare.</li>
-      <li><strong>A web assessment of a real app.</strong> Every request Plumb has sent went to its own practice app, and every imported record so far was made up for testing. Nobody has used it on an app they run.</li>
-      <li><strong>A conversation with the AI model.</strong> Asking open questions is built, but no real exchange has been recorded or graded.</li>
+      <li><strong>A web assessment of a real app.</strong> Every request Plumb has sent went to its own practice app or its own practice website, and every imported record so far was made up for testing. Nobody has used it on an app they run.</li>
+      <li><strong>How good the AI model’s answers are.</strong> One session of general questions was recorded on ${day(chat.recorded_at)}, and no answer has been graded. Questions about a project, a review or an assessment have not been recorded.</li>
       <li><strong>A second computer.</strong> Everything here was recorded on one laptop, under one Windows account. That includes the one run of the second profile, which was added so that other computers can start a review.</li>
       <li><strong>A review with the downloaded package.</strong> The package offered for download passed its checks without loading the AI model. The recorded test used an earlier package, and the one run of the second profile was done from source.</li>
       <li><strong>macOS and Linux.</strong> Plumb runs on 64-bit Windows 10 or 11 only for now.</li>
@@ -371,8 +379,8 @@ export function render(context) {
       <li><strong>A video.</strong> No screen recording exists. The saved report files are the record.</li>`,
         html`<li><strong>Har qanday aniqlik ko‘rsatkichi.</strong> Plumb uchun aniqlik, to‘liqlik yoki yolg‘on signallar ulushi hisoblanmagan. Yopiq test to‘plami tayyorlangan, lekin hali ochilmagan.</li>
       <li><strong>Boshqa vositalar yoki modellar bilan taqqoslash.</strong> Teng sharoitda birorta ham taqqoslash o‘tkazilmagan. Plumb o‘z ro‘yxatidan o‘rnata oladigan kattaroq modellar ham shunga kiradi: ularning birortasi bu yerda yuklab olinmagan va ishga tushirilmagan, shuning uchun ular bir-biridan qanday farq qilishi haqida hech narsa ma’lum emas.</li>
-      <li><strong>Haqiqiy ilovaning veb-tekshiruvi.</strong> Plumb yuborgan barcha so‘rovlar o‘zining sinov ilovasiga ketgan, hozirgacha import qilingan barcha yozuvlar esa sinov uchun to‘qib chiqarilgan. Uni hali hech kim o‘zi yuritadigan ilovada qo‘llab ko‘rmagan.</li>
-      <li><strong>SI modeli bilan suhbat.</strong> Erkin savol berish imkoniyati qurilgan, lekin haqiqiy savol-javob hali qayd etilmagan va baholanmagan.</li>
+      <li><strong>Haqiqiy ilovaning veb-tekshiruvi.</strong> Plumb yuborgan barcha so‘rovlar o‘zining sinov ilovasiga yoki o‘zining sinov saytiga ketgan, hozirgacha import qilingan barcha yozuvlar esa sinov uchun to‘qib chiqarilgan. Uni hali hech kim o‘zi yuritadigan ilovada qo‘llab ko‘rmagan.</li>
+      <li><strong>SI modeli javoblarining sifati.</strong> ${day(chat.recorded_at)} kuni umumiy savollar bilan bitta suhbat yozib olingan, lekin birorta javob baholanmagan. Loyiha, tekshiruv yoki veb-tekshiruv haqidagi savollar hali qayd etilmagan.</li>
       <li><strong>Ikkinchi kompyuter.</strong> Bu yerdagi hamma narsa bitta noutbukda, bitta Windows hisobida yozib olingan. Boshqa kompyuterlar ham tekshiruvni boshlay olishi uchun qo‘shilgan ikkinchi profilning yagona sinovi ham shu noutbukda o‘tgan.</li>
       <li><strong>Yuklab olinadigan to‘plam bilan tekshiruv.</strong> Yuklab olish uchun taklif qilingan to‘plam o‘z sinovlaridan SI modeli ishga tushirilmagan holda o‘tgan. Yozib olingan sinov avvalgi to‘plamda o‘tkazilgan, ikkinchi profilning yagona sinovi esa manba kodidan ishga tushirilgan.</li>
       <li><strong>macOS va Linux.</strong> Plumb hozircha faqat 64 bitli Windows 10 yoki 11 da ishlaydi.</li>

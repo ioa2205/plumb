@@ -20,6 +20,7 @@ import { tone } from '../src/lib/tone.mjs';
 import { render as installPage } from '../src/pages/install.mjs';
 import { render as assessmentPage } from '../src/pages/web-assessment.mjs';
 import { render as homePage } from '../src/pages/index.mjs';
+import { render as whatPage } from '../src/pages/what-it-does.mjs';
 import { build } from './build.mjs';
 import { PRIVATE_PATTERNS, PRIVATE_WORDS_LOADED } from './private.mjs';
 
@@ -245,8 +246,8 @@ test('recorded local collection stays distinct from qualified and approved websi
     assert.match(text(`uz/${page}`), /Tashqi sayt sinab ko‘rilmagan/, `uz/${page}: no external acceptance claimed`);
   }
   // The model's standing on this evidence is stated where the feature is introduced.
-  assert.match(text('index.html'), /its AI model has not settled a case yet/);
-  assert.match(text('uz/index.html'), /hali birorta holat bo‘yicha aniq xulosaga kelmagan/);
+  assert.match(text('index.html'), /Not yet: real projects, a second computer, and a website case settled by its AI model/);
+  assert.match(text('uz/index.html'), /Hozircha yo‘q: haqiqiy loyihalar, ikkinchi kompyuter va SI modeli aniq xulosaga kelgan birorta sayt holati/);
   assert.match(text('web-assessment/index.html'), /the AI model has not reached a verdict yet/);
   assert.match(text('uz/web-assessment/index.html'), /SI modeli hali aniq xulosaga kelmagan/);
   // An observation is never dressed as a source finding or a runtime check.
@@ -350,12 +351,106 @@ test('the walk-through on the front page is drawn from the record and complete w
   assert.throws(() => homePage(tested), /saved records do not/);
 });
 
+test('the front page ends in a parts list of everything Plumb does, marked as the detail page marks it', () => {
+  for (const path of ['index.html', 'uz/index.html']) {
+    const page = readFileSync(join(DIST, path), 'utf8');
+    const detail = readFileSync(join(DIST, path.replace('index.html', 'what-it-does/index.html')), 'utf8');
+    const groups = [...page.matchAll(/<section class="parts-group">\s*<h3><a href="([^"]+)">[\s\S]*?<\/section>/g)];
+    assert.equal(groups.length, 4, `${path}: code, websites, questions and results`);
+    for (const [, href] of groups) {
+      // Each group opens its own part of the detail page, in the same language.
+      assert.match(href, path.startsWith('uz/') ? /^\/uz\/what-it-does#can-\w+$/ : /^\/what-it-does#can-\w+$/, `${path}: ${href}`);
+      assert.ok(detail.includes(`id="${href.split('#')[1]}"`), `${path}: ${href} exists`);
+    }
+    const marks = [...page.matchAll(/<svg class="lvl is-(dot|half)"/g)].map((match) => match[1]);
+    assert.equal(marks.length, 13, `${path}: every part of Plumb`);
+    // As many parts are shown working on the front page as there are marks to back them on the detail page.
+    assert.ok(marks.filter((mark) => mark === 'dot').length <= [...detail.matchAll(/<li class="can">\s*<svg class="g" role="img" aria-label="(Shown working|Ishlashi ko‘rsatilgan)/g)].length, `${path}: no part promoted`);
+    assert.match(page, /<div class="parts" data-parts>/, `${path}: the list fills in when it comes into view`);
+  }
+  // The parts with no recorded run exist in the code that ships, or the pages refuse to build.
+  const context = () => ({
+    record: structuredClone(record), site,
+    assets: { css: '/assets/site.css', js: '/assets/site.js' },
+    themeColor: { day: '', night: '' },
+  });
+  assert.doesNotThrow(() => homePage(context()));
+  assert.doesNotThrow(() => whatPage(context()));
+  const noAdvisories = context();
+  noAdvisories.record.signals.advisories = 0;
+  assert.throws(() => homePage(noAdvisories), /saved records do not/);
+  const otherRule = context();
+  otherRule.record.signals.config_rules = ['config-fastapi-debug', 'config-cors-any'];
+  assert.throws(() => whatPage(otherRule), /saved records do not/);
+  const rewrites = context();
+  rewrites.record.decisions = ['open', 'dismissed'];
+  assert.throws(() => homePage(rewrites), /saved records do not/);
+  const noStop = context();
+  noStop.record.journey.commands = ['setup', 'run'];
+  assert.throws(() => whatPage(noStop), /saved records do not/);
+});
+
+test('the website test and the plain question on the front page are shown as recorded', () => {
+  const { journey, chat, download } = record;
+  // What the records say.
+  assert.equal(journey.mode, 'owned_fixture');
+  assert.equal(journey.comparison, 'candidate');
+  assert.equal(journey.supported, 0);
+  assert.equal(download.external_website_tested, false);
+  for (const path of ['index.html', 'uz/index.html']) {
+    const page = readFileSync(join(DIST, path), 'utf8');
+    // Three people ask for the same label; each lane shows the status that came back.
+    const lanes = [...page.matchAll(/<li class="lane (is-[\w-]+)">([\s\S]*?)<\/li>/g)];
+    assert.equal(lanes.length, 3, `${path}: three lanes`);
+    const statuses = lanes.map((lane) => Number(lane[2].match(/<p class="lane-got">[\s\S]*?<span class="fact">(\d+)<\/span>/)?.[1]));
+    assert.deepEqual(statuses, [journey.owner_status, journey.other_status, journey.signed_out_status], `${path}: recorded statuses`);
+    assert.ok(lanes[0][2].includes(journey.owner) && lanes[1][2].includes(journey.other), `${path}: the practice website’s own accounts`);
+    // One answer is ringed in red pencil: the one that should have been refused.
+    assert.deepEqual(lanes.filter((lane) => lane[2].includes('class="ringed"')).map((lane) => lane[1]), ['is-gap'], `${path}: one ring, on the wrong answer`);
+    // The plain question is the recorded one, and the answer is quoted from its start.
+    assert.ok(page.includes(`<p class="q" lang="en">${chat.prompt}</p>`), `${path}: the recorded question`);
+    assert.ok(page.includes(chat.basis), `${path}: what the answer rests on`);
+    const quoted = page.match(/<p class="a" lang="en">([^<]*?) <span class="more-cut">/)?.[1] ?? '';
+    assert.ok(quoted.length > 20 && chat.answer.startsWith(quoted), `${path}: the answer as recorded`);
+  }
+  // The page refuses a record that says more than the test showed.
+  const context = () => ({
+    record: structuredClone(record), site,
+    assets: { css: '/assets/site.css', js: '/assets/site.js' },
+    themeColor: { day: '', night: '' },
+  });
+  assert.doesNotThrow(() => homePage(context()));
+  const confirmed = context();
+  confirmed.record.journey.supported = 1;
+  assert.throws(() => homePage(confirmed), /saved records do not/);
+  const open = context();
+  open.record.journey.signed_out_status = 200;
+  assert.throws(() => homePage(open), /saved records do not/);
+  const finding = context();
+  finding.record.chat.basis = 'A finding about your app.';
+  assert.throws(() => homePage(finding), /saved records do not/);
+});
+
+test('every page ends in a title block that counts the records it was drawn from', () => {
+  // Saved results and the code they are checked against are counted apart, never as one figure.
+  const read = Object.keys(record.sources);
+  const records = read.filter((file) => file.startsWith('docs/results/')).length;
+  const files = read.length - records;
+  assert.ok(records > 0 && files > 0);
+  for (const path of pages()) {
+    const page = readFileSync(path, 'utf8');
+    const block = page.match(/<dl class="title-block">([\s\S]*?)<\/dl>/)?.[1] ?? '';
+    assert.ok(block.includes(isUzbek(path) ? `${records} ta saqlangan yozuv, ${files} ta manba fayli` : `${records} saved records, ${files} source files`), `${name(path)}: record count`);
+    assert.match(page, /<div class="margin-plumb" data-plumb aria-hidden="true">/, `${name(path)}: the plumb line`);
+  }
+});
+
 test('the front page stays short, and what it used to carry lives on the deeper pages', () => {
   const words = (/** @type {string} */ path) => {
     const page = readFileSync(join(DIST, path), 'utf8');
     const main = page.slice(page.indexOf('<main'), page.indexOf('</main>'));
     // The drawings are pictures; what counts is what a visitor has to read.
-    return main.replace(/<div class="stage-box"[\s\S]*?<\/div>\s*<\/li>/g, ' ').replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    return main.replace(/<div class="stage-box"[\s\S]*?<\/div>\s*<\/li>/g, ' ').replace(/<p class="chapter-name" aria-hidden="true">[^<]*<\/p>/g, ' ').replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   };
   // A newcomer reads the front page in about three minutes. Detail belongs behind it.
   assert.ok(words('index.html') <= 600, `the front page has ${words('index.html')} words`);

@@ -48,7 +48,7 @@ body {
 }
 h1, h2, h3, p, ul, ol, dl, dd, figure, pre { margin: 0; }
 ul, ol { padding: 0; }
-h2 { font: var(--t-h2); letter-spacing: -0.022em; text-wrap: balance; }
+h2 { font: var(--t-h2); font-weight: 700; letter-spacing: -0.03em; text-wrap: balance; }
 h3 { font: var(--t-h3); letter-spacing: -0.006em; }
 a { color: inherit; text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--pencil); }
 a:hover { text-decoration-color: currentColor; }
@@ -390,7 +390,8 @@ table.plain { width: 100%; border-collapse: collapse; font-size: 0.9375rem; line
 
 /* ---------- inner pages ---------- */
 .page-head { padding-block: clamp(28px, 5vw, 64px) clamp(28px, 4vw, 48px); }
-.page-head h1 { font: var(--t-title); letter-spacing: -0.03em; max-width: 18ch; text-wrap: balance; }
+.page-head h1 { font: 700 clamp(2.3rem, 1rem + 3.7vw, 4.1rem) / 1 var(--sans); letter-spacing: -0.044em; max-width: 16ch; text-wrap: balance; }
+:lang(uz) .page-head h1 { max-width: 20ch; font-size: clamp(2rem, 0.9rem + 3vw, 3.4rem); line-height: 1.04; letter-spacing: -0.038em; }
 .page-head .lede { margin-top: 18px; max-width: 40rem; }
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 32px; }
 .facts > div { display: grid; gap: 2px; align-content: start; }
@@ -615,68 +616,238 @@ a.channel:hover .arrow { stroke: var(--ink); transform: translate(2px, -2px); }
 .cans-note { margin-top: 14px; padding-inline: 4px; color: var(--pencil); }
 
 /* ---------- footer ---------- */
-.foot { padding-block: 36px 56px; }
-.foot-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) minmax(0, 5fr); gap: 24px clamp(24px, 5vw, 84px); align-items: start; }
+/* The footer is the drawing's title block: what the page was drawn from, how current it is,
+   and who made it. Cells are set apart by tone, with the sheet showing through between them. */
+.foot { padding-block: clamp(36px, 5vw, 60px) clamp(44px, 6vw, 76px); background: var(--sheet); }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr); gap: 28px clamp(24px, 4vw, 64px); align-items: start; }
+.foot-grid > div > .small { margin-top: 6px; max-width: 24rem; }
+.title-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px; margin: 0; overflow: hidden; border-radius: 12px; }
+.title-block > div { display: grid; gap: 5px; align-content: start; padding: 12px 14px 14px; background: var(--well); }
+.title-block dt { color: var(--pencil); font: 400 0.6875rem / 1.3 var(--mono); }
+.title-block dd { margin: 0; font: 600 0.9375rem / 1.3 var(--sans); }
 .foot-nav { display: grid; gap: 2px; justify-items: start; }
 .foot-nav a { display: inline-flex; align-items: center; min-height: 32px; color: var(--graphite); font: var(--t-small); text-decoration: none; }
 .foot-nav a:hover { color: var(--ink); text-decoration: underline; }
-.colophon { max-width: 30rem; }
+.colophon { grid-column: 1 / 3; max-width: 40rem; color: var(--pencil); }
 
-/* ---------- front page: few words, large pictures ---------- */
-.home .band { padding-block: clamp(56px, 8vw, 116px); }
-.home-hero { padding-block: clamp(24px, 4vw, 56px) clamp(48px, 6vw, 88px); }
-.home-top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 5vw, 84px); align-items: end; }
-.headline { font: 700 clamp(2.4rem, 1rem + 4.4vw, 4.4rem) / 1 var(--sans); letter-spacing: -0.04em; max-width: 15ch; text-wrap: balance; }
-:lang(uz) .headline { max-width: 19ch; font-size: clamp(2rem, 0.9rem + 3.3vw, 3.4rem); line-height: 1.04; }
-.home-say .lede { max-width: 26rem; }
-.home-say .actions { margin-top: 22px; }
+/* ---------- front page: a marked-up drawing ----------
+   Ink for what is shown, blue pencil for what is not settled, one red-pencil ring per section
+   on the thing that is wrong. Pictures sit on sheets ("plates") whose caption strip names
+   what they show and when it was recorded. */
+.home .band { padding-block: clamp(64px, 9vw, 136px); }
+.band-sheet { background: var(--sheet); }
+/* The one inverted section: the page's strongest promise, set in reverse like a stamp. */
+.band-ink { background: var(--ink); color: var(--desk); }
+
+.hero { padding-block: clamp(28px, 5vw, 76px) clamp(64px, 8vw, 120px); }
+.headline { font: 700 clamp(2.55rem, 0.8rem + 5.5vw, 5.75rem) / 0.97 var(--sans); letter-spacing: -0.046em; max-width: 15.5ch; text-wrap: balance; }
+:lang(uz) .headline { max-width: 19ch; font-size: clamp(2.1rem, 0.75rem + 4.2vw, 4.4rem); line-height: 1.02; letter-spacing: -0.04em; }
+.hero-say { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 44px; margin-top: clamp(24px, 3.4vw, 44px); }
+.hero-say .lede { max-width: 31rem; }
+.hero-say .actions { margin-top: 0; }
+
+/* The headline hangs word by word. With motion, each word drops on its string and swings to
+   rest like the bob in the wordmark; the phrase out of true settles crooked, then gets ringed.
+   The swing of each word is fixed here, so every visit plays the same short scene. */
+.headline .w { display: inline-block; transform-origin: 50% -0.5em; }
+.headline .w.is-odd { --rest: -2.2deg; transform: rotate(var(--rest)); }
+.headline .w:nth-child(1) { --i: 0; --swing: 6deg; }
+.headline .w:nth-child(2) { --i: 1; --swing: -8deg; }
+.headline .w:nth-child(3) { --i: 2; --swing: 5deg; }
+.headline .w:nth-child(4) { --i: 3; --swing: -6deg; }
+.headline .w:nth-child(5) { --i: 4; --swing: 9deg; }
+.headline .w:nth-child(6) { --i: 5; --swing: -5deg; }
+.headline .w:nth-child(7) { --i: 6; --swing: 7deg; }
+.headline .w:nth-child(8) { --i: 7; --swing: -9deg; }
+.headline .w:nth-child(9) { --i: 8; --swing: 6deg; }
+.headline .w:nth-child(10) { --i: 9; --swing: -7deg; }
+.headline .w:nth-child(11) { --i: 10; --swing: 5deg; }
+.headline .w:nth-child(12) { --i: 11; --swing: -6deg; }
+@keyframes hang {
+  0% { opacity: 0; transform: translateY(-0.45em) rotate(var(--swing)); }
+  14% { opacity: 1; transform: translateY(0) rotate(calc(var(--swing) * -0.68)); }
+  33% { transform: rotate(calc(var(--swing) * 0.4)); }
+  53% { transform: rotate(calc(var(--swing) * -0.2)); }
+  74% { transform: rotate(calc(var(--swing) * 0.07)); }
+  100% { opacity: 1; transform: rotate(var(--rest, 0deg)); }
+}
+.can-play .headline .w { animation: hang 1.8s cubic-bezier(0.37, 0, 0.63, 1) calc(var(--i, 0) * 60ms + 120ms) both; }
+.can-play .headline .hand path { transition-delay: 2.1s; }
+
+/* Words ringed in red pencil. The ring stretches to its words and draws itself once. */
+.ringed { position: relative; display: inline-block; white-space: nowrap; }
+.hand { position: absolute; left: -0.24em; top: -0.07em; width: calc(100% + 0.56em); height: calc(100% + 0.2em); overflow: visible; pointer-events: none; transform: rotate(-1.8deg); }
+.hand path { fill: none; stroke: var(--carmine); stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.can-play .hand path { transition: stroke-dashoffset 0.95s cubic-bezier(0.35, 0.6, 0.25, 1) 0.45s; }
+.can-play .hand:not(.is-drawn) path { stroke-dashoffset: 1; }
+
+/* A plate: a sheet holding one picture, with a caption strip saying what it is and when. */
+.plate { margin: 0; padding: clamp(14px, 2.2vw, 28px); border-radius: clamp(16px, 2vw, 24px); background: var(--sheet); min-width: 0; }
+.plate-cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 18px; margin-bottom: clamp(14px, 2vw, 24px); padding-inline: 2px; color: var(--pencil); font: 500 0.75rem / 1.45 var(--mono); }
+.plate-cap > span:first-child { color: var(--ink); }
+.plate-film { margin-top: clamp(40px, 5.6vw, 80px); }
+
 /* A section's statement: one sentence that carries the section if nothing else is read. */
-.say { font: 700 clamp(1.85rem, 1.1rem + 2.7vw, 3.1rem) / 1.05 var(--sans); letter-spacing: -0.034em; max-width: 19ch; text-wrap: balance; }
-:lang(uz) .say { max-width: 22ch; font-size: clamp(1.7rem, 1rem + 2.2vw, 2.7rem); line-height: 1.08; }
+.say { font: 700 clamp(1.95rem, 1rem + 3vw, 3.5rem) / 1.03 var(--sans); letter-spacing: -0.038em; max-width: 18ch; text-wrap: balance; }
+:lang(uz) .say { max-width: 22ch; font-size: clamp(1.75rem, 0.95rem + 2.4vw, 2.9rem); line-height: 1.07; }
+.say-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 18px clamp(24px, 5vw, 84px); align-items: end; }
+.say-note { max-width: 27rem; color: var(--graphite); font: var(--t-lede); }
 
-/* Two questions about the same receipt. Carmine marks the answer that should have been no. */
-.token { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; margin-right: 0.5em; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; font: 600 0.62em / 1 var(--sans); vertical-align: 0.16em; }
+/* Three people ask the practice website for the same parcel label. Each lane: who asks, the
+   request on its way to the site, what came back, and whether that was right. With motion the
+   requests travel one after another; without it every lane is shown as it ended. */
+.token { display: inline-grid; place-items: center; flex: none; width: 1.5em; height: 1.5em; margin-right: 0.6em; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; font: 600 0.7em / 1 var(--sans); }
 .token.is-owner { background: var(--ink); color: var(--sheet); box-shadow: none; }
-.asks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: clamp(28px, 4vw, 52px); }
-.ask { display: grid; gap: 10px; align-content: start; padding: clamp(22px, 3vw, 40px); border-radius: var(--radius-sheet); background: var(--sheet); }
-.ask.is-gap { background: var(--carmine-wash); }
-.ask-k { color: var(--graphite); font: var(--t-small); }
-.ask-q { font: 600 clamp(1.3rem, 1rem + 1.1vw, 1.85rem) / 1.2 var(--sans); letter-spacing: -0.02em; }
-.ask-a { display: flex; align-items: center; gap: 12px; margin-top: clamp(14px, 2vw, 26px); font: 500 1.125rem / 1.3 var(--sans); }
-.ask-a .g { width: 14px; height: 14px; }
-.ask-a > .g { margin-inline: 14px 12px; }
-.ask.is-gap .ask-a { color: var(--carmine); font-weight: 600; }
-.ask-a .mark { position: relative; display: inline-grid; margin-inline: 14px 12px; }
-.asks-note { margin-top: 16px; max-width: 46rem; color: var(--pencil); }
+.plate-site { margin-top: clamp(28px, 4vw, 52px); }
+.lanes-box { position: relative; }
+.lanes { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.45fr); column-gap: clamp(14px, 2vw, 30px); row-gap: 6px; list-style: none; }
+.lane { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: center; padding: clamp(14px, 1.8vw, 22px) clamp(14px, 2vw, 24px); border-radius: var(--radius-sheet); background: var(--desk); }
+.lane.is-gap { background: var(--carmine-wash); }
+.lane-who { display: flex; align-items: center; font: 600 1.125rem / 1.25 var(--sans); letter-spacing: -0.01em; }
+.lane-who > span { display: grid; }
+.lane-role { color: var(--graphite); font: var(--t-small); letter-spacing: 0; }
+.lane.is-out .token { box-shadow: inset 0 0 0 1.5px var(--pencil); color: var(--pencil); }
+.lane-track { position: relative; height: 34px; container-type: inline-size; }
+.lane-track::before { content: ""; position: absolute; left: 4px; right: 30px; top: 50%; height: 1.6px; border-radius: 1px; background: var(--control-rule); opacity: 0.45; }
+.lane-site { position: absolute; right: 0; top: 50%; width: 28px; height: 28px; margin-top: -14px; fill: var(--sheet); stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.pkt { position: absolute; left: 0; top: 50%; padding: 3px 9px 4px; border-radius: 999px; background: var(--ink); color: var(--sheet); font: 600 0.75rem / 1.2 var(--sans); white-space: nowrap; transform: translateY(-50%); }
+.lane-got { font: 600 1rem / 1.3 var(--sans); }
+.lane-got .fact { font-size: 0.9em; }
+.lane.is-gap .lane-got { color: var(--carmine); }
+.lane-got .hand path { stroke-width: 3.6; }
+.lane-got .hand { left: -1.1em; top: -0.6em; width: calc(100% + 2.4em); height: calc(100% + 1.2em); }
+.lane-verdict { display: flex; align-items: center; gap: 10px; font: 500 1rem / 1.3 var(--sans); }
+.lane-verdict .g { width: 13px; height: 13px; }
+.lane.is-gap .lane-verdict { color: var(--carmine); font-weight: 600; }
+.lanes-again { margin-top: 8px; min-height: 36px; padding: 0 10px; color: var(--graphite); font-size: 0.875rem; }
+
+.lane:nth-child(1) { --d: 0.2s; }
+.lane:nth-child(2) { --d: 1.9s; }
+.lane:nth-child(3) { --d: 3.6s; }
+.can-play .lanes-box .pkt { opacity: 0; }
+.can-play .lanes-box .lane-got, .can-play .lanes-box .lane-verdict { opacity: 0; transform: translateX(-8px); transition: opacity 0.35s ease-out, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.can-play .lanes-box.is-in .pkt { animation: send 1.15s cubic-bezier(0.55, 0, 0.3, 1) var(--d) both; }
+.can-play .lanes-box.is-in .lane-site { animation: knock 0.4s ease-out calc(var(--d) + 1s) both; transform-origin: 50% 50%; transform-box: fill-box; }
+.can-play .lanes-box.is-in .lane-got { opacity: 1; transform: none; transition-delay: calc(var(--d) + 1.15s); }
+.can-play .lanes-box.is-in .lane-verdict { opacity: 1; transform: none; transition-delay: calc(var(--d) + 1.4s); }
+.can-play .lanes-box .hand path { transition-delay: 3.1s; }
+@keyframes send {
+  0% { opacity: 0; transform: translate(0, -50%); }
+  12% { opacity: 1; transform: translate(0, -50%); }
+  82% { opacity: 1; transform: translate(calc(100cqw - 100% - 32px), -50%); }
+  100% { opacity: 0; transform: translate(calc(100cqw - 100% - 22px), -50%) scale(0.5); }
+}
+.lanes-box.is-cut *, .lanes-box.is-cut *::before { transition: none !important; animation: none !important; }
+@keyframes knock { 0%, 100% { transform: none; } 45% { transform: scale(1.18); } }
+
+/* How a website test runs: a real sequence, with the step that needs you set in ink. */
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 22px; margin-top: clamp(22px, 3vw, 34px); padding-inline: 2px; list-style: none; counter-reset: flow; }
+.flow li { position: relative; padding-top: 38px; color: var(--graphite); font: var(--t-small); font-size: 0.9375rem; counter-increment: flow; }
+.flow li::before { content: counter(flow); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--desk); color: var(--ink); font: 600 0.75rem / 1 var(--mono); }
+.flow li::after { content: ""; position: absolute; left: 36px; right: -12px; top: 12.5px; height: 1.6px; border-radius: 1px; background: var(--well); }
+.flow li:last-child::after { content: none; }
+.flow li:has(strong)::before { background: var(--ink); color: var(--sheet); }
+.flow strong { color: var(--ink); font-weight: 600; }
+
+/* How far a part has been checked, in blue pencil when it is built but not settled. */
+.status { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; margin-top: 18px; max-width: 56rem; color: var(--blue); font: var(--t-small); }
+.status .g { position: relative; top: 4px; }
+.status > span { color: var(--graphite); }
+
+/* A plain question, as a document rather than a chat window: the question, the answer, and
+   what the answer rests on. */
+.ask-wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px clamp(28px, 5vw, 84px); align-items: start; }
+.ask-wrap .say-note { margin-top: 20px; }
+.transcript { margin: 0; padding: clamp(18px, 2.6vw, 32px); border-radius: clamp(16px, 2vw, 24px); background: var(--desk); }
+.exchange { display: grid; gap: 14px; }
+.exchange .q { font: 600 clamp(1.3rem, 1rem + 1vw, 1.75rem) / 1.2 var(--sans); letter-spacing: -0.018em; }
+.exchange .a { max-width: 36rem; font: var(--t-lede); }
+.more-cut { color: var(--pencil); }
+.exchange .basis { justify-self: start; max-width: 36rem; padding: 10px 14px; border-radius: var(--radius-inset); background: var(--blue-wash); color: var(--blue); font: 500 0.875rem / 1.45 var(--sans); }
+.transcript-foot { margin-top: 16px; color: var(--pencil); }
+/* What the answer rests on arrives like a stamp on a form, once the answer has been read. */
+.can-play .exchange .basis { transition: opacity 0.18s ease-out 0.9s, transform 0.42s cubic-bezier(0.3, 1.5, 0.55, 1) 0.9s; }
+.can-play .exchange .basis:not(.is-in) { opacity: 0; transform: scale(1.14) rotate(-2.5deg); }
+
+/* A plumb line hangs in the margin of wide screens. The bob sits at the reader's place on the
+   page, swings when the page moves and settles when it stops (site.js). */
+.margin-plumb { display: none; }
+@media (min-width: 1360px) {
+  .can-play .margin-plumb { position: fixed; z-index: 1; top: 0; left: calc((100vw - var(--page)) / 4 - 7px); display: block; width: 14px; height: var(--len, 96px); pointer-events: none; transform: rotate(var(--tilt, 0deg)); transform-origin: 7px 0; }
+}
+.mp-line { position: absolute; left: 6.2px; top: 0; bottom: 17px; width: 1.6px; background: var(--pencil); opacity: 0.6; }
+.mp-bob { position: absolute; left: 0; bottom: 0; width: 14px; height: 20px; overflow: visible; fill: var(--ink); stroke: var(--desk); stroke-width: 1.4; stroke-linejoin: round; paint-order: stroke; }
 
 /* Everything stays inside the laptop. The dashed shape is what Plumb does without. */
 .local { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 84px); align-items: center; }
-.local-say .lede { margin-top: 20px; max-width: 30rem; }
-.points { display: grid; gap: 10px; margin-top: 22px; max-width: 30rem; list-style: none; color: var(--graphite); }
+.local-say .lede { margin-top: 22px; max-width: 30rem; }
+.points { display: grid; gap: 10px; margin-top: 24px; max-width: 30rem; list-style: none; color: var(--graphite); }
 .points li, .in-short li { position: relative; padding-left: 22px; }
 .points li::before, .in-short li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+.band-ink .lede, .band-ink .points { color: var(--desk); }
+.band-ink .points { opacity: 0.86; }
+.band-ink .points li::before { background: var(--desk); }
 .local-art { display: block; width: 100%; max-width: 560px; height: auto; justify-self: end; }
-.la-bezel { fill: var(--ink); }
+.la-bezel { fill: var(--sheet); }
 .la-screen { fill: var(--well); }
 .la-item rect { fill: var(--raised); }
 .la-item text { fill: var(--ink); font: 600 22px var(--sans); letter-spacing: -0.01em; }
-.la-wire, .la-cut { fill: none; stroke: var(--pencil); stroke-width: 2; stroke-linecap: round; }
-.la-cut { stroke: var(--ink); }
-.la-cloud { fill: none; stroke: var(--pencil); stroke-width: 2; stroke-dasharray: 5 6; stroke-linejoin: round; }
-.la-off { fill: var(--pencil); font: 500 17px var(--sans); }
-.la-off.is-strong { fill: var(--ink); font-weight: 600; }
+.la-wire, .la-cut { fill: none; stroke: var(--desk); stroke-width: 2; stroke-linecap: round; opacity: 0.7; }
+.la-cut { opacity: 1; }
+.la-cloud { fill: none; stroke: var(--desk); stroke-width: 2; stroke-dasharray: 5 6; stroke-linejoin: round; opacity: 0.7; }
+.la-off { fill: var(--desk); font: 500 17px var(--sans); opacity: 0.75; }
+.la-off.is-strong { opacity: 1; font-weight: 600; }
+/* A plumb line drops through the code and the model and comes to rest on the report, then the
+   wire to the online service is cut: the whole review happens inside the laptop. With motion
+   it plays once, when the drawing comes into view; without it the line simply hangs there. */
+.la-string { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; transform-box: view-box; transform-origin: 268px 18px; }
+.la-bob { fill: var(--ink); }
+.la-cut { stroke-dasharray: 1; }
+@keyframes la-string { 0% { transform: scaleY(0.17); } 30%, 52% { transform: scaleY(0.58); } 84% { transform: scaleY(1.017); } 100% { transform: none; } }
+@keyframes la-bob { 0% { opacity: 0; transform: translateY(-146px); } 8% { opacity: 1; } 30%, 52% { transform: translateY(-73px); } 84% { transform: translateY(3px); } 100% { opacity: 1; transform: none; } }
+.can-play .local-art:not(.is-in) .la-plumb { opacity: 0; }
+.can-play .local-art.is-in .la-string { animation: la-string 2.6s cubic-bezier(0.5, 0, 0.3, 1) 0.3s both; }
+.can-play .local-art.is-in .la-bob { animation: la-bob 2.6s cubic-bezier(0.5, 0, 0.3, 1) 0.3s both; }
+.can-play .local-art .la-cut { transition: stroke-dashoffset 0.5s cubic-bezier(0.35, 0.6, 0.25, 1) 3s; }
+.can-play .local-art:not(.is-in) .la-cut { stroke-dashoffset: 1; }
 
-/* How far each claim goes, in the product's own marks. */
-.standings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 44px); margin-top: clamp(28px, 4vw, 52px); list-style: none; }
-.standings li { display: grid; gap: 10px; align-content: start; }
-.standings-k { display: flex; align-items: center; gap: 10px; font: 600 1.25rem / 1.25 var(--sans); letter-spacing: -0.012em; }
-.standings-k .g { width: 15px; height: 15px; }
-.standings li > p:last-child { max-width: 26rem; color: var(--graphite); }
+.plate-proof { margin-top: clamp(28px, 4vw, 52px); background: var(--well); }
+.plate-proof .shot { box-shadow: var(--shadow-raised); }
 
-.proof-say { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 5vw, 84px); align-items: end; }
-.proof-say .actions { margin-top: 20px; }
-.proof-figure { margin-top: clamp(28px, 4vw, 52px); }
-.doors { margin-top: clamp(24px, 3.4vw, 44px); }
+/* Every part of Plumb, as the parts list on a drawing, in the product's own marks: ink for
+   shown working, blue pencil for built but not settled, pencil for not yet. */
+.plate-parts { margin-top: clamp(28px, 4vw, 52px); }
+.parts-key { display: inline-flex; flex-wrap: wrap; gap: 2px 16px; }
+.parts-key > span { display: inline-flex; align-items: center; gap: 7px; }
+.parts-key .g { width: 9px; height: 9px; color: var(--ink); }
+.parts-key .is-half .g { color: var(--blue); }
+.parts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.parts-group { padding: clamp(16px, 1.9vw, 24px) clamp(16px, 1.8vw, 22px) clamp(18px, 2.1vw, 26px); border-radius: var(--radius-sheet); background: var(--desk); }
+.parts-group h3 { margin-bottom: 16px; font: 500 0.75rem / 1.45 var(--mono); letter-spacing: 0; }
+.parts-group h3 a { color: var(--pencil); text-decoration: none; }
+.parts-group h3 a::after { content: " \2192"; }
+.parts-group h3 a:hover { color: var(--ink); text-decoration: underline; }
+.parts-group ul { display: grid; gap: 12px; list-style: none; }
+.parts-group li { display: grid; grid-template-columns: 15px minmax(0, 1fr); gap: 11px; font: 500 1rem / 1.35 var(--sans); letter-spacing: -0.006em; }
+.lvl { width: 15px; height: 15px; margin-top: 2.5px; color: var(--ink); overflow: visible; }
+.lvl.is-half { color: var(--blue); }
+.lvl-o { fill: none; stroke: currentColor; stroke-width: 1.5; }
+.lvl-f { fill: currentColor; }
+.status.is-ring { color: var(--pencil); }
+.status a { color: var(--ink); font-weight: 600; }
+.plate-parts + .status + .actions { margin-top: clamp(24px, 3vw, 36px); }
+/* Ink rises in each mark as far as its part has been shown working, one part after another,
+   once the list comes into view. Without motion the marks are full from the start. */
+.parts-group:nth-child(2) { --g: 1; }
+.parts-group:nth-child(3) { --g: 2; }
+.parts-group:nth-child(4) { --g: 3; }
+.parts-group li:nth-child(2) { --k: 1; }
+.parts-group li:nth-child(3) { --k: 2; }
+.parts-group li:nth-child(4) { --k: 3; }
+.can-play .parts .lvl-f { transition: clip-path 0.6s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--g, 0) * 0.34s + var(--k, 0) * 0.1s + 0.25s); }
+.can-play .parts:not(.is-in) .lvl-f { clip-path: inset(100% 0 0 0); }
+.can-play .parts .lvl-o { transition: stroke-dashoffset 0.45s ease-out calc(var(--g, 0) * 0.34s + var(--k, 0) * 0.1s); stroke-dasharray: 26 26; }
+.can-play .parts:not(.is-in) .lvl-o { stroke-dashoffset: 26; }
 
 /* The two recorded cases, side by side at the top of each. */
 .case-tabs { display: inline-flex; gap: 2px; margin-bottom: clamp(18px, 2.4vw, 28px); padding: 3px; border-radius: 11px; background: var(--well); }
@@ -685,15 +856,15 @@ a.channel:hover .arrow { stroke: var(--ink); transform: translate(2px, -2px); }
 .case-tabs a[aria-current="page"] { background: var(--sheet); color: var(--ink); font-weight: 600; }
 
 /* A deeper page in three lines. */
-.in-short { margin-top: 26px; max-width: 44rem; padding: 18px 22px 20px; border-radius: var(--radius-sheet); background: var(--sheet); }
-.in-short-k { margin-bottom: 8px; color: var(--pencil); font: var(--t-meta); }
+.in-short { margin-top: 30px; max-width: 46rem; padding: clamp(16px, 2vw, 24px) clamp(18px, 2.4vw, 28px) clamp(18px, 2.2vw, 26px); border-radius: clamp(16px, 2vw, 22px); background: var(--sheet); }
+.in-short-k { margin-bottom: 12px; color: var(--ink); font: 500 0.75rem / 1.45 var(--mono); }
 .in-short ul { display: grid; gap: 8px; list-style: none; }
 
 /* ---------- the walk-through ----------
    Without scripts (or with reduced motion) the four chapters are panels in a grid, each with
    its drawing in its final state and all of its captions. With scripts the same markup
    becomes one stage and a list of chapters that play in order. */
-.film { margin-top: clamp(32px, 4.6vw, 64px); }
+.film { margin-top: 0; }
 .film-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 4vw, 48px) clamp(16px, 2.4vw, 28px); list-style: none; }
 .chapter { display: grid; gap: 14px; align-content: start; min-width: 0; }
 .chapter-head { order: 0; }
@@ -844,10 +1015,11 @@ html:not(.can-play) .stage [data-to] { display: none; }
 .can-play .stage .s-gloss [data-from] { transition-delay: 1.15s; }
 
 @media (max-width: 900px) {
-  .home-top, .local, .proof-say { grid-template-columns: minmax(0, 1fr); }
-  .home-top { gap: 18px; }
+  .say-row, .local, .ask-wrap { grid-template-columns: minmax(0, 1fr); }
   .local-art { justify-self: start; }
-  .standings { grid-template-columns: minmax(0, 1fr); }
+  .parts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flow li:nth-child(2)::after { content: none; }
   .film-list { grid-template-columns: minmax(0, 1fr); }
   .can-play .film { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); column-gap: 6px; }
   .can-play .stage-box { grid-column: 1 / -1; grid-row: 1; }
@@ -865,8 +1037,24 @@ html:not(.can-play) .stage [data-to] { display: none; }
   .can-play .film-note { grid-row: 5; }
   .can-play .film-rail { display: none; }
 }
+@media (max-width: 760px) {
+  /* A lane per person still: who, then the request on its way, then what came back and the verdict. */
+  .lanes { grid-template-columns: minmax(0, 1fr); }
+  .lane { grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; }
+  .lane-who, .lane-track { grid-column: 1 / -1; }
+  .lane-got { grid-column: 1; }
+  .lane-verdict { grid-column: 2; font-size: 0.9375rem; }
+  .lane-got .hand { left: -0.8em; width: calc(100% + 1.6em); }
+}
+@media (max-width: 560px) {
+  .parts { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 700px) {
-  .asks { grid-template-columns: minmax(0, 1fr); }
+  .flow { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .flow li { padding: 2px 0 18px 40px; }
+  .flow li::after { content: ""; left: 12.5px; right: auto; top: 30px; bottom: 2px; width: 1.6px; height: auto; }
+  .flow li:nth-child(2)::after { content: ""; }
+  .flow li:last-child { padding-bottom: 0; }
 }
 
 /* ---------- narrower screens ---------- */

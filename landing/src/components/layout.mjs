@@ -1,4 +1,5 @@
 // @ts-check
+import { day, int } from '../lib/format.mjs';
 import { html, raw } from '../lib/html.mjs';
 import { LANGS, LANG_FLAGS, LANG_NAMES, lang, localPath, t } from '../lib/lang.mjs';
 import { bob, sprite } from './glyphs.mjs';
@@ -47,6 +48,18 @@ const PRELOADED_FONTS = [
  * @property {{ day: string, night: string }} themeColor
  */
 
+/** The newest time stamp anywhere in the extracted records: how current the site's facts are. */
+function newest(/** @type {unknown} */ value) {
+  /** @type {string[]} */
+  const found = [];
+  const walk = (/** @type {unknown} */ node) => {
+    if (typeof node === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(node)) found.push(node);
+    else if (node && typeof node === 'object') Object.values(node).forEach(walk);
+  };
+  walk(value);
+  return found.reduce((latest, stamp) => (Date.parse(stamp) > Date.parse(latest) ? stamp : latest));
+}
+
 /** Points links between pages at the language being rendered. Language links are left alone. */
 function localise(/** @type {string} */ markup) {
   if (lang() === 'en') return markup;
@@ -69,7 +82,11 @@ function localise(/** @type {string} */ markup) {
  * @param {boolean} [options.index] false keeps the page out of search results
  */
 export function page({ path, title, description, body, context, index = true }) {
-  const { site, assets, themeColor } = context;
+  const { site, assets, themeColor, record } = context;
+  // What the facts were read from: saved results, and the code and pins they are checked against.
+  const read = Object.keys(record.sources);
+  const records = read.filter((file) => file.startsWith('docs/results/')).length;
+  const files = read.length - records;
   const fullTitle = path === '/' ? title : `${title} · Plumb`;
   // The 404 page answers for every unknown address, so it has no address of its own.
   const own = path === '/404' ? '/' : path;
@@ -109,6 +126,7 @@ ${PRELOADED_FONTS.map(
 </head>
 <body>
 ${sprite}
+<div class="margin-plumb" data-plumb aria-hidden="true"><span class="mp-line"></span><svg class="mp-bob" viewBox="0 0 14 20"><path d="M7 0 12.4 8 7 20 1.6 8z"/></svg></div>
 <a class="skip" href="#main">${t('Skip to content', 'Asosiy matnga o‘tish')}</a>
 <header class="top">
   <div class="wrap top-row">
@@ -144,8 +162,12 @@ ${body}
         'Looks for places where people can see data that is not theirs, in a web app’s code or in the answers it gives. Runs on your own computer. A working prototype.',
         'Veb-ilova kodidan yoki u bergan javoblardan foydalanuvchiga begona ma’lumot ochilib qoladigan joylarni qidiradi. O‘z kompyuteringizda ishlaydi. Ishlaydigan prototip.',
       )}</p>
-      ${site.author ? html`<p class="small">${t(html`Built by ${site.author}.`, html`Muallif: ${site.author}.`)} <a href="/contact">${t('Write to me', 'Menga yozing')}</a></p>` : ''}
     </div>
+    <dl class="title-block">
+      <div><dt>${t('Drawn from', 'Manbasi')}</dt><dd>${t(`${int(records)} saved records, ${int(files)} source files`, `${int(records)} ta saqlangan yozuv, ${int(files)} ta manba fayli`)}</dd></div>
+      <div><dt>${t('Newest record', 'Eng yangi yozuv')}</dt><dd>${day(newest(record))}</dd></div>
+      ${site.author ? html`<div><dt>${t('Made by', 'Muallif')}</dt><dd>${site.author} · <a href="/contact">${t('Write', 'Yozish')}</a></dd></div>` : ''}
+    </dl>
     <nav class="foot-nav" aria-label="${t('Footer', 'Sahifa osti menyusi')}">
       ${NAV.map((item) => html`<a href="${item.href}">${t(item.en, item.uz)}</a>`)}
       <a href="/install/agent">${t('Install with an AI agent', 'SI agent orqali o‘rnatish')}</a>

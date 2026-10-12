@@ -8,7 +8,7 @@ import { downloadSizes } from '../lib/guide.mjs';
 import { holds } from '../lib/holds.mjs';
 import { html } from '../lib/html.mjs';
 import { t } from '../lib/lang.mjs';
-import { websiteLimits } from '../lib/website-limits.mjs';
+import { externalLimits, websiteLimits } from '../lib/website-limits.mjs';
 
 export const path = '/what-it-does';
 
@@ -16,7 +16,7 @@ export const path = '/what-it-does';
 export function render(context) {
   const { record, site } = context;
   const { run, excerpts, model, development, runtime, download, cpu_profile: cpu, collection, observation_comparison: comparison } = record;
-  const { console_records: consoles, workbench_views: views, report_drafts: drafts, tool_connection: connection } = record;
+  const { console_records: consoles, workbench_views: views, report_drafts: drafts, tool_connection: connection, journey, chat, signals, decisions } = record;
   const downloads = downloadSizes(record);
   const [receipt, invoice] = run.findings;
   const { peer, overview, coverage } = run;
@@ -58,6 +58,14 @@ export function render(context) {
   holds(consoles.ask.generated_by === 'saved_evidence' && consoles.ask.finding === receipt.display_id, 'the question about the saved finding was answered from saved evidence');
   holds(views.captures === 24 && views.signed_in_acceptance === false && views.fresh_model_acceptance === false, 'the workbench’s new screens were captured with display fixtures only');
   holds(drafts.published === false && drafts.synthetic_only, 'report drafts came from made-up cases and none was exported');
+  // The website test and the plain question, as their own records describe them.
+  holds(journey.mode === 'owned_fixture' && journey.supported === 0 && journey.findings > 0 && journey.requests <= journey.max_requests, 'the website test ran on the practice website, within its limits, and left only leads');
+  holds(download.owned_website_completed === true && download.model_planning_qualified === false, 'the package finished the practice website test; the AI model is not yet trusted to plan the steps');
+  holds(chat.mixed_general_declined === true && /not a finding/.test(chat.basis), 'a general answer is labelled as such, and one general part declined to answer');
+  holds(journey.browser_used && journey.signup_approved && journey.created === 1 && journey.signed_in === 2, 'the website test used its own browser, signed in two accounts and created one through an approved sign-up');
+  holds(['captcha', 'one_time_code'].every((kind) => journey.handed_over.includes(kind)) && journey.commands.includes('stop'), 'CAPTCHAs and one-time codes go to a person, and a test can be stopped');
+  holds(signals.config_rules.join() === 'config-fastapi-debug,config-httpx-tls', 'the two risky settings are FastAPI debug mode and HTTPX certificate checks');
+  holds(decisions.join() === 'open,dismissed,accepted_risk,resolved', 'a finding can be dismissed, accepted as a risk or resolved');
   holds(runtime.replay.after.outcome === 'fixed', 'after the hand-written fix the leak stopped');
   holds(connection.lookups.length === 4, 'the tool connection offers four lookups');
   websiteLimits(download);
@@ -97,14 +105,18 @@ export function render(context) {
           <li>Notices the one place that skips a check all its neighbours make, like the receipt above.</li>
           <li>Asks a small AI model on your laptop short questions about that place, and looks for a reason it might be fine after all.</li>
           <li>Shows the file and lines behind every answer, and saves a report you can open in any browser.</li>
-          <li>Takes a plain sentence, such as “check order ownership”, as an instruction, and answers questions about a saved result.</li>
-          <li>Works from saved requests and replies when there is no code to read.</li>`,
+          <li>Takes a plain sentence, such as “check order ownership”, as an instruction, and answers questions in plain words: general ones, and ones about a saved result.</li>
+          <li>Tests a website you may test, signed in as your test accounts, once you approve its plan.</li>
+          <li>Works from saved requests and replies when there is no code to read.</li>
+          <li>Notes secrets left in the code, risky settings and packages with a known advisory, kept apart from its findings.</li>`,
             html`<li>Python (FastAPI) yoki TypeScript (Next.js) da yozilgan veb-ilova kodini o‘qiydi va kimningdir ma’lumoti yuklanadigan barcha joylarni ro‘yxatga oladi.</li>
           <li>Qo‘shni joylarning hammasida bor tekshiruv qaysi joyda tushib qolganini sezadi. Yuqoridagi chek shunga misol.</li>
           <li>Noutbukingizda ishlaydigan kichik SI modeliga o‘sha joy haqida qisqa savollar beradi va xavotirga asos yo‘qligini ko‘rsatadigan sabab qidiradi.</li>
           <li>Har bir javob qaysi fayl va qatorlarga tayanganini ko‘rsatadi, natijani istalgan brauzerda ochiladigan hisobot qilib saqlaydi.</li>
-          <li>«Buyurtma egaligini tekshir» kabi oddiy jumlani topshiriq sifatida qabul qiladi va saqlangan natija haqidagi savollarga javob beradi.</li>
-          <li>O‘qiydigan kod bo‘lmasa, saqlab olingan so‘rov va javoblar asosida ishlaydi.</li>`,
+          <li>«Buyurtma egaligini tekshir» kabi oddiy jumlani topshiriq sifatida qabul qiladi, oddiy so‘zlar bilan berilgan savollarga javob beradi: umumiy savollarga ham, saqlangan natija haqidagilariga ham.</li>
+          <li>Sinashga ruxsatingiz bor saytni, rejasini tasdiqlaganingizdan keyin, test hisoblaringiz bilan kirib sinaydi.</li>
+          <li>O‘qiydigan kod bo‘lmasa, saqlab olingan so‘rov va javoblar asosida ishlaydi.</li>
+          <li>Kodda qolib ketgan maxfiy kalitlar, xavfli sozlamalar va zaifligi ma’lum paketlarni qayd etadi, ularni topilmalardan alohida saqlaydi.</li>`,
           )}
         </ul>
       </div>
@@ -112,13 +124,13 @@ export function render(context) {
         <h3>${glyph('ring')} ${t('It does not', 'Qilmaydi')}</h3>
         <ul class="limits">
           ${t(
-            html`<li>Upload your code anywhere. Once it is set up, it needs no internet.</li>
-          <li>Run your app or send it requests. The only app it contacts is its own practice app, and only after you approve the plan.</li>
+            html`<li>Upload your code anywhere. Once it is set up, reading code needs no internet.</li>
+          <li>Run your app’s code, or send a request you have not approved. So far it has sent requests only to its own practice app and its own practice website.</li>
           <li>Act on a question. Asking can never start a review, send a request or change a finding.</li>
           <li>Fix the code for you. In the recorded test its suggested fix was broken, so none was offered.</li>
           <li>Promise that your app is safe. An empty report only means nothing was found in what was checked.</li>`,
-            html`<li>Kodingizni hech qayerga yubormaydi. O‘rnatib bo‘lingach, internet kerak emas.</li>
-          <li>Ilovangizni ishga tushirmaydi va unga so‘rov yubormaydi. U murojaat qiladigan yagona ilova o‘zining sinov ilovasi, unga ham faqat siz rejani tasdiqlaganingizdan keyin.</li>
+            html`<li>Kodingizni hech qayerga yubormaydi. O‘rnatib bo‘lingach, kodni o‘qishga internet kerak emas.</li>
+          <li>Ilovangiz kodini ishga tushirmaydi va siz tasdiqlamagan so‘rovni yubormaydi. Hozircha u faqat o‘zining sinov ilovasi va o‘zining sinov saytiga so‘rov yuborgan.</li>
           <li>Savol asosida ish boshlab yubormaydi. Savol berish tekshiruvni boshlamaydi, so‘rov yubormaydi va topilmani o‘zgartirmaydi.</li>
           <li>Kodni siz uchun tuzatmaydi. Sinovda u taklif qilgan tuzatish xato chiqdi, shuning uchun hisobotga kiritilmadi.</li>
           <li>Ilovangiz xavfsiz deb kafolat bermaydi. Hisobot bo‘sh bo‘lsa, bu faqat tekshirilgan qismda hech narsa topilmaganini bildiradi.</li>`,
@@ -187,8 +199,8 @@ export function render(context) {
     <div class="lead-in">
       <h2 id="bench-h">${t('Or in your browser.', 'Yoki brauzeringizda.')}</h2>
       <p class="lead-note">${t(
-        html`${fact('plumb web')} opens the workbench: the same reviews, findings, questions and assessments, with forms in place of commands. It runs on your computer and starts no AI model by itself.`,
-        html`${fact('plumb web')} buyrug‘i brauzerdagi interfeysni ochadi: o‘sha tekshiruvlar, topilmalar, savollar va veb-tekshiruvlar, faqat buyruqlar o‘rniga shakllar bilan. U kompyuteringizning o‘zida ishlaydi va o‘zicha SI modelini ishga tushirmaydi.`,
+        html`${fact('plumb web')} opens the workbench: the same reviews, findings, questions, assessments and website tests, with forms in place of commands. It runs on your computer and starts no AI model by itself.`,
+        html`${fact('plumb web')} buyrug‘i brauzerdagi interfeysni ochadi: o‘sha tekshiruvlar, topilmalar, savollar, veb-tekshiruvlar va sayt sinovlari, faqat buyruqlar o‘rniga shakllar bilan. U kompyuteringizning o‘zida ishlaydi va o‘zicha SI modelini ishga tushirmaydi.`,
       )}</p>
     </div>
     <figure class="bench-figure">
@@ -205,18 +217,22 @@ export function render(context) {
     id: 'ask',
     heading: t('Ask it in your own words.', 'O‘z so‘zlaringiz bilan so‘rang.'),
     intro: html`<div class="stack-gap">
-      ${standing('half', t('Built. No real conversation recorded yet', 'Qurilgan. Haqiqiy suhbat hali qayd etilmagan'))}
+      ${standing('half', t('Built. Questions about a project not recorded yet', 'Qurilgan. Loyiha haqidagi savollar hali qayd etilmagan'))}
       <p>${t(
         'Type a question about a project, a finished review or an assessment. The AI model answers on your computer and has to point to the exact lines or replies it relies on.',
         'Loyiha, tugagan tekshiruv yoki veb-tekshiruv haqida savol yozing. SI modeli kompyuteringizning o‘zida javob beradi va tayangan qator yoki javoblarni aniq ko‘rsatishi shart.',
+      )}</p>
+      <p>${t(
+        html`Or type ${fact('plumb')} and ask anything, as you would ask a person. A general answer is labelled as general knowledge and is never a finding about your app. One such session was recorded on ${day(chat.recorded_at)}.`,
+        html`Yoki ${fact('plumb')} deb yozib, odamdan so‘ragandek istalgan savolni bering. Umumiy javob umumiy bilim deb belgilanadi va hech qachon ilovangiz haqidagi topilma hisoblanmaydi. Bunday suhbat ${day(chat.recorded_at)} kuni bir marta yozib olingan.`,
       )}</p>
     </div>`,
     body: html`<div class="stack-gap">
       <figure class="report-figure is-inline">
         ${workbenchShot('ask', t('The question box of Plumb’s workbench, with an answer that cites the practice app’s receipt code and lists what is still unknown', 'Plumb interfeysidagi savol maydoni: javob sinov ilovasining chek kodiga havola qiladi va nima hali noma’lumligini sanab o‘tadi'), [1056, 1062])}
         <figcaption class="small">${t(
-          'The question box in the workbench. The answer text in this picture is a stand-in, and the screen labels it so, because no real conversation has been recorded yet. The code it points to is the practice app’s real receipt code.',
-          'Interfeysdagi savol maydoni. Bu rasmdagi javob matni namuna, ekranning o‘zida ham shunday deb yozilgan, chunki haqiqiy suhbat hali qayd etilmagan. U ko‘rsatayotgan kod esa sinov ilovasining haqiqiy chek kodi.',
+          'The question box in the workbench. The answer text in this picture is a stand-in, and the screen labels it so, because no real conversation about this code has been recorded yet. The code it points to is the practice app’s real receipt code.',
+          'Interfeysdagi savol maydoni. Bu rasmdagi javob matni namuna, ekranning o‘zida ham shunday deb yozilgan, chunki bu kod haqida haqiqiy suhbat hali qayd etilmagan. U ko‘rsatayotgan kod esa sinov ilovasining haqiqiy chek kodi.',
         )}</figcaption>
       </figure>
       <ul class="limits">
@@ -278,24 +294,40 @@ export function render(context) {
             'Unsafe database queries, file paths that escape their folder, data leaking to the browser. Misses are on record for these.',
             'Ma’lumotlar bazasiga xavfli so‘rovlar, o‘z papkasidan chiqib ketadigan fayl yo‘llari, brauzerga sizib chiqadigan ma’lumotlar. Bularda aniqlanmay qolgan xatolar qayd etilgan.',
           ), ['--family injection', '--family path_traversal', '--family nextjs_exposure'])}
+          ${can('half', t('Note secrets, risky settings and vulnerable packages', 'Maxfiy kalitlar, xavfli sozlamalar va zaif paketlarni qayd etish'), t(
+            html`Beside its findings, a review notes the shape of a secret left in the code without ever showing its value, ${fact(signals.config_rules.length)} risky settings (debug mode left on in FastAPI, certificate checks turned off in HTTPX), and package versions named in its offline advisory list. That list holds ${fact(signals.advisories)} advisories from the ${signals.advisories_from}, dated ${day(signals.advisories_dated)}. These notes are never counted as findings.`,
+            html`Tekshiruv topilmalar yonida koddagi maxfiy kalit izini (qiymatini hech qachon ko‘rsatmay), ${fact(signals.config_rules.length)} ta xavfli sozlamani (FastAPI’da yoqiq qolgan debug rejimi, HTTPX’da o‘chirilgan sertifikat tekshiruvi) va internetsiz ishlaydigan ogohlantirishlar ro‘yxatidagi paket versiyalarini qayd etadi. Bu ro‘yxatda ${signals.advisories_from} manbasidan olingan ${fact(signals.advisories)} ta ogohlantirish bor, sanasi ${day(signals.advisories_dated)}. Bu qaydlar hech qachon topilma sifatida sanalmaydi.`,
+          ), ['plumb review <folder>'])}
+          ${can('half', t('Write down the rule the code must follow', 'Kod amal qilishi kerak bo‘lgan qoidani yozib qo‘yish'), t(
+            'Such as “only the owner may see an order”, tied to the exact code that was reviewed. It tells Plumb what was intended; it is not proof that the code does it.',
+            '«Buyurtmani faqat egasi ko‘ra oladi» kabi qoida, aynan tekshirilgan kodga bog‘lab yoziladi. U Plumbga nima ko‘zda tutilganini aytadi, lekin kod shunday ishlashini isbotlamaydi.',
+          ), ['plumb policy <run-id> --guard owner --statement "Owner required"'])}
         </ul>
       </section>
       <section class="can-group" aria-labelledby="can-ask">
         <h3 id="can-ask">${t('Ask', 'So‘rash')}</h3>
         <ul>
+          ${can('half', t('Ask a general question in plain words', 'Oddiy so‘zlar bilan umumiy savol berish'), t(
+            html`Type ${factWhole('plumb')} and write as you would to a person. The model on your computer answers, and every answer says what it rests on: general knowledge is never a finding about your app, and a message cannot start a test. Recorded on ${day(chat.recorded_at)}: a general question answered in ${fact(`${seconds(Number(chat.model_seconds.toFixed(1)))} s`)}; in a mixed question, the general part declined to answer.`,
+            html`${factWhole('plumb')} deb yozing va odamga yozgandek savol bering. Kompyuteringizdagi model javob beradi va har bir javob nimaga tayanganini aytadi: umumiy bilim ilovangiz haqidagi topilma hisoblanmaydi, xabar esa sinovni boshlay olmaydi. ${day(chat.recorded_at)} kuni yozib olingan: umumiy savolga ${fact(`${seconds(Number(chat.model_seconds.toFixed(1)))} s`)} ichida javob berildi; aralash savolda esa umumiy qism javob berishdan bosh tortdi.`,
+          ), ['plumb', `plumb chat "${chat.prompt}"`])}
           ${can('dot', t('Ask about a saved finding', 'Saqlangan topilma haqida so‘rash'), t(
             html`Answered from the saved evidence, without the AI model. Run for this site on ${day(consoles.recorded_at)}: it returned ${fact(consoles.ask.finding)} with its ${fact(consoles.ask.exhibits)} cited places and ${fact(consoles.ask.limitations)} stated limits.`,
             html`Javob SI modelisiz, saqlangan dalillardan olinadi. Shu sayt uchun ${day(consoles.recorded_at)} kuni ishga tushirilgan: u ${fact(consoles.ask.finding)} topilmasini, u tayangan ${fact(consoles.ask.exhibits)} ta joy va ${fact(consoles.ask.limitations)} ta cheklov bilan qaytardi.`,
           ), [`plumb ask <run-id> "${consoles.ask.prompt}"`])}
           ${can('half', t('Ask anything about a project, a review or an assessment', 'Loyiha, tekshiruv yoki veb-tekshiruv haqida istalgan savolni berish'), t(
-            'The AI model answers on your computer and must point to exact lines or replies; what it cannot know is listed. A question can never start a review, send a request or change a finding. It passes its software tests; no real conversation has been recorded yet.',
-            'SI modeli kompyuteringizning o‘zida javob beradi va aniq qator yoki javoblarni ko‘rsatishi shart; bila olmagan narsalari alohida sanab o‘tiladi. Savol tekshiruvni boshlay olmaydi, so‘rov yubora olmaydi va topilmani o‘zgartira olmaydi. Dasturiy testlardan o‘tadi, lekin model bilan haqiqiy suhbat hali qayd etilmagan.',
+            'The AI model answers on your computer and must point to exact lines or replies; what it cannot know is listed. A question can never start a review, send a request or change a finding. It passes its software tests; no real conversation of this kind has been recorded yet.',
+            'SI modeli kompyuteringizning o‘zida javob beradi va aniq qator yoki javoblarni ko‘rsatishi shart; bila olmagan narsalari alohida sanab o‘tiladi. Savol tekshiruvni boshlay olmaydi, so‘rov yubora olmaydi va topilmani o‘zgartira olmaydi. Dasturiy testlardan o‘tadi, lekin bunday haqiqiy suhbat hali qayd etilmagan.',
           ), ['plumb chat <id> "How is the caller tied to an order?"'])}
         </ul>
       </section>
       <section class="can-group" aria-labelledby="can-web">
         <h3 id="can-web">${t('Watch the answers', 'Javoblarni kuzatish')}</h3>
         <ul>
+          ${can('half', t('Test a website you may test', 'Sinashga ruxsatingiz bor saytni sinash'), t(
+            html`You describe the site, the test accounts, what may be done and the limits. Plumb shows its plan and sends nothing until you approve it. Then, in a browser of its own, it signs in as each account, can create one through a sign-up you allowed, and compares what each one gets, in a private report. A CAPTCHA or a one-time code is handed to you to complete. You can stop the test at any time, and an interrupted test continues only when you say so. Run on Plumb’s own practice website on ${day(journey.recorded_at)}: ${fact(journey.signed_in)} accounts signed in and ${fact(journey.created)} created, ${fact(journey.requests)} of ${fact(journey.max_requests)} allowed requests, ${fact(journey.findings)} leads and no confirmed finding. The AI model is not yet trusted to plan the steps, so plain code and you choose them. ${externalLimits(download)}`,
+            html`Siz saytni, test hisoblarini, nima qilish mumkinligini va cheklovlarni yozasiz. Plumb rejasini ko‘rsatadi va siz tasdiqlamaguningizcha hech narsa yubormaydi. Keyin o‘z brauzerida har bir hisob bilan kiradi, siz ruxsat bergan ro‘yxatdan o‘tish orqali yangi hisob ocha oladi va har biri nima olganini shaxsiy hisobotda solishtiradi. CAPTCHA yoki bir martalik kodni siz kiritasiz. Sinovni istalgan payt to‘xtata olasiz, to‘xtab qolgan sinov esa faqat siz aytganingizda davom etadi. ${day(journey.recorded_at)} kuni Plumbning o‘z sinov saytida ishga tushirilgan: ${fact(journey.signed_in)} ta hisob bilan kirildi va ${fact(journey.created)} tasi ochildi, ruxsat etilgan ${fact(journey.max_requests)} ta so‘rovdan ${fact(journey.requests)} tasi ishlatildi, ${fact(journey.findings)} ta iz topildi, tasdiqlangan topilma yo‘q. SI modeliga qadamlarni rejalashtirish hali ishonib topshirilmagan, ularni oddiy kod va siz tanlaysiz. ${externalLimits(download)}`,
+          ), ['plumb website setup', 'plumb website run <journey-id>', 'plumb website stop <journey-id>'])}
           ${can('half', t('Work from saved requests and replies', 'Saqlab olingan so‘rov va javoblar bilan ishlash'), t(
             'Bring records you collected yourself. Plumb removes passwords and cookies, compares two accounts on the same item, and draws up a map and a checklist. It passes its software tests on made-up records.',
             'O‘zingiz yig‘gan yozuvlarni bering. Plumb ulardagi parol va cookie’larni olib tashlaydi, ikki hisobning bitta narsaga olgan javobini solishtiradi, xarita va tekshirish ro‘yxatini tuzadi. Soxta yozuvlarda dasturiy testlardan o‘tadi.',
@@ -326,8 +358,12 @@ export function render(context) {
             html`Plumb bo‘sh xotiraga nima sig‘ishini va qaysi modelning qayd etilgan natijasi borligini aytadi, xotira yetmasa, ishni boshlamaydi. <a href="/install#models">U chiqargan ro‘yxat</a>.`,
           ), ['plumb doctor', 'plumb models', 'plumb calibrate'])}
           ${can('half', t('Use it in the browser', 'Brauzerda foydalanish'), t(
-            html`A workbench with forms in place of commands: reviews, findings, questions and assessments. ${fact(views.captures)} pictures of its new screens were checked. A full walk-through in a signed-in browser has not been completed.`,
-            html`Buyruqlar o‘rniga shakllar bilan ishlaydigan interfeys: tekshiruvlar, topilmalar, savollar va veb-tekshiruvlar. Yangi ekranlarining ${fact(views.captures)} ta tasviri tekshirilgan. Hisobga kirilgan brauzerda boshidan oxirigacha tekshirib chiqilmagan.`,
+            html`A workbench with forms in place of commands: reviews, findings, questions, assessments and website tests. ${fact(views.captures)} pictures of its new screens were checked. A full walk-through in a signed-in browser has not been completed.`,
+            html`Buyruqlar o‘rniga shakllar bilan ishlaydigan interfeys: tekshiruvlar, topilmalar, savollar, veb-tekshiruvlar va sayt sinovlari. Yangi ekranlarining ${fact(views.captures)} ta tasviri tekshirilgan. Hisobga kirilgan brauzerda boshidan oxirigacha tekshirib chiqilmagan.`,
+          ), ['plumb web'])}
+          ${can('half', t('Record your decision on a finding', 'Topilma bo‘yicha qaroringizni yozib qo‘yish'), t(
+            'Dismissed, accepted as a risk, or resolved with the commit that fixed it. Each decision is added beside the finding with who made it and why, and never rewrites the finding or its evidence. Done in the workbench.',
+            'Rad etildi, xavf sifatida qabul qilindi yoki uni tuzatgan commit bilan hal qilindi. Har bir qaror kim va nima uchun qabul qilgani bilan topilma yoniga qo‘shiladi, topilmaning o‘zini yoki dalillarini hech qachon o‘zgartirmaydi. Bu interfeysda qilinadi.',
           ), ['plumb web'])}
           ${can('dot', t('Test a fix on the practice app', 'Tuzatishni sinov ilovasida sinash'), t(
             html`A fixed script sends real requests before and after one hand-written fix. After it, the other customer was refused and the owner still got her receipt. <a href="/recorded-run#runtime">Recorded on its own</a>.`,
